@@ -14,9 +14,9 @@ const AnimatedBackground = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
-export const Layout = () => {
+export const MainLayout = () => {
   return (
-    <div className='max-w-full relative min-h-screen bg-gray-50'>
+    <div className='max-w-full relative min-h-screen bg-gray-50 dark:bg-darkTheme'>
       <AnimatedBackground>
         {/* Motion lines overlay */}
         <div className="absolute inset-0 opacity-20 mix-blend-overlay">

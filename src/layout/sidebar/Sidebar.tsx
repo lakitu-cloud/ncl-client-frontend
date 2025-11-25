@@ -1,5 +1,6 @@
 import React from "react";
-import { navigation, Logo } from "../../assets/dummy";
+import { navigation } from "../../assets/dummy";
+import { Logo } from "../../assets/Logo";
 import { Link } from "react-router-dom";
 import {
   IoHelpCircleOutline,
@@ -8,6 +9,9 @@ import {
 } from "react-icons/io5";
 // import { useAuth } from "../../context/AuthProvider";
 import "./sidebar.css";
+import Cookies from "js-cookie";
+
+const role = Cookies.get('role');
 
 const Sidebar: React.FC = () => {
 //   const { logout } = useAuth();
@@ -17,7 +21,7 @@ const Sidebar: React.FC = () => {
         className="fixed top-0 left-0 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 
   text-white lg:w-18 md:w-14 hover:w-56 lg:block md:block sm:hidden xs:hidden h-full border-r z-10 
   space-y-8 animate-shimmer border-2 border-transparent hover:border-blue-400 transition-all 
-  duration-1000 group"
+  duration-1000 group dark:bg-gray-200"
         style={{
           backgroundSize: "400% 400%",
           backgroundImage:
@@ -27,15 +31,15 @@ const Sidebar: React.FC = () => {
       >
         <div className="flex flex-col h-full mt-2">
           <div className="flex items-center">
-            <Link to="/dashboard" className="flex items-center -ml-2 mb-4">
+            <Link to={role === "zone" ? "manager/sales/dashboard": "manager/zone/dashboard"} className="flex items-center -ml-2 mb-4">
               <Logo
                 width={82}
                 height={82}
                 color="white"
-                className="text-white p-2 duration-300 transition-all hover:scale-110 overflow-x-hidden"
+                className="text-white p-2 duration-300 transition-all hover:scale-110 overflow-x-hidden font-oswald"
               />
-              <p className=" ml-2 font-bold text-2xl text-white font-oswald dark:text-white hidden lg:block lg:group-hover:block">
-                NYIRENDAS
+              <p className=" ml-2 font-bold text-2xl text-white font-oswald dark:text-white hidden lg:block lg:group-hover:block uppercase">
+                Nyirendas
               </p>
             </Link>
           </div>

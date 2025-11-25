@@ -1,296 +1,708 @@
-'use client';
+import Header from "../../../layout/navbar/Header";
+import Transaction from "./components/Transaction";
+import { useApp } from "../../../context/ContextProvider";
+import { FiArrowDown, FiArrowUp } from "react-icons/fi";
+import Revenue from "./components/Revenue";
 
-import React from 'react';
-import Chart from 'react-apexcharts';
-import {
-  PieOptions,
-  PieSeries,
-  BarOptions,
-  BarSeries,
-  PieLabelConnectors,
-} from '../../../components/chart';
-import { PieIcon, RankIcon } from '../../../components/icons';
-import Header from '../../../layout/navbar/Header';
+const tap = require("../../../assets/images/logo.gif");
 
-/* -------------------------------------------------------------------------- */
-/*                               Trend Arrows                                 */
-/* -------------------------------------------------------------------------- */
-const TrendingUp = () => (
-  <svg className="w-3 h-3 text-green-100" fill="currentColor" viewBox="0 0 1024 1024">
-    <path d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0" />
-  </svg>
-);
+export const SalesDash = () => {
+  const { dashboard } = useApp();
+  const { data } = dashboard;
 
-const TrendingDown = () => (
-  <svg className="w-3 h-3 text-red-100 rotate-180" fill="currentColor" viewBox="0 0 1024 1024">
-    <path d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0" />
-  </svg>
-);
-
-/* -------------------------------------------------------------------------- */
-/*                                 KPI Data (Top 4)                           */
-/* -------------------------------------------------------------------------- */
-interface KPIData {
-  value: string;
-  label: string;
-  trend: string;
-  trendUp: boolean;
-  chart: number[];
-  bgColor: string;
-  icon: React.ReactNode;
-}
-
-const topKpis: KPIData[] = [
-  {
-    value: '1,256,789',
-    label: 'Total Revenue',
-    trend: '+15.2%',
-    trendUp: true,
-    chart: [65, 78, 45, 89, 67, 82, 91],
-    bgColor: 'bg-blue-500',
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 1024 1024" fill="currentColor">
-        <path d="M256 640v192h640V384H768v-64h150.976c14.272 0 19.456 1.472 24.64 4.288a29.06 29.06 0 0 1 12.16 12.096c2.752 5.184 4.224 10.368 4.224 24.64v493.952c0 14.272-1.472 19.456-4.288 24.64a29.06 29.06 0 0 1-12.096 12.16c-5.184 2.752-10.368 4.224-24.64 4.224H233.024c-14.272 0-19.456-1.472-24.64-4.288a29.06 29.06 0 0 1-12.16-12.096c-2.688-5.184-4.224-10.368-4.224-24.576V640z" />
-        <path d="M768 192H128v448h640zm64-22.976v493.952c0 14.272-1.472 19.456-4.288 24.64a29.06 29.06 0 0 1-12.096 12.16c-5.184 2.752-10.368 4.224-24.64 4.224H105.024c-14.272 0-19.456-1.472-24.64-4.288a29.06 29.06 0 0 1-12.16-12.096C65.536 682.432 64 677.248 64 663.04V169.024c0-14.272 1.472-19.456 4.288-24.64a29.06 29.06 0 0 1 12.096-12.16C85.568 129.536 90.752 128 104.96 128h685.952c14.272 0 19.456 1.472 24.64 4.288a29.06 29.06 0 0 1 12.16 12.096c2.752 5.184 4.224 10.368 4.224 24.64z" />
-        <path d="M448 576a160 160 0 1 1 0-320 160 160 0 0 1 0 320m0-64a96 96 0 1 0 0-192 96 96 0 0 0 0 192" />
-      </svg>
-    ),
-  },
-  {
-    value: '3,456',
-    label: 'Total Orders',
-    trend: '+8.7%',
-    trendUp: true,
-    chart: [45, 67, 34, 78, 56, 89, 67],
-    bgColor: 'bg-green-500',
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 1024 1024" fill="currentColor">
-        <path d="M704 320v96a32 32 0 0 1-32 32h-32V320H384v128h-32a32 32 0 0 1-32-32v-96H192v576h640V320zm-384-64a192 192 0 1 1 384 0h160a32 32 0 0 1 32 32v640a32 32 0 0 1-32 32H160a32 32 0 0 1-32-32V288a32 32 0 0 1 32-32zm64 0h256a128 128 0 1 0-256 0" />
-        <path d="M192 704h640v64H192z" />
-      </svg>
-    ),
-  },
-  {
-    value: '2,847',
-    label: 'Active Users',
-    trend: '-2.1%',
-    trendUp: false,
-    chart: [78, 65, 89, 67, 45, 78, 56],
-    bgColor: 'bg-orange-500',
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 1024 1024" fill="currentColor">
-        <path d="M512 512a192 192 0 1 0 0-384 192 192 0 0 0 0 384m0 64a256 256 0 1 1 0-512 256 256 0 0 1 0 512m320 320v-96a96 96 0 0 0-96-96H288a96 96 0 0 0-96 96v96a32 32 0 1 1-64 0v-96a160 160 0 0 1 160-160h448a160 160 0 0 1 160 160v96a32 32 0 1 1-64 0" />
-      </svg>
-    ),
-  },
-  {
-    value: '512',
-    label: 'Transactions',
-    trend: '+6.3%',
-    trendUp: true,
-    chart: [55, 60, 58, 62, 65, 70, 68],
-    bgColor: 'bg-purple-500',
-    icon: (
-      <svg className="w-6 h-6" viewBox="0 0 1024 1024" fill="currentColor">
-        <path d="m161.92 580.736 29.888 58.88C171.328 659.776 160 681.728 160 704c0 82.304 155.328 160 352 160s352-77.696 352-160c0-22.272-11.392-44.16-31.808-64.32l30.464-58.432C903.936 615.808 928 657.664 928 704c0 129.728-188.544 224-416 224S96 833.728 96 704c0-46.592 24.32-88.576 65.92-123.264" />
-        <path d="m161.92 388.736 29.888 58.88C171.328 467.84 160 489.792 160 512c0 82.304 155.328 160 352 160s352-77.696 352-160c0-22.272-11.392-44.16-31.808-64.32l30.464-58.432C903.936 423.808 928 465.664 928 512c0 129.728-188.544 224-416 224S96 641.728 96 512c0-46.592 24.32-88.576 65.92-123.264" />
-        <path d="M512 544c-227.456 0-416-94.272-416-224S284.544 96 512 96s416 94.272 416 224-188.544 224-416 224m0-64c196.672 0 352-77.696 352-160S708.672 160 512 160s-352 77.696-352 160 155.328 160 352 160" />
-      </svg>
-    ),
-  },
-];
-
-/* -------------------------------------------------------------------------- */
-/*                         Revenue & Volume Cards (8 Cards)                   */
-/* -------------------------------------------------------------------------- */
-
-/* Icons matching the image */
-const HomeIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-    <polyline points="9 22 9 12 15 12 15 22" />
-  </svg>
-);
-
-const CalendarIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-    <line x1="16" y1="2" x2="16" y2="6" />
-    <line x1="8" y1="2" x2="8" y2="6" />
-    <line x1="3" y1="10" x2="21" y2="10" />
-  </svg>
-);
-
-const MonthIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M8 7V3v4zm8 0V3v4zM5 9h14M5 9a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V11a2 2 0 0 0-2-2H5z" />
-  </svg>
-);
-
-const YearIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z" />
-    <path d="M16 2v4M8 2v4M3 10h18" />
-  </svg>
-);
-
-const WaterIcon = () => (
-  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 12s3-6 9-6 9 6 9 6-3 6-9 6-9-6-9-6z" />
-    <path d="M3 18s3-6 9-6 9 6 9 6" />
-  </svg>
-);
-
-const GridIcon = () => (
-  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="7" height="7" rx="1" />
-    <rect x="14" y="3" width="7" height="7" rx="1" />
-    <rect x="3" y="14" width="7" height="7" rx="1" />
-    <rect x="14" y="14" width="7" height="7" rx="1" />
-  </svg>
-);
-
-interface MetricCard {
-  label: string;
-  value: string;
-  unit?: string;
-  series: number[];
-  icon: React.ReactNode;
-}
-
-const quickAccessItems: MetricCard[] = [
-  // Revenue
-  { label: 'Today', value: '452,300', unit: 'TZS', series: [4000, 3800, 3600, 3400, 3200], icon: <HomeIcon /> },
-  { label: 'This Week', value: '3,215,800', unit: 'TZS', series: [3500, 3700, 3600, 3800, 3900], icon: <CalendarIcon /> },
-  { label: 'This Month', value: '12,567,890', unit: 'TZS', series: [3000, 3200, 3100, 3300, 3400], icon: <MonthIcon /> },
-  { label: 'This Year', value: '148,920,450', unit: 'TZS', series: [2800, 3000, 2900, 3100, 3200], icon: <YearIcon /> },
-
-  // Volume
-  { label: 'Today', value: '842', unit: 'm³', series: [800, 780, 760, 740, 720], icon: <WaterIcon /> },
-  { label: 'This Week', value: '5,920', unit: 'm³', series: [750, 770, 760, 780, 790], icon: <CalendarIcon /> },
-  { label: 'This Month', value: '23,450', unit: 'm³', series: [700, 720, 710, 730, 740], icon: <MonthIcon /> },
-  { label: 'This Year', value: '285,670', unit: 'm³', series: [680, 700, 690, 710, 720], icon: <YearIcon /> },
-];
-
-/* Mini Area Chart Options */
-const miniAreaOptions = {
-  chart: { type: 'area', sparkline: { enabled: true }, height: 60 },
-  stroke: { curve: 'smooth', width: 2 },
-  fill: { opacity: 0.3, type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.7, opacityTo: 0.3 } },
-  colors: ['#3B82F6'],
-  tooltip: { enabled: false },
-};
-
-/* -------------------------------------------------------------------------- */
-/*                               Main Component                               */
-/* -------------------------------------------------------------------------- */
-export default function SalesDash() {
   return (
-    <div className="px-6 min-h-screen space-y-4">
-      {/* ====================== HEADER ====================== */}
+    <div className="max-h-screen">
       <Header title="Dashboard" />
-
-      {/* ====================== TOP 4 KPI CARDS (UNCHANGED) ====================== */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {topKpis.map((kpi, idx) => (
-          <article
-            key={idx}
-            className={`${kpi.bgColor} rounded-sm p-4 text-white relative overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300`}
-          >
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-                {kpi.icon}
+      <section className="mt-6 font-poppins">
+        <div className="max-w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 not-prose">
+          {/* Top card */}
+          <div className="col-span-2 rounded-lg text-white bg-blue-800 p-4">
+            <header className="flex align-middle  gap-x-8 mb-4 ">
+              <div className="">
+                <svg
+                  width="72px"
+                  height="72px"
+                  className="hidden sm:block"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21.25 8.5C21.25 7.09554 21.25 6.39331 20.9129 5.88886C20.767 5.67048 20.5795 5.48298 20.3611 5.33706C19.9199 5.04224 19.3274 5.00529 18.246 5.00066C18.2501 5.29206 18.25 5.59655 18.25 5.91051L18.25 6V7.25H19.25C19.6642 7.25 20 7.58579 20 8C20 8.41421 19.6642 8.75 19.25 8.75H18.25V10.25H19.25C19.6642 10.25 20 10.5858 20 11C20 11.4142 19.6642 11.75 19.25 11.75H18.25V13.25H19.25C19.6642 13.25 20 13.5858 20 14C20 14.4142 19.6642 14.75 19.25 14.75H18.25V21.25H16.75V6C16.75 4.11438 16.75 3.17157 16.1642 2.58579C15.5784 2 14.6356 2 12.75 2H10.75C8.86438 2 7.92157 2 7.33579 2.58579C6.75 3.17157 6.75 4.11438 6.75 6V21.25H5.25V14.75H4.25C3.83579 14.75 3.5 14.4142 3.5 14C3.5 13.5858 3.83579 13.25 4.25 13.25H5.25V11.75H4.25C3.83579 11.75 3.5 11.4142 3.5 11C3.5 10.5858 3.83579 10.25 4.25 10.25H5.25V8.75H4.25C3.83579 8.75 3.5 8.41421 3.5 8C3.5 7.58579 3.83579 7.25 4.25 7.25H5.25V6L5.24999 5.9105C5.24996 5.59655 5.24992 5.29206 5.25403 5.00066C4.17262 5.00529 3.58008 5.04224 3.13886 5.33706C2.92048 5.48298 2.73298 5.67048 2.58706 5.88886C2.25 6.39331 2.25 7.09554 2.25 8.5V21.25H1.75C1.33579 21.25 1 21.5858 1 22C1 22.4142 1.33579 22.75 1.75 22.75H21.75C22.1642 22.75 22.5 22.4142 22.5 22C22.5 21.5858 22.1642 21.25 21.75 21.25H21.25V8.5ZM9 11.75C9 11.3358 9.33579 11 9.75 11H13.75C14.1642 11 14.5 11.3358 14.5 11.75C14.5 12.1642 14.1642 12.5 13.75 12.5H9.75C9.33579 12.5 9 12.1642 9 11.75ZM9 14.75C9 14.3358 9.33579 14 9.75 14H13.75C14.1642 14 14.5 14.3358 14.5 14.75C14.5 15.1642 14.1642 15.5 13.75 15.5H9.75C9.33579 15.5 9 15.1642 9 14.75ZM11.75 18.25C12.1642 18.25 12.5 18.5858 12.5 19V21.25H11V19C11 18.5858 11.3358 18.25 11.75 18.25ZM9 6.25C9 5.83579 9.33579 5.5 9.75 5.5H13.75C14.1642 5.5 14.5 5.83579 14.5 6.25C14.5 6.66421 14.1642 7 13.75 7H9.75C9.33579 7 9 6.66421 9 6.25ZM9 9.25C9 8.83579 9.33579 8.5 9.75 8.5H13.75C14.1642 8.5 14.5 8.83579 14.5 9.25C14.5 9.66421 14.1642 10 13.75 10H9.75C9.33579 10 9 9.66421 9 9.25Z"
+                    fill="#fff"
+                  />
+                </svg>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-3xl font-bold truncate">{kpi.value}</div>
-                <div className="text-sm opacity-90 mt-1">{kpi.label}</div>
-                <div className={`flex items-center text-sm font-medium mt-2 ${kpi.trendUp ? 'text-green-100' : 'text-red-100'}`}>
-                  {kpi.trendUp ? (
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 1024 1024">
-                      <path d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0" />
-                    </svg>
-                  ) : (
-                    <svg className="w-3 h-3 rotate-180" fill="currentColor" viewBox="0 0 1024 1024">
-                      <path d="m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0" />
-                    </svg>
-                  )}
-                  <span className="ml-1">{kpi.trend}</span>
-                </div>
+              <div className="mb-4">
+                <h1 className="text-2xl font-oswald mb-2">
+                  EQUIPMENT QUALITY STATISTICS
+                </h1>
+                <p className="text-sm overflow-hidden">
+                  Statistics on the performance and quality of equipment used
+                </p>
+              </div>
+            </header>
+            <div className="border-[1px]"></div>
+            <div className="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-2 justify-between gap-x-8 mt-12">
+              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.subscriber.total ? data.subscriber.total : 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Customers</span>
+                  <span>Count</span>
+                </p>
+              </div>
+              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.meter.total || 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Meter</span>
+                  <span>Count</span>
+                </p>
+              </div>
+              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.transaction.total_count || 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Transactions</span>
+                  <span>Count</span>
+                </p>
+              </div>
+              <div className="w-full sm:w-auto flex flex-col text-center">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.wakala.total || 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Wakala</span>
+                  <span>Count</span>
+                </p>
               </div>
             </div>
-            <div className="absolute bottom-5 right-5 flex gap-1 items-end h-9">
-              {kpi.chart.map((height, i) => (
-                <div
-                  key={i}
-                  className="bg-white/40 rounded-full transition-all"
-                  style={{ width: '5px', height: `${(height / 100) * 36}px` }}
-                />
-              ))}
+          </div>
+          {/* Second card */}
+          <div className="col-span-1 rounded-lg text-white bg-green-700 p-4">
+            <header className="flex flex-col sm:flex-row items-center  gap-x-8 mb-4">
+              <div>
+                <svg
+                  width="80px"
+                  className="hidden sm:block"
+                  height="80px"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g data-name="Product Icons">
+                    <g>
+                      <path
+                        className="cls-1"
+                        d="M12.54,12.43V8h0a1.14,1.14,0,1,0-1,0v4.42H7.27V9.6a1.14,1.14,0,0,0-.53-2.15A1.14,1.14,0,0,0,6.22,9.6v2.83H6a3.82,3.82,0,1,1,1.4-7.38A5.22,5.22,0,0,1,16.84,5a4,4,0,0,1,1.23-.2h0a3.83,3.83,0,0,1,0,7.66h-.25V9.6a1.14,1.14,0,1,0-1.06,0v2.83Z"
+                        fill="#fff"
+                      />
+
+                      <path
+                        className="cls-2"
+                        d="M7.27,15.39a2,2,0,0,1,1.54,2,2.07,2.07,0,1,1-2.59-2V12.43h1Zm-.53,3a1,1,0,1,0,0-2,1,1,0,0,0,0,2Zm11.08-3a2.07,2.07,0,1,1-1.06,0V12.44h1.06Zm-.53,3a1,1,0,0,0,.39-1.94,1,1,0,1,0-.39,1.94Zm-4.75-.43h0a2.06,2.06,0,1,1-1,0v-5.5h1.06Zm-.54,3a1,1,0,1,0-.93-.62A1,1,0,0,0,12,20.94Z"
+                        fill="#fff"
+                      />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+              <div className="mb-4">
+                <h1 className="text-2xl font-oswald mb-2 mx-auto">
+                  ACTIVE RESOURCE
+                </h1>
+                <p className="text-sm">Summary of active resource</p>
+              </div>
+            </header>
+            <div className="border-[1px]"></div>
+            <div className="flex flex-wrap justify-between gap-x-8 mt-12">
+              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.subscriber.active || 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Customers</span>
+                  <span>Count</span>
+                </p>
+              </div>
+              <div className="w-full sm:w-auto flex flex-col text-center">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.meter.inactive || 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Meter</span>
+                  <span>Count</span>
+                </p>
+              </div>
             </div>
-          </article>
-        ))}
-      </section>
-
-      {/* ====================== 8 WHITE CARDS (PIXEL-PERFECT IMAGE MATCH) ====================== */}
-     <section className="w-full max-w-full">
-        <div className="bg-white rounded-sm border border-gray-200 shadow-sm p-8">
-          {/* Title + Icon */}
-          <div className="flex justify-between items-center mb-4 border-b-2 font-oswald">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2 uppercase">Quick Access Metrics</h2>
-            <GridIcon />
           </div>
 
-        {/* 2 Rows × 4 Mini Cards – Clean Vertical Layout */}
-    <div className="grid grid-cols-4 gap-8">
-      {quickAccessItems.map((item, idx) => (
-        <div key={idx} className="flex items-center gap-[4px]">
-          {/* Icon in Light Blue Circle */}
-          <div className="w-14 h-14 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
-            {item.icon}
-          </div>
-
-          {/* Value + Label + Unit (Centered, Vertical) */}
-          <div className="text-start space-x-1 align-top ">
-            <div className="text-md font-oswald mb-[1px] uppercase">
-              {item.label}
+          {/* Third card */}
+          <div className="col-span-1 rounded-lg text-white bg-orange-400 p-4">
+            <header className="flex flex-col sm:flex-row items-center  gap-x-8 mb-4">
+              <div>
+                <svg
+                  width="80px"
+                  height="80px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="hidden sm:block"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M2.43627 5.14686C2 5.64345 2 6.49488 2 8.19773V17.591C2 18.797 2 19.4 2.3146 19.854C2.62919 20.3079 3.17921 20.4986 4.27924 20.88L5.57343 21.3286C6.27436 21.5717 6.81371 21.7586 7.26633 21.879C7.5616 21.9576 7.83333 21.7258 7.83333 21.4203V6.2701C7.83333 6.02118 7.64964 5.81111 7.40837 5.74991C7.01914 5.65118 6.55127 5.48897 5.91002 5.26666C4.35676 4.72817 3.58014 4.45893 2.98922 4.73235C2.77941 4.82942 2.59116 4.97054 2.43627 5.14686Z"
+                    fill="#fff"
+                  />
+                  <path
+                    d="M12.6204 3.48096L11.0844 4.54596C10.5287 4.93124 10.1215 5.2136 9.77375 5.41491C9.60895 5.51032 9.5 5.68291 9.5 5.87334V20.9203C9.5 21.2909 9.88398 21.5222 10.1962 21.3225C10.5312 21.1082 10.9149 20.8422 11.3796 20.5199L12.9156 19.4549C13.4712 19.0697 13.8785 18.7873 14.2262 18.586C14.3911 18.4906 14.5 18.318 14.5 18.1276V3.08063C14.5 2.71004 14.116 2.47866 13.8038 2.67836C13.4688 2.89271 13.0851 3.15874 12.6204 3.48096Z"
+                    fill="none"
+                  />
+                  <path
+                    d="M19.7208 3.12093L18.4266 2.67226C17.7256 2.42923 17.1863 2.24228 16.7337 2.12187C16.4384 2.04333 16.1667 2.2751 16.1667 2.58064V17.7308C16.1667 17.9797 16.3504 18.1898 16.5916 18.251C16.9809 18.3497 17.4488 18.5119 18.09 18.7342C19.6432 19.2727 20.4199 19.542 21.0108 19.2686C21.2206 19.1715 21.4088 19.0304 21.5637 18.854C22 18.3575 22 17.506 22 15.8032V6.40988C22 5.2039 22 4.60091 21.6854 4.14695C21.3708 3.69298 20.8208 3.5023 19.7208 3.12093Z"
+                    fill="#fff"
+                  />
+                </svg>
+              </div>
+              <div className="mb-4">
+                <h1 className="text-2xl font-oswald mb-2">DISTRIBUTION</h1>
+                <p className="text-sm">View distribution of resources.</p>
+              </div>
+            </header>
+            <div className="border-[1px]"></div>
+            <div className="flex flex-wrap justify-between gap-x-8 mt-12">
+              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.wakala.total || 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Point of Sale</span>
+                  <span>Count</span>
+                </p>
+              </div>
+              <div className="w-full sm:w-auto flex flex-col text-center">
+                <p className="font-oswald text-semibold text-3xl mb-4">
+                  {data?.meter.total || 0}
+                </p>
+                <p className="flex flex-col">
+                  <span>Meter</span>
+                  <span>Count</span>
+                </p>
+              </div>
             </div>
-            <div className="text-md font-bold font-oswald">
-              TZS {item.value} 
+          </div>
+        </div>
+
+        {/* Middle section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3 mt-6">
+          <div className="relative col-start-1 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all ">
+            {/* Background Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-30"
+              style={{ backgroundImage: `url(${tap})` }}
+            ></div>
+
+            {/* Content Overlay */}
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              {/* Title */}
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Daily Volume
+              </p>
+
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                {new Intl.NumberFormat("en-US", {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                }).format((data?.liters?.today ?? 0) * 0.001)}{" "}
+                m³
+              </p>
+              {/* Growth Indicator */}
+              <div className="flex items-center gap-1 text-sm font-medium">
+                {(() => {
+                  const todayLiters = data?.liters?.today ?? 0;
+                  const yesterdayLiters = data?.liters?.yesterday ?? 0;
+
+                  // Handle division by zero and initial state
+                  let growthPercentage = 0;
+                  if (yesterdayLiters > 0) {
+                    growthPercentage =
+                      ((todayLiters - yesterdayLiters) / yesterdayLiters) * 100;
+                  } else if (todayLiters > 0) {
+                    // Handle case where previous value was zero
+                    growthPercentage = 100;
+                  }
+
+                  const isPositive = growthPercentage >= 0;
+                  const isNegative = growthPercentage < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {yesterdayLiters === 0 && todayLiters === 0
+                          ? "0%"
+                          : `${Math.abs(growthPercentage).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          from Yesterday
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
             </div>
-            
           </div>
-        </div>
-      ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ====================== BOTTOM 2 CHARTS (w-1/2 each) ====================== */}
-      <section className="w-full max-w-full grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Pie Chart */}
-        <div className="bg-white rounded-sm shadow-sm p-6 border border-gray-250">
-        
+          {/* Card 1: Weekly Volume */}
+          <div className="relative col-start-2 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg overflow-hidden p-6 transition-all">
+            {/* Background Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-30"
+              style={{ backgroundImage: `url(${tap})` }}
+            ></div>
 
-          {/* Title + Icon */}
-          <div className="flex justify-between items-center mb-4 border-b-2 font-oswald">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2 uppercase">Managers Distribution</h2>
-            <PieIcon />
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Weekly Volume
+              </p>
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                {new Intl.NumberFormat("en-US", {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                }).format((data?.liters?.thisWeek ?? 0) * 0.001)}{" "}
+                m³
+              </p>
+              <div className="flex items-center text-sm font-medium">
+                {(() => {
+                  const current = data?.liters?.thisWeek ?? 0;
+                  const previous = data?.liters?.lastWeek ?? 0;
+                  let growth = 0;
+
+                  if (previous > 0) {
+                    growth = ((current - previous) / previous) * 100;
+                  } else if (current > 0) {
+                    growth = 100;
+                  }
+
+                  const isPositive = growth >= 0;
+                  const isNegative = growth < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {previous === 0 && current === 0
+                          ? "0%"
+                          : `${Math.abs(growth).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          from last week
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
           </div>
-          <div className="relative">
-            <Chart options={PieOptions} series={PieSeries} type="donut" height={300} />
-            {/* <PieLabelConnectors /> */}
+
+          {/* Card 2: Monthly Volume */}
+          <div className="relative col-start-3 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+            {/* Background Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-30"
+              style={{ backgroundImage: `url(${tap})` }}
+            ></div>
+
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Monthly Volume
+              </p>
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                {new Intl.NumberFormat("en-US", {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                }).format((data?.liters?.thisMonth ?? 0) * 0.001)}{" "}
+                m³
+              </p>
+              <div className="flex items-center text-sm font-medium">
+                {(() => {
+                  const current = data?.liters?.thisMonth ?? 0;
+                  const previous = data?.liters?.lastMonth ?? 0;
+                  let growth = 0;
+
+                  if (previous > 0) {
+                    growth = ((current - previous) / previous) * 100;
+                  } else if (current > 0) {
+                    growth = 100;
+                  }
+
+                  const isPositive = growth >= 0;
+                  const isNegative = growth < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {previous === 0 && current === 0
+                          ? "0%"
+                          : `${Math.abs(growth).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          from last month
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
           </div>
+
+          {/* Card 3: Annual Volume */}
+          <div className="relative col-start-4 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+            {/* Background Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-30"
+              style={{ backgroundImage: `url(${tap})` }}
+            ></div>
+
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Annual Volume
+              </p>
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                {new Intl.NumberFormat("en-US", {
+                  maximumFractionDigits: 2,
+                  minimumFractionDigits: 0,
+                }).format((data?.liters?.thisYear ?? 0) * 0.001)}{" "}
+                m³
+              </p>
+              <div className="flex items-center text-sm font-medium">
+                {(() => {
+                  const current = data?.liters?.thisYear ?? 0;
+                  const previous = data?.liters?.lastYear ?? 0;
+                  let growth = 0;
+
+                  if (previous > 0) {
+                    growth = ((current - previous) / previous) * 100;
+                  } else if (current > 0) {
+                    growth = 100;
+                  }
+
+                  const isPositive = growth >= 0;
+                  const isNegative = growth < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {previous === 0 && current === 0
+                          ? "0%"
+                          : `${Math.abs(growth).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          from last year
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+          {/* Card 4: Amount Today */}
+          <div className="relative col-start-1 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Amount Today
+              </p>
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                TZS{" "}
+                {new Intl.NumberFormat("en-TZ").format(
+                  data?.revenue?.today ?? 0
+                )}
+              </p>
+              <div className="flex items-center text-sm font-medium">
+                {(() => {
+                  const current = data?.revenue?.today ?? 0;
+                  const previous = data?.revenue?.yesterday ?? 0;
+                  let growth = 0;
+
+                  if (previous > 0) {
+                    growth = ((current - previous) / previous) * 100;
+                  } else if (current > 0) {
+                    growth = 100;
+                  }
+
+                  const isPositive = growth >= 0;
+                  const isNegative = growth < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {previous === 0 && current === 0
+                          ? "0%"
+                          : `${Math.abs(growth).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          Yesterday
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 5: Amount Weekly */}
+          <div className="relative col-start-2 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Amount Weekly
+              </p>
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                TZS{" "}
+                {new Intl.NumberFormat("en-TZ").format(
+                  data?.revenue?.thisWeek ?? 0
+                )}
+              </p>
+              <div className="flex items-center text-sm font-medium">
+                {(() => {
+                  const current = data?.revenue?.thisWeek ?? 0;
+                  const previous = data?.revenue?.lastWeek ?? 0;
+                  let growth = 0;
+
+                  if (previous > 0) {
+                    growth = ((current - previous) / previous) * 100;
+                  } else if (current > 0) {
+                    growth = 100;
+                  }
+
+                  const isPositive = growth >= 0;
+                  const isNegative = growth < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {previous === 0 && current === 0
+                          ? "0%"
+                          : `${Math.abs(growth).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          vs last week
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 6: Amount Monthly */}
+          <div className="relative col-start-3 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 transition-all overflow-hidden">
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Amount Monthly
+              </p>
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                TZS{" "}
+                {new Intl.NumberFormat("en-TZ").format(
+                  data?.revenue?.thisMonth ?? 0
+                )}
+              </p>
+              <div className="flex items-center text-sm font-medium">
+                {(() => {
+                  const current = data?.revenue?.thisMonth ?? 0;
+                  const previous = data?.revenue?.lastMonth ?? 0;
+                  let growth = 0;
+
+                  if (previous > 0) {
+                    growth = ((current - previous) / previous) * 100;
+                  } else if (current > 0) {
+                    growth = 100;
+                  }
+
+                  const isPositive = growth >= 0;
+                  const isNegative = growth < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {previous === 0 && current === 0
+                          ? "0%"
+                          : `${Math.abs(growth).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          vs last month
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          {/* Card 6: Total Water Consumed */}
+          <div className="relative col-start-4 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+            {/* <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url(${tap})` }}></div> */}
+
+            <div className="relative z-9 flex flex-col justify-between h-full">
+              <p className="text-gray-700 text-sm font-medium font-oswald">
+                Amount Anually
+              </p>
+              <p className="text-4xl font-bold text-gray-900 font-oswald">
+                TZS{" "}
+                {new Intl.NumberFormat("en-TZ").format(
+                  data?.revenue?.thisYear ?? 0
+                )}
+              </p>
+              <div className="flex items-center text-sm font-medium">
+                {(() => {
+                  const current = data?.revenue?.thisYear ?? 0;
+                  const previous = data?.revenue?.thisYear ?? 0;
+                  let growth = 0;
+
+                  if (previous > 0) {
+                    growth = ((current - previous) / previous) * 100;
+                  } else if (current > 0) {
+                    growth = 100;
+                  }
+
+                  const isPositive = growth >= 0;
+                  const isNegative = growth < 0;
+
+                  return (
+                    <>
+                      {isPositive && (
+                        <FiArrowUp className="w-5 h-5 text-green-500" />
+                      )}
+                      {isNegative && (
+                        <FiArrowDown className="w-5 h-5 text-red-500" />
+                      )}
+                      <span
+                        className={
+                          isPositive
+                            ? "text-green-500"
+                            : isNegative
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                      >
+                        {previous === 0 && current === 0
+                          ? "0%"
+                          : `${Math.abs(growth).toFixed(0)}%`}
+                        <span className="text-gray-400 text-xs font-normal ml-1">
+                          vs last Year
+                        </span>
+                      </span>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+
+          <Transaction />
         </div>
 
-        {/* Bar Chart */}
-        <div className="bg-white rounded-sm shadow-sm p-6 border border-gray-250">
-           <div className="flex justify-between items-center mb-4 border-b-2 font-oswald">
-            <h2 className="text-xl font-semibold text-gray-900 mb-2 uppercase">Performance</h2>
-            <RankIcon />
-          </div>
-          <Chart options={BarOptions} series={BarSeries} type="bar" height={300} />
-        </div>
+        {/* Bottom Section */}
+        <Revenue />
       </section>
     </div>
   );
-}
+};
+

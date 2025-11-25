@@ -1,3 +1,4 @@
-import SalesDash from "./sales/SalesDash";
+import { SalesDash } from "./sales/SalesDash";
+import ZoneDash from "./manager/ZoneDash";
 
-export {SalesDash};
+export {SalesDash, ZoneDash};

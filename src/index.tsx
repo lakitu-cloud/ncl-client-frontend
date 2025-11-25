@@ -4,13 +4,28 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import App from './App';
 import "./styles/index.css";
+import { AuthProvider } from './context/AuthProvider';
+import { ContextProvider } from './context/ContextProvider';
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <App />
+      <AuthProvider>
+
+        <ContextProvider>
+          <App />
+        </ContextProvider>
+
+      </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );

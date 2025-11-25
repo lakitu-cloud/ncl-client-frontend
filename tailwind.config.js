@@ -19,6 +19,18 @@ module.exports = {
         lg: "1200px",
         xl: "1700px",
       },
+      colors: {
+        blueTheme: '#001a77',
+        darkTheme: '#121212',
+        blackText: '#232323',
+        whiteText: '#E0E0E0'
+      },
+      borderRadius: {
+        default: 'rounded-sm',
+      },
+      shadows: {
+        default: 'shadow-sm'
+      }
     },
   },
   plugins: [

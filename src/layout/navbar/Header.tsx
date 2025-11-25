@@ -48,11 +48,11 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         setIsLanguageDropdownOpen(false)
     }
 
-    console.log()
+    const role = Cookies.get('role');
 
-    // const refreshPage = () => {
-    //     window.location.reload();
-    // };
+    const refreshPage = () => {
+        window.location.reload();
+    };
 
     const handleLogout = () => {
         // logout();
@@ -63,8 +63,8 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             <section className="flex md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
                 {/* Title Section */}
                 <div className="flex gap-2 max-w-xs md:w-auto">
-                    <Link to="/dashboard" className="text-blue-800 text-nowrap hidden md:inline-block text-md md:text-2xl font-bold font-oswald">
-                        ZONE MANAGER
+                    <Link to="/dashboard" className="text-blue-800 text-nowrap hidden uppercase md:inline-block text-md md:text-2xl font-bold font-oswald">
+                        {role === 'zone' ? "ZONE MANAGER" : "Sales Manager"}
                        
                     </Link>
                     
