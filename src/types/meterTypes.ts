@@ -1,12 +1,24 @@
+export interface Meter {
+  id: string;
+  name: string | null;
+  serial: string;
+  type: string;
+  phone: string | null;
+  status: "active" | "inactive";
+  description: string;
+  lock: boolean;
+  image: string;
+  subscriberId: string | null;
+  managerId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: boolean;
+  installedAt: string;
+}
+
 export interface MeterPayload {
-        id: string;
-      serial: string;
-      error: string;
-      price_per_unit: number;
-      calibration_factor: number;
-      type: string;
-      status: string;
-      created_at: string;
+  status: string;
+  meters: Meter[];
 }
 
 export interface UpdateMeterPayload {

@@ -33,7 +33,7 @@ export default function MeterDetailPage() {
       <div className="w-96 bg-white border-r border-gray-200 shadow-xl overflow-y-auto">
         <div className="p-6">
           {/* Device Image */}
-          <div className="mb-6 rounded-lg border border-gray-200 overflow-hidden">
+          <div className="mb-6 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-lg border border-gray-200 overflow-hidden">
             <img
               src={require('../../assets/images/products/5.png')} // Replace with your real image
               alt="PWM"
@@ -128,7 +128,7 @@ export default function MeterDetailPage() {
             <div className="flex justify-between items-center">
               <span className="text-gray-500">Service Time</span>
               <span className="bg-blue-600 text-white px-3 py-1.5 rounded-full text-xs font-medium">
-                Mobile (4G)
+                30w 4d 2h 40m
               </span>
             </div>
 
@@ -142,7 +142,7 @@ export default function MeterDetailPage() {
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 font-oswald ">Meter Details</h2>
-            <p className="text-gray-600 mt-1">ZA_WESPAK_L1 • Last updated just now</p>
+            <p className="text-gray-600 mt-1">Meter Name • Last updated just now</p>
           </div>
 
           {/* Sales Manager Card */}

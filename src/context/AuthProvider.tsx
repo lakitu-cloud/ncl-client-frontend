@@ -8,6 +8,9 @@ interface AuthContextType {
     login: (token: string) => void;
     logout: () => void;
     token: string | null;
+    user: string | null;
+    // accountType: 'sales' | 'zone';
+    // onChangeAccountType: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -15,8 +18,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [token, setToken] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-
+    const [ user, setUser ] = useState<string | null>("sales")
+    
     useEffect(() => {
         const token = Cookies.get('auth');
         if (token) {
@@ -31,7 +34,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     const logout = () => {
-        console.log("logout")
         setToken(null);
         Cookies.remove('auth');
         Cookies.remove('email');
@@ -39,7 +41,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated: !!token, login, logout, token }}>
+        <AuthContext.Provider value={{ isAuthenticated: !!token, login, logout, token, user }}>
             {children}
         </AuthContext.Provider>
     );

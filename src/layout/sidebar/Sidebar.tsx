@@ -9,12 +9,12 @@ import {
 } from "react-icons/io5";
 // import { useAuth } from "../../context/AuthProvider";
 import "./sidebar.css";
-import Cookies from "js-cookie";
+import { useAuth } from "../../context/AuthProvider";
 
-const role = Cookies.get('role');
+const role = localStorage.getItem('preferredAccountType') as 'sales' | 'zone' | null;
 
 const Sidebar: React.FC = () => {
-//   const { logout } = useAuth();
+  const { logout } = useAuth();
   return (
     <>
       <nav
@@ -86,8 +86,8 @@ const Sidebar: React.FC = () => {
                 </li>
                 <li>
                   <a
-                    href="/logout"
-                    // onClick={logout}
+                    href="/auth"
+                    onClick={logout}
                     className="flex items-center gap-x-2 text-gray-600 p-2 rounded-lg"
                   >
                     <div className="text-gray-500">

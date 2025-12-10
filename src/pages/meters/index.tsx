@@ -1,12 +1,10 @@
 import React from "react";
-import { MeterListPage } from "./MeterPage";
+import MetersPage from "./MeterListPage";
 import Header from "../../layout/navbar/Header";
 import { useApp } from "../../context/ContextProvider";
 import AddMeterModal from "../../components/modal/addSubscriberModal";
 import CardMeter from "../../components/card/CardMeter";
 import { useAuth } from "../../context/AuthProvider";
-import { IoHelpCircleOutline } from "react-icons/io5";
-import { FiPlus } from "react-icons/fi";
 
 const Meters = () => {
   const { isButtonPress, setIsButtonPress } = useApp();
@@ -43,7 +41,7 @@ const Meters = () => {
         </div> */}
         <CardMeter />
         <section className="mt-2">
-          <MeterListPage />
+          <MetersPage />
         </section>
         {isButtonPress && <AddMeterModal />}
       </section>

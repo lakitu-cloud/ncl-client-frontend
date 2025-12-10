@@ -16,7 +16,8 @@ export const apiRequest = async <T>(url: string, method: 'GET' | 'POST' | 'PUT' 
         throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+    if (response.status === 204) return {} as T;
+
     const responseData: T = await response.json();
-    console.log(responseData)
     return responseData;
 };

@@ -24,7 +24,7 @@ interface NavItem {
 // Safe role detection (SSR-safe)
 const getUserRole = (): "zone" | "sales" => {
   if (typeof window === "undefined") return "sales";
-  return (Cookies.get("role") as "zone" | "sales" | undefined) || "sales";
+  return (localStorage.getItem("preferredAccountType") as "zone" | "sales" | null) || "sales";
 };
 
 const role = getUserRole();
@@ -39,7 +39,7 @@ const conditionalItems: NavItem[] = [];
 // Only Sales sees "Topup"
 if (isSales) {
   conditionalItems.push({
-    name: "Topup",
+    name: `${isSales} is sales`,
     href: "/manager/sales/topup",
     icon: <IoCashOutline className="w-6 h-6" />,
   });
@@ -48,7 +48,7 @@ if (isSales) {
 // Only Zone sees "Documents"
 if (isZone) {
   conditionalItems.push({
-    name: "Documents",
+    name: 'Reports',
     href: "/documents",
     icon: <IoDocumentTextOutline className="w-6 h-6" />,
   });
@@ -57,7 +57,7 @@ if (isZone) {
 // Only Sales sees "Wakala"
 if (isSales) {
   conditionalItems.push({
-    name: "Wakala",
+    name:  `${isSales}`,
     href: "/manager/sales/wakala",
     icon: <IoBusinessOutline className="w-6 h-6" />,
   });
@@ -65,21 +65,21 @@ if (isSales) {
 
 export const navigation: NavItem[] = [
   {
-    name: "Dashboard",
+    name: "Dashboards",
     href: `${basePath}/dashboard`,
     icon: <IoHomeOutline className="w-6 h-6" />,
   },
 
   // Dynamic: "Managers" (Zone) or "Subscribers" (Sales)
   {
-    name: isZone ? "Managers" : "Subscribers",
-    href: isZone ? "/manager/zone/managers" : "/manager/sales/subscribers",
+    name: "Users",
+    href: "/manager/zone/managers",
     icon: <IoPeopleOutline className="w-6 h-6" />,
   },
 
   {
     name: "Meters",
-    href: `${basePath}/meters`,
+    href: "/manager/zone/meters",
     icon: <IoFlashOutline className="w-6 h-6" />, // you can change icon later
   },
 

@@ -10,18 +10,18 @@ const CardMeter = () => {
     // Define card details and icon mapping
     const cardDetails = [
         {
-            name: 'Total Meter',
+            name: 'Total Managers',
             value: data?.meter.total || 0,
             icon: HiCube,
         },
         {
-            name: 'Inactive Meter',
+            name: 'Inactive Manager',
             value: data?.meter.inactive || 0,
             icon: HiClock,
         },
         {
-            name: 'Collected Unit',
-            value: `${data?.transaction.total_units || 0} UNITS`,
+            name: 'Total Customers',
+            value: `${data?.transaction.total_units || 0}`,
             icon: HiChartBar,
         },
         {

@@ -37,7 +37,7 @@ export const useZoneLogin = () => {
 
             if (data.status === "success") {
                 toast.success(data.message as string);
-                Cookies.set('role', 'zone')
+                // Cookies.set('role', 'zone')
                 Cookies.set('auth', data.token, {
                     expires: 1 / 24,
                     secure: true,
