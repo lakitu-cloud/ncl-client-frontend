@@ -1,5 +1,5 @@
 import React from "react";
-import { navigation } from "../../assets/dummy";
+import { getNavigation } from "../../assets/dummy"
 import { Logo } from "../../assets/Logo";
 import { Link } from "react-router-dom";
 import {
@@ -11,7 +11,7 @@ import {
 import "./sidebar.css";
 import { useAuth } from "../../context/AuthProvider";
 
-const role = localStorage.getItem('preferredAccountType') as 'sales' | 'zone' | null;
+const navigation = getNavigation();
 
 const Sidebar: React.FC = () => {
   const { logout } = useAuth();
@@ -31,7 +31,7 @@ const Sidebar: React.FC = () => {
       >
         <div className="flex flex-col h-full mt-2">
           <div className="flex items-center">
-            <Link to={role === "zone" ? "manager/sales/dashboard": "manager/zone/dashboard"} className="flex items-center -ml-2 mb-4">
+            {/* <Link to={role === "zone" ? "manager/sales/dashboard": "manager/zone/dashboard"} className="flex items-center -ml-2 mb-4"> */}
               <Logo
                 width={82}
                 height={82}
@@ -41,19 +41,19 @@ const Sidebar: React.FC = () => {
               <p className=" ml-2 font-bold text-2xl text-white font-oswald dark:text-white hidden lg:block lg:group-hover:block uppercase">
                 Nyirendas
               </p>
-            </Link>
+            {/* </Link> */}
           </div>
 
           {/* <div className=" border-b-[1px]"></div> */}
           <div className="flex-1 flex flex-col h-full mt-2">
             <ul className="px-4 text-sm font-medium flex-1 text-center justify-center">
               {navigation.map((item, idx) => (
-                <li key={idx} className="">
+                <li key={idx} className="text-white">
                   <a
                     href={item.href}
                     className="flex items-center space-x-4 py-4 hover:translate-x-2"
                   >
-                    <p className="mb-1 justify-center duration-300 translate-x-0 ">
+                    <p className="mb-1 justify-center duration-300 translate-x-0 text-white">
                       {item.icon}
                     </p>
                     <p className="uppercase font-semibold font-oswald">

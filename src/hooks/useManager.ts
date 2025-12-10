@@ -168,12 +168,11 @@ export const useSalesLogin = () => {
 
       if (response.status === "error") {
         toast.dismiss('LOADING');
-        toast.error(response.message as string);
+        toast.error("Wrong Credentials");
       }
 
       if (response.status === "success") {
         toast.success(response.message as string);
-        Cookies.set('role', 'sales')
         Cookies.set('auth', response.token, {
           expires: 1 / 24,
           secure: true,
@@ -185,7 +184,7 @@ export const useSalesLogin = () => {
           queryKey: ['user']
         })
 
-        navigate('/manager/zone/dashboard');
+        navigate('/manager/sales/dashboard');
       }
     },
 

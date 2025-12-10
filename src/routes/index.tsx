@@ -11,15 +11,17 @@ import ManagerById from '../pages/manager/ManagerById'
 import Manager from '../pages/manager/index'
 import Meters from '../pages/meters';
 import NotFound from '../pages/404';
-import { SalesLogin } from '../pages/auth/salesLogin';
-import ZoneLogin from '../pages/auth/login';
 import AuthLayout from '../layout/AuthLayout';
 import { Auth } from '../pages/auth';
+import SubscriberList from '../pages/subscribers/List';
+import WakalaList from '../pages/wakala/WakalaList';
+import TopUp from '../pages/manager/TopUp'
 
 const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const token = Cookies.get('auth');
+  const role = localStorage.getItem("prefferedAccountType") as 'zone' | 'sales' | null;
 
-  // <Navigate to={role === 'sales' ? '/manager/sales/dashboard' : '/manager/zone/dashboard'} replace />;
+  <Navigate to={role === 'sales' ? '/manager/sales/dashboard' : '/manager/zone/dashboard'} replace />;
   return token ? children : <Navigate to="/auth" />;
 };
 
@@ -40,6 +42,10 @@ export const AppRoutes: React.FC = () => {
         {/* SALES MANAGER ROUTES */}
         <Route path="/manager/sales/dashboard" element={<ProtectedRoute><SalesDash /></ProtectedRoute>} />
         <Route path='/manager/sales/subscriber/id' element={<ProtectedRoute><SubscriberDetailPage /></ProtectedRoute>} />
+        <Route path="/manager/sales/subscribers" element={<ProtectedRoute><SubscriberList /></ProtectedRoute>} />
+        <Route path="/manager/sales/wakalas" element={<ProtectedRoute><WakalaList /></ProtectedRoute>} />
+        <Route path="/manager/sales/topup" element={<ProtectedRoute><TopUp /></ProtectedRoute>} />
+
       </Route>
 
       {/* AUTH ROUTES */}

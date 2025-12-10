@@ -32,7 +32,8 @@ export const managerService = {
   },
 
   login: async (payload: ManagerLoginPayload) => {
-    const res = await apiRequest<ApiResponse<{ status: string, token: string, id: string}>>('user/login', 'POST', payload);
+    const res = await apiRequest<ApiResponse<{ status: string, token: string, id: string}>>('manager/login', 'POST', payload);
+    console.log(res)
     return res
   },
 
