@@ -7,7 +7,7 @@ import Home from '../pages/wecome';
 import "../styles/styles.css"
 import MeterDetailPage from '../pages/meters/MeterDetails';
 import SubscriberDetailPage from '../pages/subscribers/view';
-import ManagerById from '../pages/manager/ManagerById'
+import ManagerById from '../pages/recharge/ManagerById'
 import Manager from '../pages/manager/index'
 import Meters from '../pages/meters';
 import NotFound from '../pages/404';
@@ -15,7 +15,7 @@ import AuthLayout from '../layout/AuthLayout';
 import { Auth } from '../pages/auth';
 import SubscriberList from '../pages/subscribers/List';
 import WakalaList from '../pages/wakala/WakalaList';
-import TopUp from '../pages/manager/TopUp'
+import TopUp from '../pages/recharge/TopUp'
 
 const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const token = Cookies.get('auth');
