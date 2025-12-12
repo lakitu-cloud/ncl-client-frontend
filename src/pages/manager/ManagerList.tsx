@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { Manager } from "../../types/managerType";
 import DeleteModal from "../../components/modal/deleteModel";
 import { UpdateSalesManager } from "../../components/modal/updateManager";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 export const ManagerList: React.FC = () => {
   const { data: managers = [], isLoading, error } = useGetManagers();
@@ -13,13 +14,15 @@ export const ManagerList: React.FC = () => {
   const [managerToDelete, setManagerToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [managerToEdit, setManagerToEdit] = useState<Manager | null>(null);
+  
+  const navigate = useNavigate()
 
   const openUpdateModal = (manager: Manager) => {
     setManagerToEdit(manager);
     setIsUpdateModalOpen(true);
   };
 
-  const deleteManager = useDeleteManager(); // your existing hook
+  const deleteManager = useDeleteManager(); 
 
   const openDeleteModal = (id: string, name: string) => {
     setManagerToDelete({ id, name });
@@ -30,6 +33,12 @@ export const ManagerList: React.FC = () => {
     setIsDeleteModalOpen(false);
     setManagerToDelete(null);
   };
+
+  const handleGetManager = (id: string, name: string) => {
+    toast.loading(`Getting manager ${name}` as string)
+    navigate(`manager/sales/manager/${id}`)
+    
+  }
 
   const handleDelete = (id: string, name: string) => {
     if (!toast.warning(`Are you sure you want to delete manager "${name}"?`)) return;
@@ -90,19 +99,19 @@ export const ManagerList: React.FC = () => {
               className="border-b border-gray-100 hover:bg-gray-50 transition"
             >
               {/* Name + Avatar */}
-              <td className="py-5 px-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-xl font-bold text-blue-700">
-                      {manager.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-bold text-lg">{manager.name}</p>
-                    <p className="text-sm text-gray-500">Sales Manager</p>
-                  </div>
+             <td className="py-5 px-6">
+              <Link to={`/manager/zone/manager/${manager.id}`} className="flex items-center gap-4 hover:opacity-80 transition">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="text-xl font-bold text-blue-700">
+                    {manager.name.charAt(0).toUpperCase()}
+                  </span>
                 </div>
-              </td>
+                <div>
+                  <p className="font-bold text-lg hover:text-indigo-600 transition">{manager.name}</p>
+                  <p className="text-sm text-gray-500">Sales Manager</p>
+                </div>
+              </Link>
+            </td>
 
               {/* Phone */}
               <td className="py-5 px-6">

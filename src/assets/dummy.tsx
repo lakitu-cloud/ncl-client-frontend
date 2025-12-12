@@ -61,7 +61,7 @@ export const getNavigation = (): NavItem[] => {
       },
       {
         name: "Wakala",
-        href: `${basePath}/wakala`,
+        href: `${basePath}/wakalas`,
         icon: <IoBusinessOutline className="w-6 h-6" />,
       }
     );

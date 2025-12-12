@@ -18,6 +18,7 @@ export const useGetManagers = () => {
     queryKey: managerKeys.all,
     queryFn: async () => {
       const res = await managerService.getAll();
+      console.log(res)
       return res
     },
     retry: 2,

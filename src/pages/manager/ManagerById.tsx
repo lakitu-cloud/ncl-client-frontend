@@ -1,248 +1,233 @@
-'use client';
-
+// src/pages/manager/[id].tsx
 import React, { useState } from 'react';
+import { useManagerById } from '../../hooks/useManager';
+import { Manager } from '../../types/managerType';
+import { Meter } from '../../types/meterTypes';
+import {
+  IoArrowBack,
+  IoCall,
+  IoLocationOutline,
+  IoCashOutline,
+  IoPeopleOutline,
+  IoCheckmarkCircle,
+  IoTrashOutline,
+  IoSettingsOutline,
+  IoCreateOutline,
+  IoAnalyticsOutline,
+  IoDocumentTextOutline,
+  IoPersonOutline,
+} from 'react-icons/io5';
+import { format } from 'date-fns';
+import { Link, useParams } from 'react-router-dom';
+import Header from '../../layout/navbar/Header';
+import { MetersTable } from './components/MeterTable';
+import { SubscribersTable } from './components/SubscriberTable';
+import { ReportsTab } from './components/Report';
+import { AnalysisTab } from './components/Analysis';
+import { SettingsTab } from './components/Settings';
 
-// Mock Data
-const subscriber = {
-  id: 'SUB-2025-0891',
-  name: 'Eng. Josephine Achieng',
-  phone: '+254 722 981 447',
-  email: 'josephine.achieng@gmail.com',
-  idNumber: '28451234',
-  accountNumber: 'ACC-001947',
-  registrationDate: '2023-08-14',
-  status: 'active' as const,
-  location: {
-    address: 'Wespak Estate, House L1, Lavington',
-    coordinates: '-1.2834, 36.7735',
-    county: 'Nairobi',
-    ward: 'Kileleshwa',
-  },
-  salesManager: {
-    name: 'Allan Kiprop',
-    phone: '+254 712 345 678',
-    email: 'allan.kiprop@powerco.ke',
-    avatar: null,
-  },
-  profileImage: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-};
+type Tab = 'meters' | 'subscribers' | 'reports' | 'analysis' | 'settings';
 
-const meters = [
-  { id: 'ZA_WESPAK_L1', serial: 'RUT901-448921', status: 'online', lastSeen: '2 mins ago', unitsBalance: 87.3, revenue: 284000 },
-  { id: 'ZA_WESPAK_L2', serial: 'RUT901-448923', status: 'offline', lastSeen: '3 days ago', unitsBalance: 12.1, revenue: 98700 },
-];
+export const ManagerDetailPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const { data: manager, isLoading, error } = useManagerById(id!);
+  const [activeTab, setActiveTab] = useState<Tab>('meters');
 
-const recentTransactions = [
-  { id: 'TRX8912', date: '2025-11-24 09:18', meter: 'ZA_WESPAK_L1', units: 120.0, amount: 12000, token: '4819 3920 1748 1029 3847', status: 'success' },
-  { id: 'TRX8905', date: '2025-11-22 14:55', meter: 'ZA_WESPAK_L1', units: 50.0, amount: 5000, token: '7291 4482 9930 1124 5561', status: 'success' },
-  { id: 'TRX8881', date: '2025-11-20 11:03', meter: 'ZA_WESPAK_L2', units: 30.0, amount: 3000, token: '3012 8877 5544 9900 2213', status: 'pending' },
-];
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
+      </div>
+    );
+  }
 
-export default function SalesManagerDetailPage() {
-  const [copiedToken, setCopiedToken] = useState<string | null>(null);
+  if (error || !manager) {
+    return (
+      <div className="text-center py-32">
+        <p className="text-2xl text-red-600 mb-4">Manager not found</p>
+        <Link to="/managers" className="text-indigo-600 hover:underline">
+          Back to Managers List
+        </Link>
+      </div>
+    );
+  }
 
-  const copyToken = (token: string) => {
-    navigator.clipboard.writeText(token.replace(/ /g, ''));
-    setCopiedToken(token);
-    setTimeout(() => setCopiedToken(null), 2000);
-  };
+  // const totalRevenue = manager.meters.reduce((sum, m) => sum + (m.revenueGenerated || 0), 0);
+  // const totalUnits = manager.meters.reduce((sum, m) => sum + (m.unitsSold || 0), 0);
+  const activeMeters = manager.meters.filter((m) => m.status === 'active').length;
+
+  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: 'meters', label: 'Meters', icon: <IoPeopleOutline className="w-5 h-5" /> },
+    { id: 'subscribers', label: 'Subscribers', icon: <IoPersonOutline className="w-5 h-5" /> },
+    { id: 'reports', label: 'Reports', icon: <IoDocumentTextOutline className="w-5 h-5" /> },
+    { id: 'analysis', label: 'Analysis', icon: <IoAnalyticsOutline className="w-5 h-5" /> },
+    { id: 'settings', label: 'Settings', icon: <IoSettingsOutline className="w-5 h-5" /> },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      {/* Hero Header */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                <img
-                  src={subscriber.profileImage}
-                  alt={subscriber.name}
-                  className="w-32 h-32 rounded-full border-4 border-white shadow-2xl object-cover"
-                />
-                <div className="absolute bottom-2 right-2 w-10 h-10 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
-                  <span className="text-white text-xl">✔</span>
+    <>
+      <Header title="Manager Manangement" />
+
+      <div className="flex h-screen">
+        {/* LEFT SIDEBAR - Fixed, Full Height, Scrollable */}
+        <aside className="w-80 border-r border-gray-400 flex flex-col overflow-y-auto">
+          {/* Profile Section */}
+          <div className="p-8 border-b border-gray-200">
+            <div className="flex flex-col items-center text-center">
+              <div className="relative mb-5">
+                <div className="w-32 h-32 uppercase font-oswald bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-5xl font-bold shadow-xl">
+                  {manager.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .toUpperCase()}
+                </div>
+                <div className="absolute bottom-0 right-0 w-12 h-12 bg-green-500 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
+                  <IoCheckmarkCircle className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <div>
-                <h1 className="text-4xl font-bold">{subscriber.name}</h1>
-                <p className="text-indigo-100 text-lg mt-1">Premium Residential Subscriber</p>
-                <div className="flex items-center gap-4 mt-3">
-                  <span className="bg-white/20 backdrop-blur px-4 py-2 rounded-full text-sm font-medium">
-                    {subscriber.id}
-                  </span>
-                  <span className="bg-green-500 px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-2">
-                    <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                    Active Account
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-indigo-100">Total Units Purchased</p>
-              <p className="text-5xl font-bold">1,847.6 kWh</p>
-              <p className="text-indigo-200 mt-1">KES 382,700 Lifetime Revenue</p>
+
+              <h2 className="text-2xl uppercase font-oswald font-bold text-gray-900">{manager.name}</h2>
+              <p className="text-indigo-600 uppercase font-poppins font-bold mt-1">Sales Manager</p>
+
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-6 -mt-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Subscriber Info */}
-          <div className="space-y-6">
-            {/* Personal Details */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-5 flex items-center gap-3">
-                <span className="text-indigo-600">Personal Details</span>
-              </h3>
-              <div className="space-y-4 text-sm">
-                {[
-                  { label: 'Phone Number', value: subscriber.phone },
-                  { label: 'Email Address', value: subscriber.email },
-                  { label: 'National ID', value: subscriber.idNumber },
-                  { label: 'Account Number', value: subscriber.accountNumber },
-                  { label: 'Registered On', value: subscriber.registrationDate },
-                ].map((item) => (
-                  <div key={item.label} className="flex justify-between py-2 border-b border-gray-100 last:border-0">
-                    <span className="text-gray-500">{item.label}</span>
-                    <span className="font-medium text-gray-900">{item.value}</span>
-                  </div>
+          {/* Basic Information */}
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2 font-oswald">
+              General Information
+            </h3>
+
+            <dl className="space-y-4 text-sm font-poppins">
+              <div className="flex item-center justify-between">
+                <dt className="text-gray-800 font-semibold">Phone</dt>
+                <dd className="font-medium text-gray-900 mt-1">{manager.phone}</dd>
+              </div>
+
+              <div className="flex item-center justify-between">
+                <dt className="text-gray-800 font-semibold">Service Area</dt>
+                <dd className="font-medium text-gray-900 mt-1">
+                  {manager.ward}, {manager.district}
+                </dd>
+              </div>
+              <div className="flex item-center justify-between">
+                <div className='text-gray-800 font-semibold'>Region</div>
+                <div>{manager.region}</div>
+              </div>
+
+              <div className="flex item-center justify-between">
+                <dt className="text-gray-800 font-semibold">Registered</dt>
+                <dd className="font-medium text-gray-900 mt-1">
+                  {manager.createdAt ? format(new Date(manager.createdAt), 'dd MMM yyyy') : '—'}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          {/* Financial & Performance */}
+          <div className="p-4 border-b border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2 font-oswald">
+              Financial Summary
+            </h3>
+
+             <dl className="space-y-4 text-sm font-poppins">
+              <div className="flex item-center justify-between">
+                <dt className="text-gray-500">Total Revenue</dt>
+                <dd className="font-medium text-gray-900 mt-1">{manager.phone}</dd>
+              </div>
+
+              <div className="flex item-center justify-between">
+                <dt className="text-gray-500">Revenue Today</dt>
+                <dd className="font-medium text-gray-900 mt-1">
+                  50500 TZS
+                </dd>
+              </div>
+              <div className="flex item-center justify-between">
+                <div className='font-semibold'>Price per Unit</div>
+                <div>{manager.region}</div>
+              </div>
+            </dl>
+          </div>
+            
+            {/* Performance anaylsis */}
+          <div className="p-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2 font-oswald">
+              Zone Performance 
+            </h3>
+
+             <dl className="space-y-4 text-sm font-poppins">
+              <div className="flex item-center justify-between">
+                <dt className="text-gray-500">Total Customers</dt>
+                <dd className="font-medium text-gray-900 mt-1">54</dd>
+              </div>
+
+              <div className="flex item-center justify-between">
+                <dt className="text-gray-500">Total Meters</dt>
+                <dd className="font-medium text-gray-900 mt-1">
+                  50500 Units
+                </dd>
+              </div>
+              <div className="flex item-center justify-between">
+                <div className='font-semibold'>Volume Consumed</div>
+                <div>5034 m3</div>
+              </div>
+            </dl>
+            </div>
+
+        </aside>
+
+        {/* MAIN CONTENT AREA */}
+        <main className="flex-1 overflow-y-auto bg-gray-50">
+          <div className="max-w-full px-12 py-8">
+            {/* Page Header with Actions */}
+            <div className="flex items-center justify-between mb-4">
+              <h1 className="text-2xl font-oswald font-bold text-gray-900">Manager Details</h1>
+
+              <div className="flex items-center gap-3">
+                <button className="p-3 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
+                  <IoCreateOutline className="w-4 h-4 text-indigo-600" />
+                </button>
+                <button className="p-3 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
+                  <IoSettingsOutline className="w-4 h-4 text-gray-600" />
+                </button>
+                <button className="p-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">
+                  <IoTrashOutline className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="mb-4 border-b border-default">
+              <nav className="flex flex-wrap -mb-px text-sm font-medium text-center font-poppins">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`inline-block p-4 border-b-2 rounded-t-base text-gray-800 ${
+                      activeTab === tab.id
+                        ? 'text-indigo-600 border-indigo-600'
+                        : 'text-gray-500 border-transparent hover:text-gray-700'
+                    }`}
+                  >
+                    <span>{tab.label}</span>
+                  </button>
                 ))}
-              </div>
+              </nav>
             </div>
 
-            {/* Location Card */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="bg-gradient-to-r from-teal-500 to-cyan-600 text-white p-5">
-                <h3 className="text-xl font-bold">Service Location</h3>
-              </div>
-              <div className="p-6">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-full h-48 mb-4" />
-                <div className="space-y-3 text-sm">
-                  <p className="font-semibold text-gray-800">{subscriber.location.address}</p>
-                  <p className="text-gray-600">
-                    {subscriber.location.ward} • {subscriber.location.county} County
-                  </p>
-                  <div className="flex items-center gap-2 text-gray-500">
-                    <span className="text-xs">GPS:</span>
-                    <code className="text-xs bg-gray-100 px-2 py-1 rounded">{subscriber.location.coordinates}</code>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Tab Content */}
+            <div className="mt-8">
+              {activeTab === 'meters' && <MetersTable meters={manager?.meters || []} />}
 
-            {/* Sales Manager */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Assigned Sales Manager</h3>
-              <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                  {subscriber.salesManager.name.split(' ').map(n => n[0]).join('')}
-                </div>
-                <div>
-                  <p className="font-semibold text-gray-900">{subscriber.salesManager.name}</p>
-                  <p className="text-sm text-gray-600">{subscriber.salesManager.phone}</p>
-                  <p className="text-xs text-gray-500 mt-1">{subscriber.salesManager.email}</p>
-                </div>
-              </div>
+              {activeTab === 'subscribers' && <SubscribersTable />}
+              {activeTab === 'reports' && <ReportsTab />}
+              {activeTab === 'analysis' && <AnalysisTab />}
+              {activeTab === 'settings' && <SettingsTab />}
             </div>
           </div>
-
-          {/* Right Column - Meters & Transactions */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Meters Grid */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Connected Meters ({meters.length})</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {meters.map((meter) => (
-                  <div key={meter.id} className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden hover:shadow-2xl transition-shadow">
-                    <div className={`p-5 ${meter.status === 'online' ? 'bg-gradient-to-r from-emerald-500 to-teal-600' : 'bg-gradient-to-r from-gray-500 to-gray-700'} text-white`}>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="text-xl font-bold">{meter.id}</h4>
-                          <p className="text-sm opacity-90">Serial: {meter.serial}</p>
-                        </div>
-                        <div className="text-right">
-                          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${meter.status === 'online' ? 'bg-white/20' : 'bg-white/10'}`}>
-                            <span className={`w-2 h-2 rounded-full ${meter.status === 'online' ? 'bg-white animate-pulse' : 'bg-gray-300'}`}></span>
-                            {meter.status === 'online' ? 'Online' : 'Offline'}
-                          </div>
-                          <p className="text-xs mt-1 opacity-80">Last seen {meter.lastSeen}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="p-6 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600">Current Balance</span>
-                        <span className="text-3xl font-bold text-gray-900">{meter.unitsBalance} kWh</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-500">Total Revenue</span>
-                        <span className="font-semibold">KES {meter.revenue.toLocaleString()}</span>
-                      </div>
-                      <div className="pt-4 border-t border-gray-100">
-                        <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-xl transition">
-                          View Meter Details →
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent Transactions */}
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-600 to-purple-700 text-white p-6">
-                <h2 className="text-2xl font-bold">Recent Token Purchases</h2>
-                <p className="opacity-90">Last 30 days activity</p>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b-2 border-gray-200">
-                    <tr>
-                      <th className="text-left px-6 py-4 text-xs font-bold text-gray-600 uppercase tracking-wider">Token</th>
-                      <th className="text-left px-6 py-4 text-xs font-bold text-gray-600 uppercase tracking-wider">Date</th>
-                      <th className="text-left px-6 py-4 text-xs font-bold text-gray-600 uppercase tracking-wider">Meter</th>
-                      <th className="text-right px-6 py-4 text-xs font-bold text-gray-600 uppercase tracking-wider">Units</th>
-                      <th className="text-right px-6 py-4 text-xs font-bold text-gray-600 uppercase tracking-wider">Amount</th>
-                      <th className="text-center px-6 py-4 text-xs font-bold text-gray-600 uppercase tracking-wider">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {recentTransactions.map((tx) => (
-                      <tr key={tx.id} className="hover:bg-indigo-50/30 transition">
-                        <td className="px-6 py-5 font-mono text-sm">
-                          <div className="flex items-center gap-2">
-                            <span>{tx.token}</span>
-                            <button
-                              onClick={() => copyToken(tx.token)}
-                              className="text-indigo-600 hover:text-indigo-800"
-                            >
-                              {copiedToken === tx.token ? 'Copied!' : 'Copy'}
-                            </button>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5 text-sm text-gray-700">{tx.date}</td>
-                        <td className="px-6 py-5">
-                          <span className="font-medium text-indigo-700">{tx.meter}</span>
-                        </td>
-                        <td className="px-6 py-5 text-right font-semibold">{tx.units} kWh</td>
-                        <td className="px-6 py-5 text-right font-bold text-gray-900">KES {tx.amount.toLocaleString()}</td>
-                        <td className="px-6 py-5 text-center">
-                          <span className={`inline-flex px-4 py-2 rounded-full text-xs font-bold ${tx.status === 'success' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
-                            {tx.status.toUpperCase()}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        </main>
       </div>
-    </div>
+    </>
   );
-}
+};

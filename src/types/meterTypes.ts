@@ -4,7 +4,7 @@ export interface Meter {
   serial: string;
   type: string;
   phone: string | null;
-  status: "active" | "inactive";
+  status: string;
   description: string;
   lock: boolean;
   image: string;
@@ -12,7 +12,6 @@ export interface Meter {
   managerId: string;
   createdAt: string;
   updatedAt: string;
-  deletedAt: boolean;
   installedAt: string;
 }
 

@@ -10,6 +10,7 @@ import {
 // import { useAuth } from "../../context/AuthProvider";
 import "./sidebar.css";
 import { useAuth } from "../../context/AuthProvider";
+import { motion } from "framer-motion";
 
 const navigation = getNavigation();
 

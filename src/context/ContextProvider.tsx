@@ -23,18 +23,18 @@ interface DashboardContextType {
 
 const AppContext = createContext<AppContextProps | undefined>(undefined);
 
-const fetchDashboardData = async (): Promise<Data> => {
-    const response = await fetch(`${baseUrl}/user/data`, {
-        method: 'GET',
-        credentials: 'include',
-    });
-    if (!response.ok) {
-        throw new Error('Failed to fetch data');
-    }
-    const result = await response.json();
-    console.log(result)
-    return result.data;
-};
+// const fetchDashboardData = async (): Promise<Data> => {
+//     const response = await fetch(`${baseUrl}/user/dashboard`, {
+//         method: 'GET',
+//         credentials: 'include',
+//     });
+//     if (!response.ok) {
+//         throw new Error('Failed to fetch data');
+//     }
+//     const result = await response.json();
+//     console.log(result)
+//     return result.data;
+// };
 
 export const ContextProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [activeTab, setActiveTab] = useState('Managers');
@@ -50,7 +50,7 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     const { data = null, isLoading, error } = useQuery<Data>({
         queryKey: ['dashboardData'],
-        queryFn: fetchDashboardData,
+        // queryFn: fetchDashboardData,
         refetchOnWindowFocus: true, // Refetch data when the page regains focus
     });
 
