@@ -31,11 +31,12 @@ import type { Meter } from "../../types/meterTypes";
 import DeleteModel from "../../components/modal/deleteModel";
 import Jobs from "./Jobs";
 import Setting from "./Setting";
+import { Link } from "react-router-dom";
 
 export default function MetersPage() {
   const { data: meters = [], isLoading, isError, error, refetch } = useGetAllMeter();
 
-const [globalFilter, setGlobalFilter] = useState("");
+  const [globalFilter, setGlobalFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -100,7 +101,7 @@ const [globalFilter, setGlobalFilter] = useState("");
             className="w-4 h-4 rounded border-gray-300"
           />
         ),
-        size: 20,
+        size: 2,
       },
       {
         accessorKey: "status",
@@ -159,9 +160,20 @@ const [globalFilter, setGlobalFilter] = useState("");
       {
         accessorKey: "serial",
         header: "Serial No",
-        cell: ({ getValue }) => (
-          <span className="font-oswald font-semibold">{getValue() as string}</span>
-        ),
+        cell: ({ row }) => {
+          const serial = row.original.serial;
+          const id = row.original.id;
+
+          return (
+            <Link
+              to={`/manager/zone/meter/${id}`}
+              className="font-oswald font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+              onClick={(e) => e.stopPropagation()} // Prevent row click if you add it later
+            >
+              {serial}
+            </Link>
+          );
+        },
       },
       {
         accessorKey: "type",
@@ -200,7 +212,7 @@ const [globalFilter, setGlobalFilter] = useState("");
     []
   );
 
-const table = useReactTable({
+  const table = useReactTable({
     data: meters,
     columns,
     state: {
@@ -273,79 +285,79 @@ const table = useReactTable({
         </div>
 
         <div className="grid grid-flow-col gap-x-4 max-w-full ">
-            {/* Type Filter */}
-        <div className="relative">
-          <button
-            // onClick={() => setOpenTypeDropdown(!openTypeDropdown)}
-            className="inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 transition"
-          >
-            Type: {typeFilter || "All"} <FaChevronDown className="ml-2 w-3 h-3" />
-          </button>
-          {openTypeDropdown && (
-            <div className="absolute top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 w-44">
-              <ul className="py-2 text-sm text-gray-700">
-                {["", "Token", "Card", "Direct"].map((type) => (
-                  <li key={type || "all"}>
-                    <button
-                      onClick={() => {
-                        setTypeFilter(type);
-                        setOpenTypeDropdown(false);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                    >
-                      {type || "All"}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        {/* Search */}
-        <div className="flex-1 relative max-w-md">
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search meters..."
-            value={globalFilter}
-            // onChange={(e) => setGlobalFilter(e.target.value)}
-            className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-          />
-        </div>
-
-        {/* Right Side Controls */}
-        <div className="flex items-center gap-4">
-
-
-          <div className="flex items-center gap-3">
+          {/* Type Filter */}
+          <div className="relative">
             <button
-              // onClick={() => setToggle(!toggle)}
-              className="text-xl transition"
-              title={toggle ? "Hide inactive" : "Show all"}
+              // onClick={() => setOpenTypeDropdown(!openTypeDropdown)}
+              className="inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 transition"
             >
-              {toggle ? <FaToggleOn className="text-blue-600" /> : <FaToggleOff className="text-gray-400" />}
+              Type: {typeFilter || "All"} <FaChevronDown className="ml-2 w-3 h-3" />
             </button>
+            {openTypeDropdown && (
+              <div className="absolute top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 w-44">
+                <ul className="py-2 text-sm text-gray-700">
+                  {["", "Token", "Card", "Direct"].map((type) => (
+                    <li key={type || "all"}>
+                      <button
+                        onClick={() => {
+                          setTypeFilter(type);
+                          setOpenTypeDropdown(false);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                      >
+                        {type || "All"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
 
-            <button 
-              // onClick={handleRefresh} 
-              disabled={isRefreshing} 
-              className="text-gray-600 hover:text-gray-800">
-              <FaSync className={`text-xl ${isRefreshing ? "animate-spin" : ""}`} />
-            </button>
+          {/* Search */}
+          <div className="flex-1 relative max-w-md">
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search meters..."
+              value={globalFilter}
+              // onChange={(e) => setGlobalFilter(e.target.value)}
+              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
+            />
+          </div>
 
-            <button onClick={handleExport} className="text-gray-600 hover:text-gray-800">
-              <FaDownload className="text-xl" />
-            </button>
+          {/* Right Side Controls */}
+          <div className="flex items-center gap-4">
 
-            <button onClick={() => setIsSettingsOpen(true)} className="text-gray-600 hover:text-gray-800">
-              <FaCog className="text-xl" />
-            </button>
+
+            <div className="flex items-center gap-3">
+              <button
+                // onClick={() => setToggle(!toggle)}
+                className="text-xl transition"
+                title={toggle ? "Hide inactive" : "Show all"}
+              >
+                {toggle ? <FaToggleOn className="text-blue-600" /> : <FaToggleOff className="text-gray-400" />}
+              </button>
+
+              <button
+                // onClick={handleRefresh} 
+                disabled={isRefreshing}
+                className="text-gray-600 hover:text-gray-800">
+                <FaSync className={`text-xl ${isRefreshing ? "animate-spin" : ""}`} />
+              </button>
+
+              <button onClick={handleExport} className="text-gray-600 hover:text-gray-800">
+                <FaDownload className="text-xl" />
+              </button>
+
+              <button onClick={() => setIsSettingsOpen(true)} className="text-gray-600 hover:text-gray-800">
+                <FaCog className="text-xl" />
+              </button>
+            </div>
           </div>
         </div>
-        </div>
 
-      
+
       </div>
 
       {/* Table */}

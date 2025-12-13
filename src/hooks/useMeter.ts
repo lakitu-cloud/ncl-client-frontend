@@ -1,6 +1,6 @@
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { meterService } from "../services/meterService";
-import { Meter, MeterPayload } from "../types/meterTypes";
+import { Meter, MeterPayload, MeterDetailApiResponse } from "../types/meterTypes";
 import { toast } from "react-toastify";
 import { queryClient } from "..";
 import { meterKeys } from "../lib/queryKeys";
@@ -30,7 +30,22 @@ export const useGetMeter = (options?: UseQueryOptions) => {
   });
 };
 
-
+export const useGetMeterById = (
+  meterId: string,
+  options?: UseQueryOptions<MeterDetailApiResponse, Error>
+) => {
+  return useQuery<MeterDetailApiResponse, Error>({
+    queryKey: meterKeys.byId(meterId),
+    queryFn: async () => {
+      const res = await meterService.getById(meterId);
+      return res;
+    },
+    enabled: !!meterId && meterId !== "undefined" && meterId !== "null",
+    retry: 2,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    ...options,
+  });
+};
 
 export const useDeleteMeter = () => {
   return useMutation({

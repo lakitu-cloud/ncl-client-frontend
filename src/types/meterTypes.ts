@@ -41,3 +41,42 @@ export type AddMultipleMeterPayload = {
 export interface deleteMeterPayload {
     id: number;
 }
+
+export interface Transaction {
+  id: string;
+  date: string; // ISO date
+  units: number;
+  amount: number;
+  status: string;
+  customer?: string | null;
+}
+
+export interface MetersGetByIdPayload {
+  id: string;
+  name: string | null;
+  serial: string;
+  type: string;
+  phone: string | null;
+  status: string;
+  description: string;
+  lock: boolean;
+  image: string;
+  subscriberId: string | null;
+  managerId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: boolean | string;
+  installedAt: string;
+  transactions: Transaction[];
+  jobs: any[]; // refine later if needed
+}
+
+export interface MeterDetailApiResponse {
+  status: string;
+  meter: MetersGetByIdPayload;
+  manager: {
+    id: string;
+    name: string;
+  };
+  message?: string;
+}
