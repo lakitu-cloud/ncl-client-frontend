@@ -17,15 +17,23 @@ export const useGetAllMeter = () => {
   });
 };
 
-export const useGetMeter = (options?: UseQueryOptions) => {
-  return useQuery({
-    queryKey: ["meters"],
+type MeterResponse = {
+  status: string;
+  meters: MeterPayload[];
+};
+
+export const useGetMeter = (
+  options?: UseQueryOptions<Meter[], Error>
+) => {
+  return useQuery<Meter[], Error>({
+    queryKey: ['meters'],
     queryFn: async () => {
       const data = await meterService.get();
-      toast.dismiss("LOADING");
-      return data;
+      toast.dismiss('LOADING');
+      return data.meters; 
     },
     retry: 3,
+    staleTime: 5 * 60 * 1000, // Optional: cache for 5 mins
     ...options,
   });
 };
@@ -89,3 +97,39 @@ export const useSetting = () => {
     });
 
 }
+
+// Assign meter
+export const useAssignMeterToSubscriber = () => {
+  return useMutation({
+    mutationFn: ({ meterId, subscriberId }: { meterId: string; subscriberId: string }) =>
+      meterService.assign(meterId, subscriberId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['meter', variables.meterId] });
+      queryClient.invalidateQueries({ queryKey: ['meters'] });
+    },
+  });
+};
+
+// Unassign
+export const useUnassignMeter = () => {
+  return useMutation({
+    mutationFn: ({ meterId }: { meterId: string }) =>
+      meterService.unassign(meterId),
+    onSuccess: (_, { meterId }) => {
+      queryClient.invalidateQueries({ queryKey: ['meter', meterId] });
+      queryClient.invalidateQueries({ queryKey: ['meters'] });
+    },
+  });
+};
+
+export const useAvailableMeters = (search: string = '', enabled: boolean = true) => {
+  return useQuery<{ id: string, serial: string }[], Error>({
+    queryKey: ['available-meters', search],
+    queryFn: () => meterService.getAvailable(search),
+    enabled: enabled && search.length >= 2, // Start fetching after 2 chars for better UX/performance
+    staleTime: 5 * 60 * 1000, // 5 minutes — meters don't change often
+    gcTime: 10 * 60 * 1000,   // Cache longer
+    retry: 1,
+    refetchOnWindowFocus: false,
+  });
+};

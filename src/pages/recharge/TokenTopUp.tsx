@@ -97,7 +97,7 @@ const TokenTopUp = () => {
             onSubmit={(e) => e.preventDefault()}
             className="flex flex-col lg:flex-row gap-4 items-center"
           >
-            <div className="flex items-center w-full gap-1 px-2 bg-white border rounded-lg">
+            <div className="flex items-center w-full gap-1 px-2 bg-gray-50 dark:bg-blackText border rounded-lg">
               <input
                 type="text"
                 placeholder="Search"
@@ -106,48 +106,48 @@ const TokenTopUp = () => {
                 className="w-full px-2 py-2 text-gray-500 bg-transparent rounded-md outline-none"
               />
             </div>
-            <div className="flex items-center space-x-4 px-4">
+            <div className="flex items-center space-x-4 px-4 dark:text-whiteText">
               <p className="text-sm whitespace-nowrap font-poppins">
                 Showing 0 of {tableItems.length} items
               </p>
               <IoSettings
-                className="text-gray-600 w-6 h-6 hover:text-gray-400"
+                className="text-gray-600 dark:text-gray-200 w-6 h-6 hover:text-gray-400"
                 onClick={() => console.log("Settings clicked")}
               />
               <IoRefresh
-                className="text-gray-600 w-6 h-6 hover:text-gray-400"
+                className="text-gray-600 dark:text-gray-200 w-6 h-6 hover:text-gray-400"
                 onClick={() => setSearchQuery("")}
               />
             </div>
           </form>
 
-          <div className="mt-12 shadow-sm border rounded-lg overflow-x-auto font-oswald">
+          <div className="mt-12 shadow-sm border rounded-md overflow-x-auto font-oswald">
             <table className="w-full table-auto text-sm text-left">
-              <thead className="text-gray-600 font-medium border-b bg-gray-50">
+              <thead className="text-gray-600 font-medium border-b bg-gray-50 dark:bg-blackText dark:text-whiteText">
                 <tr>
-                  <th className="py-3 px-6 flex items-center gap-x-4">
+                  <th className="py-3 px-6 flex items-center gap-x-4 dark:text-whiteText">
                     <input
                       type="checkbox"
                       id="checkbox-all-items"
                       checked={areAllChecked}
                       onChange={handleSelectAll}
                     />
-                    Meter ID
+                    Meter No
                   </th>
-                  <th className="py-3 px-6 uppercase">Ref Number</th>
-                  <th className="py-3 px-6 uppercase">Token</th>
-                  <th className="py-3 px-6 uppercase">Units</th>
-                  <th className="py-3 px-6 uppercase">Price</th>
-                  <th className="py-3 px-6 uppercase">Type</th>
-                  <th className="py-3 px-6 uppercase">Status</th>
-                  <th className="py-3 px-6 uppercase">Date</th>
+                  <th className="py-3 px-6 uppercase dark:text-whiteText">Ref Number</th>
+                  <th className="py-3 px-6 uppercase dark:text-whiteText">Token</th>
+                  <th className="py-3 px-6 uppercase dark:text-whiteText">Units</th>
+                  <th className="py-3 px-6 uppercase dark:text-whiteText">Price</th>
+                  <th className="py-3 px-6 uppercase dark:text-whiteText">Type</th>
+                  <th className="py-3 px-6 uppercase dark:text-whiteText">Status</th>
+                  <th className="py-3 px-6 uppercase dark:text-whiteText">Date</th>
                 </tr>
               </thead>
               <tbody className="text-gray-600 divide-y">
                 {isPending ? (
                   <tr>
-                    <td colSpan={8} className="text-center py-4">
-                      Loading...
+                    <td colSpan={8} className="text-center justify-center  py-4">
+                      <Spinner />
                     </td>
                   </tr>
                 ) : isError ? (
@@ -258,13 +258,13 @@ const TokenTopUp = () => {
         </div>
 
         {/* Right Panel: Token Generation Form */}
-        <div className="md:col-span-2 mt-2 bg-dimWhite p-4 rounded-lg font-poppins">
+        <div className="md:col-span-2 mt-2 dark:text-whiteText p-4 rounded-lg font-poppins">
           <div className="text-lg text-start border-b border-gray-200 font-oswald font-bold mb-4 uppercase">
             <ul className="flex flex-wrap -mb-px">
               <li className="me-2">
                 <button
                   onClick={() => setTokenType("set")}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 ${
+                  className={`inline-block p-4 border-b-2 rounded-t-lg  hover:text-gray-600 ${
                     tokenType === "set"
                       ? "border-blue-600 hover:text-blue-600"
                       : "border-b-transparent hover:text-gray-600"

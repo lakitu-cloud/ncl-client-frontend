@@ -2,8 +2,8 @@ import { apiRequest } from ".";
 import { SubscriberCreatePayload, SubscriberPayload, SubscriberUpdatePayload } from "../types/subscriberTypes";
 
 export const subscriberService = {
-    get: async() => {
-        const response = await apiRequest<{ subscribers: SubscriberPayload[] }>('subscriber', 'GET');
+    get: async(): Promise<{status: string, message: string, subscribers: SubscriberPayload[]}> => {
+        const response = await apiRequest<{ status: string, message: string, subscribers: SubscriberPayload[] }>('subscriber', 'GET');
         return response;
     },
 
@@ -30,5 +30,9 @@ export const subscriberService = {
 
     upload: async(id: string) => {
         return await apiRequest<any>(`subscriber/${id}/image`, 'PUT')
+    },
+
+    search: async(payload: string) => {
+        return await apiRequest<any>(`subscriber/:${payload}/search`, 'GET')
     }
 }

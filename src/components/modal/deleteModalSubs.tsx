@@ -1,30 +1,24 @@
-// components/modals/DeleteManagerModal.tsx
+// components/modal/DeleteModal.tsx  (renamed & made generic)
 import React from 'react';
-import { useDeleteManager } from '../../hooks/useManager';
 import { toast } from 'react-toastify';
 
-type DeleteManagerModalProps = {
-  managerId: string;
-  managerName: string;
+type DeleteModalProps = {
+  title: string;
+  name: string;
+  warning?: string;
+  isPending: boolean;
+  onConfirm: () => void;
   onClose: () => void;
 };
 
-const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName, onClose }) => {
-  const deleteManager = useDeleteManager();
-
-  const handleDelete = () => {
-    deleteManager.mutate(managerId, {
-      onSuccess: () => {
-        toast.success(`Manager "${managerName}" deleted successfully`);
-        onClose();
-      },
-      onError: () => {
-        toast.error("Failed to delete manager");
-        onClose();
-      },
-    });
-  };
-
+const DeleteModalSubs: React.FC<DeleteModalProps> = ({
+  title,
+  name,
+  warning,
+  isPending,
+  onConfirm,
+  onClose,
+}) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
@@ -52,13 +46,15 @@ const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName,
             </svg>
           </div>
 
-          <h3 className="mb-2 text-lg font-semibold text-gray-900">
-            Delete Manager
-          </h3>
+          <h3 className="mb-2 text-lg font-semibold text-gray-900">{title}</h3>
           <p className="mb-6 text-sm text-gray-500">
-            Are you sure you want to delete <span className="font-bold">"{managerName}"</span>?
-            <br />
-            <span className="text-red-600">This will also unassign all their meters.</span>
+            Are you sure you want to delete <span className="font-bold">"{name}"</span>?
+            {warning && (
+              <>
+                <br />
+                <span className="text-red-600">{warning}</span>
+              </>
+            )}
           </p>
 
           <div className="flex justify-center gap-4">
@@ -69,11 +65,11 @@ const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName,
               Cancel
             </button>
             <button
-              onClick={handleDelete}
-              disabled={deleteManager.isPending}
+              onClick={onConfirm}
+              disabled={isPending}
               className="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-70"
             >
-              {deleteManager.isPending ? "Deleting..." : "Yes, Delete"}
+              {isPending ? "Deleting..." : "Yes, Delete"}
             </button>
           </div>
         </div>
@@ -82,4 +78,4 @@ const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName,
   );
 };
 
-export default DeleteModal;
+export default DeleteModalSubs;

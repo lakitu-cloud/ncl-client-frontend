@@ -1,6 +1,8 @@
-import React, { useState, HTMLProps, useEffect } from "react";
+// src/components/pages/SubscriberTable.tsx
+import React, { useState, useEffect, useMemo } from "react";
 import {
   ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -9,82 +11,45 @@ import {
 } from "@tanstack/react-table";
 import { FiEdit, FiPlusSquare, FiTrash } from "react-icons/fi";
 import { FaCircleCheck } from "react-icons/fa6";
-import { AiOutlinePlus } from "react-icons/ai";
-import { IoMdArrowDropdown } from "react-icons/io";
-import { useApp } from "../../context/ContextProvider";
-import { SubscriberPayload } from "../../types/subscriberTypes";
-import { baseUrl } from "../../config/urls";
+import { FaSearch } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { useAssignSub, useGetSubs } from "../../hooks/useSubscriber";
+import { useGetSubs, useAssignSub, useDeleteSubs } from "../../hooks/useSubscriber";
+import { useQueryClient } from "@tanstack/react-query";
+import AddSubscriberModal from "../../components/modal/addSubscriberModal";
+import { SubscriberPayload } from "../../types/subscriberTypes";
+import DeleteModalSubs from "../../components/modal/deleteModalSubs";
 
 export function SubscriberTable() {
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [globalFilter, setGlobalFilter] = React.useState("");
-  const [typeFilter, setTypeFilter] = React.useState("");
-  const [statusFilter, setStatusFilter] = React.useState("");
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [serial, setSerial] = React.useState<string>("");
-  const [assignMeter, setAssignMeter] = React.useState(false);
-  const [deleteId, setDeleteId] = React.useState<string>("");
-  const [subscriber, setSubscriber] = React.useState<SubscriberPayload[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { setIsButtonPress, meters } = useApp();
-  const { data, isPending, isSuccess, isError, error } = useGetSubs();
-  const { mutate: assignMutate, isSuccess: successAssign } = useAssignSub();
 
-  const handleDelete = async () => {
-    try {
-      const response = await fetch(`${baseUrl}/subscriber/${deleteId}/delete`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+  // React Query data
+  const { data = [], isPending } = useGetSubs(); // data is now the array directly
+  const { mutate: assignMutate } = useAssignSub();
+  const deleteSubscriber = useDeleteSubs();
 
-      console.log(response);
+  // UI state
+  const [rowSelection, setRowSelection] = useState({});
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [assignMeter, setAssignMeter] = useState(false);
+  const [selectedId, setSelectedId] = useState<string>("");
+  const [serial, setSerial] = useState<string>("");
 
-      const data = await response.json();
+  // Delete state
+  const [subscriberToDelete, setSubscriberToDelete] = useState<{ id: string; name: string } | null>(null);
 
-      if (data.status === "success") {
-        toast.dismiss("Wakala created successfully!");
-        setDeleteId("");
-        setIsModalOpen(false);
-      } else {
-        toast.error(data.message || "Failed to create wakala.");
-      }
-    } catch (err: any) {
-      console.error(err.message);
-      toast.error(err.message || "An error occurred.");
-    } finally {
-      setIsModalOpen(false);
-      setDeleteId("");
-    }
-  };
-
-  const handleAssignMeter = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!serial) {
-      toast.warn("Please select a meter serial.");
-      return;
-    }
-
-    try {
-      assignMutate({id: deleteId, serial});
-
-      setDeleteId("");
-      setAssignMeter(false);
-    } catch (err: any) {
-      console.error("Assignment error:", err.message);
-      toast.error("Failed to assign meter");
-    }
-  };
-
+  // Filters effect
   useEffect(() => {
-    if (data) {
-      setSubscriber(data as SubscriberPayload[]);
-      console.log(data);
-    }
-  }, [data]);
+    const filters: ColumnFiltersState = [];
+    if (statusFilter) filters.push({ id: "status", value: statusFilter });
+    if (typeFilter) filters.push({ id: "type", value: typeFilter });
+    setColumnFilters(filters);
+  }, [statusFilter, typeFilter]);
 
-  const columns = React.useMemo<ColumnDef<SubscriberPayload>[]>(
+  // Columns definition (clean, performant, memoized)
+  const columns = useMemo<ColumnDef<SubscriberPayload>[]>(
     () => [
       {
         id: "select",
@@ -95,149 +60,182 @@ export function SubscriberTable() {
             onChange={table.getToggleAllPageRowsSelectedHandler()}
           />
         ),
-        cell: ({ row }: { row: any }) => (
+        cell: ({ row }) => (
           <input
             type="checkbox"
             checked={row.getIsSelected()}
             onChange={row.getToggleSelectedHandler()}
           />
         ),
-        size: 2,
+        size: 50,
+        enableSorting: false,
       },
-      {
-        accessorKey: "status",
-        header: "Status",
-        size: 10, // Adjust width
-        cell: ({ getValue }: { getValue: any }) => (
-          <FaCircleCheck
-            className={`${
-              getValue() === "active" ? "text-green-600" : "text-red-600"
-            } font-medium`}
-          />
-        ),
-      },
+     
       {
         header: "Action",
-        size: 2,
-        cell: ({ row }: { row: any }) => (
-          <div className="flex gap-2">
+        size: 100,
+        enableSorting: false,
+        cell: ({ row }) => (
+          <div className="flex items-center gap-3">
             <button
-              className="text-blue-500 hover:text-blue-700"
+              className="text-blue-600 hover:text-blue-800 transition-colors"
               onClick={() => {
-                setDeleteId(row.original.id);
+                setSelectedId(row.original.id);
                 setAssignMeter(true);
               }}
+              title="Assign Meter"
             >
-              <FiPlusSquare />
+              <FiPlusSquare size={18} />
             </button>
             <button
-              className="text-gray-500 hover:text-gray-700"
+              className="text-red-600 hover:text-red-800 transition-colors"
               onClick={() => {
-                setDeleteId(row.original.id);
-                setIsModalOpen(true);
+                setSubscriberToDelete({
+                  id: row.original.id,
+                  name: row.original.name,
+                });
               }}
+              title="Delete Subscriber"
             >
-              <FiTrash />
+              <FiTrash size={18} />
             </button>
-            <button
-              className="text-yellow-500 hover:text-yellow-700"
-              onClick={() => {
-                setDeleteId(row.original.id);
-                setIsModalOpen(true);
-              }}
-            >
-              <FiEdit />
+            <button className="text-yellow-600 hover:text-yellow-800 transition-colors opacity-50" title="Edit (soon)">
+              <FiEdit size={18} />
             </button>
           </div>
         ),
       },
+
       {
         accessorKey: "name",
         header: "Name",
-        size: 10,
+        size: 180,
       },
-      {
-        accessorKey: "account_no",
-        header: "Tracking No",
-        size: 10,
+       {
+        id: "profile",
+        header: "Profile",
+        size: 80,
+        enableSorting: false,
         cell: ({ row }) => {
-          // Explicit type handling
-          const accountNo: string | null = row.getValue("account_no");
-          const phone: string | null = row.original.phone;
+          const profile = row.original.profile?.trim();
+          const name = row.original.name || "Unknown";
+          const initials =
+            name
+              .split(" ")
+              .map((n) => n[0])
+              .filter(Boolean)
+              .slice(0, 2)
+              .join("")
+              .toUpperCase() || "NA";
 
-          // Handle all cases explicitly
-          const displayValue = (accountNo?.trim() || phone?.trim()) ?? "N/A";
-
-          return <div className="cursor-pointer">{displayValue}</div>;
-        },
-      },
-      {
-        accessorKey: "type",
-        size: 10,
-        header: "Type",
-      },
-      {
-        header: "Meters",
-        accessorKey: "meter",
-        size: 100,
-        cell: (props: any) => {
-          // Properly typed value access
-          const meters = props.row.original.meter;
+          if (!profile) {
+            return (
+              <div className="flex justify-center">
+                <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
+                  {initials}
+                </div>
+              </div>
+            );
+          }
 
           return (
-            <span className="text-blue-600 font-medium">
-              {Array.isArray(meters) && meters.length > 0
-                ? meters.join(", ")
-                : "No meters assigned"}
-            </span>
+            <div className="flex justify-center">
+              <img
+                src={profile}
+                alt={`${name}'s profile`}
+                className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                loading="lazy"
+                onError={(e) => {
+                  const img = e.target as HTMLImageElement;
+                  img.style.display = "none";
+                  const fallback = img.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.classList.remove("hidden");
+                }}
+              />
+              <div className="hidden w-10 h-10 rounded-full bg-gray-400 text-white flex items-center justify-center text-sm font-semibold">
+                {initials}
+              </div>
+            </div>
           );
         },
       },
       {
-        header: "Price/Unit",
-        accessorKey: "ppu",
-        size: 10,
+        accessorKey: "ref",
+        header: "Ref No.",
+        size: 120,
+        cell: ({ getValue }) => <span className="font-mono text-sm">{getValue() as string }</span>,
       },
 
       {
-        header: "Balance",
-        accessorKey: "balance",
-        size: 10,
-        cell: ({ getValue }: { getValue: any }) => `TZS ${getValue()}`,
-      },
-
-      {
-        accessorKey: "region",
-        header: "Region",
-        size: 10,
-      },
-      {
-        accessorKey: "created_at",
-        header: "Created At",
+        id: "serial",
+        header: "Meter Number",
         size: 150,
-        cell: ({ getValue }: { getValue: any }) =>
-          new Date(getValue()).toLocaleDateString(),
+        cell: ({ row }) => {
+          const meters = row.original.meters || [];
+          if (meters.length === 0) return <span className="text-gray-500 text-sm">No meter</span>;
+          return (
+            <div className="flex flex-wrap gap-1">
+              {meters.map((m) => (
+                <span key={m.id} className="font-mono text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                  {m.serial}
+                </span>
+              ))}
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: "type",
+        header: "Type",
+        size: 100,
+        cell: ({ getValue }) => <span className="capitalize font-medium">{getValue() as string}</span>,
+      },
+      {
+        accessorKey: "balance",
+        header: "Balance",
+        size: 120,
+        cell: ({ getValue }) => `TZS ${Number(getValue()).toLocaleString()}`,
+      },
+            {
+        accessorKey: "status",
+        header: "Status",
+        size: 80,
+        cell: ({ getValue }) => (
+          <FaCircleCheck
+            className={`text-xl ${getValue() === "active" ? "text-green-600" : "text-red-600"}`}
+          />
+        ),
+      },
+      {
+        accessorKey: "location",
+        header: "Location",
+        size: 160,
+        cell: ({ getValue }) => getValue() || "—",
+      },
+      {
+        accessorKey: "createdAt",
+        header: "Created At",
+        size: 140,
+        cell: ({ getValue }) => {
+          const date = new Date(getValue() as string);
+          return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+        },
       },
     ],
     []
   );
 
-  // const filteredData = React.useMemo(() => {
-  //   return subscriber.filter(
-  //     item =>
-  //       (statusFilter ? item.status === statusFilter : true)
-
-  //   );
-  // }, [subscriber, statusFilter, typeFilter,]);
-
   const table = useReactTable({
-    data: subscriber.length > 0 ? subscriber : [],
+    data,
     columns,
     state: {
       rowSelection,
       globalFilter,
+      columnFilters,
     },
     onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -245,370 +243,144 @@ export function SubscriberTable() {
 
   return (
     <div className="p-4 overflow-x-auto">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex gap-4">
-          <input
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            className="p-2 shadow border"
-            placeholder="Search all columns..."
-          />
+      {/* Header: Filters + Search + Add Button */}
+      <div className="font-poppins mb-6 flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="p-2 shadow border text-sm font-oswald"
+            className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800"
           >
-            <option value="">All Statuses</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="locked">Locked</option>
+          </select>
+
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="px-4 py-2 border rounded-lg text-sm"
+          >
+            <option value="">All Types</option>
+            <option value="Token">Token</option>
+            <option value="Card">Card</option>
+            <option value="Direct">Direct</option>
           </select>
         </div>
-        {assignMeter ? (
-          <div className="flex gap-2">
-            <form
-              onSubmit={handleAssignMeter}
-              className={`flex gap-2 items-center transition-all duration-500 ${
-                assignMeter
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 -translate-x-full"
-              }`}
-            >
-              {isError && <p className="text-red-500">{error.message}</p>}
 
-              <div className="flex space-x-2 items-center">
-                <div className="flex">
-                  <button
-                    type="button"
-                    aria-expanded={isDropdownOpen}
-                    onClick={() => setIsDropdownOpen((prev) => !prev)}
-                    className="flex-shrink-0 z-10 inline-flex items-center py-2 px-4 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200"
-                  >
-                    {serial || "Select a Meter"}
-                    <IoMdArrowDropdown className="w-4 h-4 ms-2" />
-                  </button>
+        <div className="relative flex-1 min-w-[200px]">
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <input
+            type="text"
+            placeholder="Search subscribers..."
+            value={globalFilter ?? ""}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="pl-8 p-2 w-full border rounded dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+          />
+        </div>
 
-                  {isDropdownOpen && (
-                    <div className="absolute bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44 overflow-auto">
-                      <ul className="mt-12 py-2 text-sm text-gray-700">
-                        {meters.length > 0 ? (
-                          meters.map((meter) => (
-                            <li key={meter}>
-                              <button
-                                type="button"
-                                className="w-full px-4 py-2 text-left hover:bg-gray-100"
-                                onClick={() => setSerial(meter)}
-                              >
-                                {meter}
-                              </button>
-                            </li>
-                          ))
-                        ) : (
-                          <li className="px-4 py-2 text-gray-500">
-                            No meters available
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
-              {/* <input
-                type="number"
-                id="ppu"
-                aria-label="price per unit"
-                name="price-per-unit"
-                value={ppu}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  setPpu(isNaN(value) ? 0 : value);
-                }}
-                className={`p-2 shadow border text-sm transition-all duration-500 ${
-                  assignMeter
-                    ? "opacity-100 translate-x-0"
-                    : "opacity-0 -translate-x-full"
-                }`}
-                placeholder="Enter Price Per Unit"
-              /> */}
-
-              <button
-                type="submit"
-                className={`bg-blue-600 font-oswald text-md text-white py-2 px-4 rounded-md hover:bg-blue-500 flex items-center justify-center transition-all duration-500 ${
-                  assignMeter ? "opacity-100 translate-x-0" : "opacity-0"
-                }`}
-                disabled={isPending}
-              >
-                {isPending ? (
-                  <span className="flex items-center">
-                    <div role="status">
-                      <svg
-                        aria-hidden="true"
-                        className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                        viewBox="0 0 100 101"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                          fill="currentColor"
-                        />
-                        <path
-                          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                          fill="currentFill"
-                        />
-                      </svg>
-                      <span className="sr-only">Loading...</span>
-                    </div>
-                    updating...
-                  </span>
-                ) : (
-                  <span className="flex items-center">
-                    <AiOutlinePlus className="mr-2" /> Update
-                  </span>
-                )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setAssignMeter(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                Cancel
-              </button>
-            </form>
-          </div>
-        ) : (
-          <button
-            onClick={() => setIsButtonPress((prevState) => !prevState)}
-            type="button"
-            className="flex items-center justify-center text-white bg-blue-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-          >
-            <svg
-              className="h-3.5 w-3.5 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg"
-              aria-hidden="true"
-            >
-              <path
-                clip-rule="evenodd"
-                fill-rule="evenodd"
-                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-              />
-            </svg>
-            Add Subscriber
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => setIsAddModalOpen(true)}
+          className="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-500 focus:ring-4 focus:ring-blue-300 font-oswald text-sm px-4 py-2 rounded-md"
+        >
+          <svg className="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path clipRule="evenodd" fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+          </svg>
+          Add Subscriber
+        </button>
       </div>
-      {!subscriber || subscriber.length === 0 ? (
-        <>
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <p className="text-lg font-semibold text-gray-600">
-                No data available
-              </p>
-              <p className="text-sm text-gray-500">
-                Please add some data to view it here.
-              </p>
-            </div>
+
+      {/* Loading / Empty / Table */}
+      {isPending ? (
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+        </div>
+      ) : data.length === 0 ? (
+        <div className="flex items-center justify-center h-64 text-center">
+          <div>
+            <p className="text-lg font-semibold text-gray-600">No subscribers found</p>
+            <p className="text-sm text-gray-500">Add one using the button above.</p>
           </div>
-        </>
+        </div>
       ) : (
-        <>
-          {isPending ? (
-            <div>
-              <div className="flex items-center justify-center h-screen">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-opacity-50"></div>
-              </div>
-            </div>
-          ) : (
-            <table className="w-full table-auto">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr
-                    key={headerGroup.id}
-                    className="bg-gray-100 p-2 rounded-lg font-owald text-md uppercase"
-                  >
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className="p-2 text-left text-sm font-medium text-gray-600"
-                        style={{ width: header.column.columnDef.size }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </th>
-                    ))}
-                  </tr>
+        <table className="w-full table-auto">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="bg-gray-100 font-oswald text-md uppercase">
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} className="p-2 text-left text-sm font-medium text-gray-600" style={{ width: header.column.columnDef.size }}>
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  </th>
                 ))}
-              </thead>
-              <tbody>
-                {table.getRowModel()?.rows?.map((row) => (
-                  <tr
-                    key={row.id}
-                    className={`hover:bg-gray-50  ${
-                      row.getIsSelected() ? "bg-blue-50" : ""
-                    }`}
-                  >
-                    {row.getVisibleCells().map((cell: any) => (
-                      <td
-                        key={cell.id}
-                        className="p-2 text-md font-oswald text-gray-800"
-                        style={{ width: cell.column.columnDef.size }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </td>
-                    ))}
-                  </tr>
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id} className={`hover:bg-gray-50 ${row.getIsSelected() ? "bg-blue-50" : ""}`}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className="p-2 text-md font-oswald text-gray-800" style={{ width: cell.column.columnDef.size }}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
                 ))}
-              </tbody>
-            </table>
-          )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
-          {isModalOpen && (
-            <div
-              id="deleteModal"
-              className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50"
-            >
-              <div className="relative p-4 w-full max-w-md h-auto bg-white rounded-lg shadow dark:bg-gray-800">
-                {/* Modal Content */}
-                <div className="p-4 text-center">
-                  <button
-                    onClick={() => setIsModalOpen(false)}
-                    className="absolute top-2.5 right-2.5 text-gray-400 hover:text-gray-900 rounded-lg"
-                  >
-                    <svg
-                      aria-hidden="true"
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                  <svg
-                    className="text-gray-400 w-11 h-11 mx-auto mb-3.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="mb-4 text-gray-500">
-                    Are you sure you want to delete this item?
-                  </p>
-                  <div className="flex justify-center space-x-4">
-                    <button
-                      onClick={() => setIsModalOpen(false)}
-                      className="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100"
-                    >
-                      No, cancel
-                    </button>
-                    <button
-                      onClick={handleDelete}
-                      className="py-2 px-3 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700"
-                    >
-                      Yes, I'm sure
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+      {/* Pagination */}
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="flex items-center gap-1">
+          <button className="px-3 py-1.5 border rounded-md text-sm bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50" onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
+            {"<<"}
+          </button>
+          <button className="px-3 py-1.5 border rounded-md text-sm bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
+            {"<"}
+          </button>
+          <button className="px-3 py-1.5 border rounded-md text-sm bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50" onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+            {">"}
+          </button>
+          <button className="px-3 py-1.5 border rounded-md text-sm bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50" onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
+            {">>"}
+          </button>
+        </div>
+        <span className="text-sm text-gray-700">
+          Page <strong>{table.getState().pagination.pageIndex + 1}</strong> of <strong>{table.getPageCount()}</strong>
+        </span>
+        <select
+          className="pl-3 pr-8 py-1.5 border rounded-md text-sm"
+          value={table.getState().pagination.pageSize}
+          onChange={(e) => table.setPageSize(Number(e.target.value))}
+        >
+          {[10, 20, 30, 40, 50].map((size) => (
+            <option key={size} value={size}>
+              Show {size}
+            </option>
+          ))}
+        </select>
+      </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            {/* Pagination Buttons */}
-            <div className="flex items-center gap-1">
-              <button
-                className="px-3 py-1.5 border rounded-md text-sm font-medium 
-                bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50
-                disabled:cursor-not-allowed transition-colors"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="First page"
-              >
-                {"<<"}
-              </button>
-              <button
-                className="px-3 py-1.5 border rounded-md text-sm font-medium 
-                bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50
-                disabled:cursor-not-allowed transition-colors"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                aria-label="Previous page"
-              >
-                {"<"}
-              </button>
+      {/* Modals */}
+      {isAddModalOpen && <AddSubscriberModal IsAddModalOpen={isAddModalOpen} setIsAddModalOpen={setIsAddModalOpen} />}
 
-              <button
-                className="px-3 py-1.5 border rounded-md text-sm font-medium 
-                bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50
-                disabled:cursor-not-allowed transition-colors"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                aria-label="Next page"
-              >
-                {">"}
-              </button>
-              <button
-                className="px-3 py-1.5 border rounded-md text-sm font-medium 
-                bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50
-                disabled:cursor-not-allowed transition-colors"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-                aria-label="Last page"
-              >
-                {">>"}
-              </button>
-            </div>
-
-            {/* Page Info */}
-            <div className="flex items-center gap-2">
-              <span className="flex items-center gap-1 text-sm text-gray-700">
-                <span>Page</span>
-                <span className="font-medium px-1.5 py-0.5 bg-gray-100 rounded">
-                  {table.getState().pagination.pageIndex + 1}
-                </span>
-                <span>of</span>
-                <span className="font-medium px-1.5 py-0.5 bg-gray-100 rounded">
-                  {table.getPageCount()}
-                </span>
-              </span>
-            </div>
-
-            {/* Page Size Selector */}
-            <div className="flex items-center gap-2">
-              <select
-                className="pl-3 pr-8 py-1.5 border rounded-md text-sm 
-                focus:ring-2 focus:ring-blue-500 focus:border-blue-500 
-                appearance-none bg-no-repeat"
-                value={table.getState().pagination.pageSize}
-                onChange={(e) => table.setPageSize(Number(e.target.value))}
-              >
-                {[10, 20, 30, 40, 50].map((size) => (
-                  <option key={size} value={size}>
-                    Show {size}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </>
+      {/* Generic Delete Modal (shared with managers) */}
+      {subscriberToDelete && (
+        <DeleteModalSubs
+          title="Delete Subscriber"
+          name={subscriberToDelete.name}
+          warning="This action cannot be undone and will remove all associated data."
+          isPending={deleteSubscriber.isPending}
+          onConfirm={() => {
+            deleteSubscriber.mutate(subscriberToDelete.id, {
+              onSuccess: () => setSubscriberToDelete(null),
+              onError: () => setSubscriberToDelete(null),
+            });
+          }}
+          onClose={() => setSubscriberToDelete(null)}
+        />
       )}
     </div>
   );

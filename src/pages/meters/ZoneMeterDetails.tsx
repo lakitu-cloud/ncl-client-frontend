@@ -6,7 +6,7 @@ import { Copy, Check } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Header from '../../layout/navbar/Header';
 
-export default function MeterDetailPage() {
+export default function ZoneMeterDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -23,7 +23,6 @@ export default function MeterDetailPage() {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  // Loading State
   if (isPending) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -32,7 +31,6 @@ export default function MeterDetailPage() {
     );
   }
 
-  // Error State
   if (isError || !meter) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
@@ -211,13 +209,13 @@ export default function MeterDetailPage() {
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Transaction ID
+                      References
                     </th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date & Time
+                      Meter Numbers
                     </th>
                     <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Customer
+                      Methods
                     </th>
                     <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Units (m³)
@@ -233,11 +231,11 @@ export default function MeterDetailPage() {
                 <tbody className="divide-y divide-gray-200">
                   {meter.transactions.map((tx) => (
                     <tr key={tx.id} className="hover:bg-gray-50 transition">
-                      <td className="px-6 py-4 font-mono text-sm">{tx.id}</td>
+                      <td className="px-6 py-4 font-mono text-sm">{tx.reference}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {format(new Date(tx.date), 'PPp')}
+                        {tx.serial}
                       </td>
-                      <td className="px-6 py-4 text-sm">{tx.customer || 'Anonymous'}</td>
+                      <td className="px-6 py-4 text-sm">{tx.method || 'Anonymous'}</td>
                       <td className="px-6 py-4 text-sm text-right font-medium">{tx.units.toFixed(1)}</td>
                       <td className="px-6 py-4 text-sm text-right font-semibold text-green-700">
                         {tx.amount.toLocaleString()}

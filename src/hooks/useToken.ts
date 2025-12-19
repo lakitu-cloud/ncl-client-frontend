@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import {
   ClearTamperPayload,
   GenerateTokenPayload,
@@ -8,17 +8,18 @@ import { toast } from "react-toastify";
 import { queryClient } from "..";
 import { rechargeSerice } from "../services/rechargeService";
 
-export const useFetchTokens = () => {
+export const useFetchTokens = (options?: UseQueryOptions< TopUpPayload[], Error, TopUpPayload[], ['token'] >) => {
   return useQuery({
     queryKey: ["token"],
     queryFn: async () => {
       toast.dismiss("LOADING");
       const data = await rechargeSerice.get();
-
+      console.log(data)
       return data;
     },
     staleTime: 5 * 60 * 1000,
     retry: 3,
+     ...options,
   });
 };
 

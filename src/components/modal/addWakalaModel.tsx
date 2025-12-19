@@ -3,10 +3,11 @@ import React from "react";
 import SubscriberForm from "../form/subscriberForm";
 import { HiX } from "react-icons/hi";
 import { IoBusiness, IoCloseOutline, IoPeopleOutline } from "react-icons/io5";
-import { Props } from "../../types/subscriberTypes";
+import { Props } from "../../types/wakalaType";
+import WakalaForm from "../form/wakalaForm";
 
 
-const AddSubscriberModal: React.FC<Props> = ({ setIsAddModalOpen, IsAddModalOpen }) => {
+const AddWakalaModal: React.FC<Props> = ({ setIsAddModalOpen, IsAddModalOpen }) => {
 
   return (
     <section>
@@ -24,8 +25,8 @@ const AddSubscriberModal: React.FC<Props> = ({ setIsAddModalOpen, IsAddModalOpen
                     <IoPeopleOutline className="w-8 h-8 text-white dark:text-blueTheme" />
                   </div>
                   <div>
-                    <h2 className="text-lg text-gray-800 font-bold  dark:text-gray-200 font-oswald">Create Customer </h2>
-                    <p className="text-gray-400 dark:text-gray-200 text-sm font-poppins">Fill customer's details and assign prepaid meters</p>
+                    <h2 className="text-lg text-gray-800 font-bold  dark:text-gray-200 font-oswald">Create Wakala </h2>
+                    <p className="text-gray-400 dark:text-gray-200 text-sm font-poppins">Fill wakala's details and assign prepaid pos</p>
                   </div>
                 </div>
                 <button onClick={() => setIsAddModalOpen(!IsAddModalOpen)} className="p-3 hover:bg-white/20 rounded-xl transition">
@@ -33,7 +34,7 @@ const AddSubscriberModal: React.FC<Props> = ({ setIsAddModalOpen, IsAddModalOpen
                 </button>
               </div>
             </div>
-            <SubscriberForm setIsAddModalOpen={setIsAddModalOpen} IsAddModalOpen={IsAddModalOpen}/>
+            <WakalaForm setIsAddModalOpen={setIsAddModalOpen} IsAddModalOpen={IsAddModalOpen}/>
           </div>
         </div>
       </div>
@@ -41,4 +42,4 @@ const AddSubscriberModal: React.FC<Props> = ({ setIsAddModalOpen, IsAddModalOpen
   );
 };
 
-export default AddSubscriberModal;
+export default AddWakalaModal;

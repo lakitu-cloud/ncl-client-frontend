@@ -1,11 +1,11 @@
 export interface SubscriberCreatePayload {
     name: string;
     phone: string;
-    region: string;
-    ward: string;
-    ppu?: number;
+    serial: string;
+    type: string
+    amount?: number;
     card?: string;
-    type: "token" | "card" | "";
+    location: string
 }
 
 export interface SubscriberUpdatePayload {
@@ -22,19 +22,34 @@ type Meter = {
     serial: string;
   }
 
-export interface SubscriberPayload {
-    id: string;
-    name: string;
-    type: string;
-    account_no: string;
-    phone: string;
-    region: string;
-    ppu: number;
-    card: string;
-    ward: string;
-    status: string;
+export interface MeterSubscriber {
+  id: string;
+  serial: string;
+  name: string | null;
+  type: string;
+  status: string;
+  image: string;
+  // ... other meter fields if needed
 }
 
-export interface AssignMeterPayload {
-    serial: string;
+export interface SubscriberPayload {
+  id: string;
+  ref: string;
+  name: string;
+  phone: string;
+  balance: number;
+  type: string;
+  status: 'active' | 'inactive' | 'locked';
+  profile: string;
+  location: string;
+  createdAt: string;
+  updatedAt: string;
+  meters: MeterSubscriber[]; 
 }
+
+
+export interface Props {
+  IsAddModalOpen: boolean,
+  setIsAddModalOpen: any
+}
+

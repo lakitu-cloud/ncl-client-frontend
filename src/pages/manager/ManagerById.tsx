@@ -1,13 +1,7 @@
 // src/pages/manager/[id].tsx
 import React, { useState } from 'react';
 import { useManagerById } from '../../hooks/useManager';
-import { Manager } from '../../types/managerType';
-import { Meter } from '../../types/meterTypes';
 import {
-  IoArrowBack,
-  IoCall,
-  IoLocationOutline,
-  IoCashOutline,
   IoPeopleOutline,
   IoCheckmarkCircle,
   IoTrashOutline,

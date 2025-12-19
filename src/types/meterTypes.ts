@@ -1,3 +1,5 @@
+import { TransactionPayload } from "./tsxTypes";
+
 export interface Meter {
   id: string;
   name: string | null;
@@ -42,16 +44,7 @@ export interface deleteMeterPayload {
     id: number;
 }
 
-export interface Transaction {
-  id: string;
-  date: string; // ISO date
-  units: number;
-  amount: number;
-  status: string;
-  customer?: string | null;
-}
-
-export interface MetersGetByIdPayload {
+export interface  MetersGetByIdPayload {
   id: string;
   name: string | null;
   serial: string;
@@ -67,7 +60,7 @@ export interface MetersGetByIdPayload {
   updatedAt: string;
   deletedAt: boolean | string;
   installedAt: string;
-  transactions: Transaction[];
+  transactions: TransactionPayload[];
   jobs: any[]; // refine later if needed
 }
 

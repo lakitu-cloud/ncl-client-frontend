@@ -40,13 +40,18 @@ export const getNavigation = (): NavItem[] => {
       icon: <IoHomeOutline className="w-6 h-6" />,
     },
     {
-      name: isZone ? "Managers" : "Subscribers",
+      name: isZone ? "Managers" : "Customers",
       href: isZone ? `${basePath}/managers` : `${basePath}/subscribers`,
       icon: <IoPeopleOutline className="w-6 h-6" />,
     },
     {
       name: "Meters",
       href: `${basePath}/meters`,
+      icon: <IoFlashOutline className="w-6 h-6" />,
+    },
+     {
+      name: "Transactions",
+      href: `/manager/transactions`,
       icon: <IoFlashOutline className="w-6 h-6" />,
     },
   ];

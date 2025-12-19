@@ -5,6 +5,7 @@ import { MdNotificationsNone } from 'react-icons/md';
 import { HiOutlineMenu, HiOutlineX } from 'react-icons/hi';
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useAuth } from '../../context/AuthProvider';
 
 interface HeaderProps {
     title: string
@@ -13,7 +14,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ title }) => {
     // const { setShowTokenTopUpUI, setIsButtonPress } = useApp();
     const [email, setEmail] = React.useState<string | undefined>();
-    // const { logout } = useAuth();
+    const { logout } = useAuth();
 
     // const nameStored = localStorage.getItem('name');
     const [isDarkMode, setIsDarkMode] = React.useState(false);
@@ -55,21 +56,21 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
     };
 
     const handleLogout = () => {
-        // logout();
+        logout();
     };
 
     return (
-        <header className="mt-2 font-poppins border-b-[1px] rounded-md">
-            <section className="flex md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+        <header className="font-poppins border-b-[1px] rounded-md">
+            <section className="flex md:flex-row justify-between  items-start md:items-center space-y-4 md:space-y-0">
                 {/* Title Section */}
-                <div className="flex gap-2 max-w-xs md:w-auto">
-                    <Link to="/dashboard" className="text-blue-800 text-nowrap hidden uppercase md:inline-block text-md md:text-2xl font-bold font-oswald">
+                <div className="flex gap-2 max-w-xs md:w-auto my-2">
+                    <Link to="/dashboard" className="text-blue-800  dark:text-white text-nowrap hidden uppercase md:inline-block text-md md:text-2xl font-bold font-oswald">
                         {role === 'zone' ? "ZONE MANAGER" : "Sales Manager"}
                        
                     </Link>
                     
-                    <div className='border-r-4 border-blue-800 h-8'></div>
-                    <p className="text-blue-800 font-oswald text-md md:text-2xl text-nowrap font-bold">{title}
+                    <div className='border-r-4 border-blue-800 h-8 dark:border-white'></div>
+                    <p className="text-blue-800 dark:text-white font-oswald text-md md:text-2xl text-nowrap font-bold">{title}
                    
                     </p>
                 </div>

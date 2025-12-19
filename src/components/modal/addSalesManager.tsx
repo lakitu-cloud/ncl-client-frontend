@@ -3,12 +3,6 @@ import { IoBusiness, IoCloseOutline } from "react-icons/io5";
 import { useApp } from '../../context/ContextProvider';
 import { useCreateManager } from "../../hooks/useManager";
 
-const createSalesManager = async (data: any) => {
-  await new Promise((r) => setTimeout(r, 1200));
-  console.log("Submitted:", data);
-  return { success: true };
-};
-
 interface AddSalesManagerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -114,7 +108,7 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
 
             {/* Scrollable Content */}
             <form onSubmit={handleSubmit} className="flex flex-col h-full">
-              <div className="flex-1 p-8 space-y-10">
+              <div className="flex-1 p-8 space-y-10 font-poppins">
                 {/* Step 1 */}
                 {step === 1 && (
                   <div className="space-y-8">

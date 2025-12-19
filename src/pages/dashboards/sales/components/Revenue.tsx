@@ -6,7 +6,7 @@ const Revenue = () => {
     const { data } = dashboard;
 
   return (
-    <div className="mt-6 bg-white p-3 sm:p-4">
+    <div className="mt-6 p-3 sm:p-4">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <div className="text-center sm:text-left">
               <h2 className="text-lg sm:text-xl font-bold">

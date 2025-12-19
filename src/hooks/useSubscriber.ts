@@ -3,27 +3,38 @@ import { toast } from "react-toastify";
 import { queryClient } from "..";
 import { useApp } from "../context/ContextProvider";
 import { subscriberService } from "../services/subServices";
-import { SubscriberCreatePayload, SubscriberUpdatePayload } from "../types/subscriberTypes";
+import { useDebounce } from 'use-debounce'; 
+import { SubscriberCreatePayload, SubscriberPayload, SubscriberUpdatePayload } from "../types/subscriberTypes";
 
-export const useGetSubs = (options?: UseQueryOptions) => {
+export const useGetSubs = ( options?: UseQueryOptions< SubscriberPayload[], Error, SubscriberPayload[], ['subscriber'] >) => {
+  return useQuery({
+    queryKey: ['subscriber'],
+    queryFn: async () => {
+      const response = await subscriberService.get();
+      
+      if (response.subscribers) {
+        return response.subscribers;
+      }
+      throw new Error(response.message || 'Failed to fetch subscribers');
+    },
+    retry: 3,
+    staleTime: 5 * 60 * 1000, 
+    ...options,
+  });
+};
+
+export const useGetSubsById = (subscriberId: string) => {
+    
     return useQuery({
         queryKey: ['subscriber'],
         queryFn: async () => {
-           const data = await subscriberService.get()
-            toast.dismiss("LOADING");
-            return data;
-        },
-        retry: 3,
-        ...options,
-    });
-
+            const data = await subscriberService.getById(subscriberId as string)
+            return data
+        }
+    })
 }
 
-
-
 export const useAddSubs = () => {
-      const { setIsButtonPress, meters } = useApp();
-    
     const mutation = useMutation({
         mutationFn: async (payload: SubscriberCreatePayload) => subscriberService.create(payload),
         onSuccess: () => {
@@ -32,7 +43,6 @@ export const useAddSubs = () => {
             queryClient.invalidateQueries({
                 queryKey: ['subscriber']
             })
-            setIsButtonPress(false)
         },
         onError(error) {
             toast.dismiss("LOADING")
@@ -147,3 +157,15 @@ export const useUpdateSub = () => {
         ...mutation
     }
 }
+
+
+// // Search subscribers
+export const useSearchSubscribers = (query: string) => {
+  const debouncedQuery = useDebounce(query, 300)[0];
+  return useQuery<SubscriberPayload[]>({
+    queryKey: ['subscribers', 'search', debouncedQuery],
+    queryFn: () => subscriberService.search(debouncedQuery),
+    enabled: debouncedQuery.length >= 2,
+  });
+};
+

@@ -5,15 +5,13 @@ import { Link, Outlet } from 'react-router-dom';
 import AccountTypeSelector from './select';
 import Register from './register';
 import Login from './login';
-// import { AuthProvider } from './Provider';
-
+import { useApp } from '../../context/ContextProvider';
 
 export const Auth = () => {
-    // const [selectedItem, setSelectedItem] = useState(0);
+    const { accountType, setAccountType } = useApp();
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
     const [backgroundImage, setBackgroundImage] = useState('');
     const [showLogin, setShowLogin] = useState(false);
-    const [accountType, setAccountType] = useState<'sales' | 'zone' | null>(null);
 
     const backgroundImages = [
         require('../../assets/images/background2.png'),
@@ -30,10 +28,7 @@ export const Auth = () => {
             ];
         setBackgroundImage(randomImage);
 
-        // Check if user has saved preference
-        const saved = localStorage.getItem('preferredAccountType') as 'sales' | 'zone' | null;
-        if (saved) {
-            setAccountType(saved);
+        if (accountType) {
             setShowLogin(true);
         }
     }, []);

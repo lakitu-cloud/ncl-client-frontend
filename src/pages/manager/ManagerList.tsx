@@ -165,6 +165,7 @@ export const ManagerList: React.FC = () => {
           ))}
         </tbody>
       </table>
+      
       {isDeleteModalOpen && managerToDelete && (
         <DeleteModal
           managerId={managerToDelete.id}

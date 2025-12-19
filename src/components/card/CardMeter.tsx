@@ -36,13 +36,13 @@ const CardMeter = () => {
             {cardDetails.map((card, index) => {
                 const Icon = card.icon;
                 return (
-                    <div key={index} className="bg-white shadow rounded-lg p-6 flex items-center">
-                        <div className="bg-indigo-700 p-4 rounded">
-                            <Icon className="text-white" />
+                    <div key={index} className="bg-white dark:bg-blackText shadow rounded-lg p-6 flex items-center">
+                        <div className="bg-blueTheme p-4 rounded dark:bg-white">
+                            <Icon className="text-white dark:text-blackText" />
                         </div>
                         <div className="ml-6 text-nowrap">
-                            <h3 className="text-2xl font-bold text-gray-800">{card.value}</h3>
-                            <p className="text-sm text-gray-600">{card.name}</p>
+                            <h3 className="text-2xl font-bold text-gray-800 dark:text-whiteText">{card.value}</h3>
+                            <p className="text-sm text-gray-600 dark:text-whiteText">{card.name}</p>
                         </div>
                     </div>
                 );

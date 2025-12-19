@@ -1,14 +1,17 @@
-import React from "react";
-import MetersPage from "./MeterListPage";
+import React, { useEffect, useState } from "react";
+import MetersPage from "./ZoneMeters";
 import Header from "../../layout/navbar/Header";
 import { useApp } from "../../context/ContextProvider";
 import AddMeterModal from "../../components/modal/addSubscriberModal";
 import CardMeter from "../../components/card/CardMeter";
 import { useAuth } from "../../context/AuthProvider";
+import { SaleMeters } from "./SaleMeters";
 
 const Meters = () => {
-  const { isButtonPress, setIsButtonPress } = useApp();
   const { token } = useAuth();
+  const { accountType, setAccountType } = useApp();
+  const [ role, setRole ] = useState('')
+
 
   return (
     <>
@@ -41,9 +44,10 @@ const Meters = () => {
         </div> */}
         <CardMeter />
         <section className="mt-2">
-          <MetersPage />
+          {accountType === "zone" && (<MetersPage />)}
+          {accountType === "sales" && (<SaleMeters />)}
         </section>
-        {isButtonPress && <AddMeterModal />}
+        {/* {isButtonPress && <AddMeterModal />} */}
       </section>
     </>
   );

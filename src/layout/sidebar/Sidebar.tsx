@@ -20,9 +20,9 @@ const Sidebar: React.FC = () => {
     <>
       <nav
         className="fixed top-0 left-0 overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 
-  text-white lg:w-18 md:w-14 hover:w-56 lg:block md:block sm:hidden xs:hidden h-full border-r z-10 
-  space-y-8 animate-shimmer border-2 border-transparent hover:border-blue-400 transition-all 
-  duration-1000 group dark:bg-gray-200"
+        text-white lg:w-18 md:w-14 hover:w-56 lg:block md:block sm:hidden xs:hidden h-full border-r z-10 
+        space-y-8 animate-shimmer border-2 border-transparent hover:border-blue-400 transition-all 
+        duration-1000 group dark:bg-white"
         style={{
           backgroundSize: "400% 400%",
           backgroundImage:

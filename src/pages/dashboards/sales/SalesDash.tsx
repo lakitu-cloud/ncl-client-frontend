@@ -197,7 +197,7 @@ export const SalesDash = () => {
 
         {/* Middle section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3 mt-6">
-          <div className="relative col-start-1 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all ">
+          <div className="relative col-start-1 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all ">
             {/* Background Image */}
             <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -269,7 +269,7 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 1: Weekly Volume */}
-          <div className="relative col-start-2 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg overflow-hidden p-6 transition-all">
+          <div className="relative col-start-2 row-start-1 col-span-1 row-span-1 border dark:bg-darkTheme border-gray-200 rounded-lg overflow-hidden p-6 transition-all">
             {/* Background Image */}
             <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -334,7 +334,7 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 2: Monthly Volume */}
-          <div className="relative col-start-3 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-3 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
             {/* Background Image */}
             <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -399,7 +399,7 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 3: Annual Volume */}
-          <div className="relative col-start-4 row-start-1 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-4 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
             {/* Background Image */}
             <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -407,10 +407,10 @@ export const SalesDash = () => {
             ></div>
 
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 dark:text-gray-200 text-sm font-medium font-oswald">
                 Annual Volume
               </p>
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
+              <p className="text-4xl font-bold dark:text-whiteText text-gray-900 font-oswald">
                 {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
@@ -452,7 +452,7 @@ export const SalesDash = () => {
                         {previous === 0 && current === 0
                           ? "0%"
                           : `${Math.abs(growth).toFixed(0)}%`}
-                        <span className="text-gray-400 text-xs font-normal ml-1">
+                        <span className="text-gray-400 dark:text-gray-200 text-xs font-normal ml-1">
                           from last year
                         </span>
                       </span>
@@ -463,12 +463,12 @@ export const SalesDash = () => {
             </div>
           </div>
           {/* Card 4: Amount Today */}
-          <div className="relative col-start-1 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-1 row-start-2 col-span-1 row-span-1  border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 dark:text-gray-200 text-sm font-medium font-oswald">
                 Amount Today
               </p>
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
+              <p className="text-4xl font-bold text-gray-900 dark:text-whiteText  font-oswald">
                 TZS{" "}
                 {new Intl.NumberFormat("en-TZ").format(
                   data?.revenue?.today ?? 0
@@ -509,7 +509,7 @@ export const SalesDash = () => {
                         {previous === 0 && current === 0
                           ? "0%"
                           : `${Math.abs(growth).toFixed(0)}%`}
-                        <span className="text-gray-400 text-xs font-normal ml-1">
+                        <span className="text-gray-400 dark:text-gray-200 text-xs font-normal ml-1">
                           Yesterday
                         </span>
                       </span>
@@ -521,12 +521,12 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 5: Amount Weekly */}
-          <div className="relative col-start-2 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-2 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 dark:text-gray-200 text-sm font-medium font-oswald">
                 Amount Weekly
               </p>
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
+              <p className="text-4xl font-bold text-gray-900 dark:text-whiteText font-oswald">
                 TZS{" "}
                 {new Intl.NumberFormat("en-TZ").format(
                   data?.revenue?.thisWeek ?? 0
@@ -567,7 +567,7 @@ export const SalesDash = () => {
                         {previous === 0 && current === 0
                           ? "0%"
                           : `${Math.abs(growth).toFixed(0)}%`}
-                        <span className="text-gray-400 text-xs font-normal ml-1">
+                        <span className="text-gray-400 dark:text-gray-200 text-xs font-normal ml-1">
                           vs last week
                         </span>
                       </span>
@@ -579,12 +579,12 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 6: Amount Monthly */}
-          <div className="relative col-start-3 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 transition-all overflow-hidden">
+          <div className="relative col-start-3 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 transition-all overflow-hidden">
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 text-sm dark:text-gray-20 font-medium font-oswald">
                 Amount Monthly
               </p>
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
+              <p className="text-4xl font-bold dark:text-whiteText text-gray-900 font-oswald">
                 TZS{" "}
                 {new Intl.NumberFormat("en-TZ").format(
                   data?.revenue?.thisMonth ?? 0
@@ -625,7 +625,7 @@ export const SalesDash = () => {
                         {previous === 0 && current === 0
                           ? "0%"
                           : `${Math.abs(growth).toFixed(0)}%`}
-                        <span className="text-gray-400 text-xs font-normal ml-1">
+                        <span className="text-gray-400 dark:text-gray-200 text-xs font-normal ml-1">
                           vs last month
                         </span>
                       </span>
@@ -637,14 +637,14 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 6: Total Water Consumed */}
-          <div className="relative col-start-4 row-start-2 col-span-1 row-span-1 bg-white border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-4 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
             {/* <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url(${tap})` }}></div> */}
 
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 text-sm dark:text-gray-200 font-medium font-oswald">
                 Amount Anually
               </p>
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
+              <p className="text-4xl font-bold dark:text-whiteText text-gray-900 font-oswald">
                 TZS{" "}
                 {new Intl.NumberFormat("en-TZ").format(
                   data?.revenue?.thisYear ?? 0
@@ -685,7 +685,7 @@ export const SalesDash = () => {
                         {previous === 0 && current === 0
                           ? "0%"
                           : `${Math.abs(growth).toFixed(0)}%`}
-                        <span className="text-gray-400 text-xs font-normal ml-1">
+                        <span className="text-gray-400 dark:text-gray-200 text-xs font-normal ml-1">
                           vs last Year
                         </span>
                       </span>

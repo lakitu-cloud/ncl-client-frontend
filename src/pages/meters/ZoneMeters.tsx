@@ -33,7 +33,7 @@ import Jobs from "./Jobs";
 import Setting from "./Setting";
 import { Link } from "react-router-dom";
 
-export default function MetersPage() {
+export default function ZoneMeters() {
   const { data: meters = [], isLoading, isError, error, refetch } = useGetAllMeter();
 
   const [globalFilter, setGlobalFilter] = useState("");
