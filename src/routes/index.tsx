@@ -17,6 +17,7 @@ import Subscribers from '../pages/subscribers';
 import SalesMeterDetails from '../pages/meters/SalesMeterDetails';
 import ZoneMeterDetailPage from '../pages/meters/ZoneMeterDetails';
 import Transaction from '../pages/txs';
+import IntegrationsPage from '../pages/intergration';
 
 const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   const token = Cookies.get('auth');
@@ -40,6 +41,7 @@ export const AppRoutes: React.FC = () => {
         <Route path="/manager/zone/meter/:id" element={<ProtectedRoute><ZoneMeterDetailPage /></ProtectedRoute>} />
         <Route path="manager/zone/managers" element={<ProtectedRoute><Manager /></ProtectedRoute>} />
         <Route path='/manager/zone/manager/:id' element={<ProtectedRoute><ManagerDetailPage /></ProtectedRoute>} />
+        <Route path="/manager/zone/intergration" element={<ProtectedRoute><IntegrationsPage /></ProtectedRoute>}/>
 
         {/* SALES MANAGER ROUTES */}
         <Route path="/manager/sales/dashboard" element={<ProtectedRoute><SalesDash /></ProtectedRoute>} />

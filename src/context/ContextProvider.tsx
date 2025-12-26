@@ -1,14 +1,6 @@
 // ContextProvider.tsx
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { baseUrl } from '../config/urls';
-import { Data } from '../types/context.types';
 
-interface DashboardContextType {
-    data: Data | null;
-    isLoading: boolean;
-    error: unknown;
-}
 
 interface AppContextProps {
     activeTab: string;
@@ -17,7 +9,6 @@ interface AppContextProps {
     setShowTokenTopUpUI: (value: string) => void;
     meters: string[];
     setMeters: React.Dispatch<React.SetStateAction<string[]>>;
-    dashboard: DashboardContextType;
     isButtonPress: boolean;
     setIsButtonPress: React.Dispatch<React.SetStateAction<boolean>>;
     accountType: 'sales' | 'zone' | null;
@@ -47,13 +38,6 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({ children })
         localStorage.setItem('meters', JSON.stringify(meters));
     }, [meters]);
 
-    const { data = null, isLoading, error } = useQuery<Data>({
-        queryKey: ['dashboardData'],
-        // queryFn: fetchDashboardData,
-        refetchOnWindowFocus: true,
-    });
-
-    const dashboard: DashboardContextType = { data, isLoading, error };
 
     return (
         <AppContext.Provider
@@ -64,7 +48,6 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({ children })
                 setShowTokenTopUpUI,
                 meters,
                 setMeters,
-                dashboard,
                 isButtonPress,
                 setIsButtonPress,
                 accountType,

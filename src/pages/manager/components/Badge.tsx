@@ -4,14 +4,14 @@ import { HTMLAttributes } from 'react';
 import { cn } from "../components/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold transition-colors",
+  "inline-flex items-center px-3 py-1 rounded-md text-xs font-semibold transition-colors",
   {
     variants: {
       variant: {
-        default: "bg-indigo-100 text-indigo-800",
+        default: "bg-blue-100 text-blue-800",
         success: "bg-green-100 text-green-800",
         destructive: "bg-red-100 text-red-800",
-        secondary: "bg-gray-100 text-gray-700",
+        secondary: "bg-gray-200 text-gray-700",
         outline: "border border-gray-300 bg-transparent text-gray-700",
       },
     },

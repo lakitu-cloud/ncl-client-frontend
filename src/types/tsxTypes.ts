@@ -1,12 +1,33 @@
-export interface TransactionPayload {
+// export interface TransactionPayload {
+//   id: string;
+//   serial: string;
+//   reference: string;
+//   token: string;
+//   phone: string;
+//   units: number;
+//   method: string;
+//   status: string;
+//   created_at: string;
+//   amount: number;
+// }
+
+
+export type TransactionPayload = {
   id: string;
+  receipt: string;
   serial: string;
-  reference: string;
-  token: string;
-  phone: string;
+  card: string | null;
+  accountNo: string;
   units: number;
-  method: string;
-  status: string;
-  created_at: string;
   amount: number;
-}
+  token: string;
+  status: string;
+  method: string;
+  sys_id: string | null;
+  managerId: string;
+  wakalaId: string | null;
+  subscriberId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: boolean | null;
+};

@@ -1,56 +1,130 @@
-import { ApexOptions } from "apexcharts";
+import React from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { ManagerChartItem } from '../../types/userType'; // adjust path
 
-export const PieSeries = [30, 25, 20, 15, 10];
+interface ManagerDonutChartProps {
+  data: ManagerChartItem[];
+}
 
-// === CURVED LABEL CONNECTORS (SVG) ===
-export const PieLabelConnectors = () => (
-  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 300 300">
-    {/* Video Ads */}
-    <path d="M 150,40 Q 100,70 80,80" fill="none" stroke="#9CA3AF" strokeWidth="1" />
-    <text x="70" y="80" fontSize="11" fill="#4B5563">MOROGORO</text>
+const COLORS = [
+  '#0EA5E9', // sky-500
+  '#3B82F6', // blue-500
+  '#2563EB', // blue-600
+  '#1D4ED8', // blue-700
+  '#1E40AF', // blue-800
+  '#172554', // blue-900
+];
 
-    {/* Affiliate */}
-    <path d="M 80,100 Q 50,120 40,140" fill="none" stroke="#9CA3AF" strokeWidth="1" />
-    <text x="25" y="145" fontSize="11" fill="#4B5563">Affiliate</text>
+type RechartsPieData = ManagerChartItem & { [key: string]: any };
 
-    {/* Email Marketing */}
-    <path d="M 80,200 Q 50,220 40,240" fill="none" stroke="#9CA3AF" strokeWidth="1" />
-    <text x="25" y="245" fontSize="11" fill="#4B5563">Email Marketing</text>
+export default function ManagerDonutChart({ data }: ManagerDonutChartProps) {
+  const rechartsData: RechartsPieData[] = data; // safe cast – we only use known keys
 
-    {/* Search Engine */}
-    <path d="M 220,200 Q 250,220 260,240" fill="none" stroke="#9CA3AF" strokeWidth="1" />
-    <text x="220" y="245" fontSize="11" fill="#4B5563">Search Engine</text>
+  const totalSubscribers = data.reduce((sum, m) => sum + m.subscribers, 0);
 
-    {/* Direct */}
-    <path d="M 220,80 Q 250,100 260,120" fill="none" stroke="#9CA3AF" strokeWidth="1" />
-    <text x="220" y="125" fontSize="11" fill="#4B5563">Direct</text>
-  </svg>
-);
+  const RADIAN = Math.PI / 180;
 
-// === PIE CHART ===
-export const PieOptions: ApexOptions = {
-  chart: { type: 'donut', height: 300 },
-  labels: ['MOROGORO', 'MVOMERO', 'ULANGA', 'MVOMERO', 'MALINYI', "GAIRO", "KILOMBERO", "KILOSA"],
-  colors: ['#3B82F6', '#F59E0B', '#10B981', '#06B6D4', '#EF4444'],
-  legend: { show: false },
-  dataLabels: { enabled: false },
-  
-  plotOptions: {
-    pie: {
-      donut: {
-        size: '68%',
-        labels: {
-          show: true,
-          total: {
-            show: true,
-            label: 'Total',
-            fontSize: '14px',
-            color: '#6B7280',
-            formatter: () => '100%',
-          },
-        },
-      },
-    },
-  },
-  tooltip: { y: { formatter: (v) => `${v}%` } },
-};
+  const renderCustomLabel = ({
+    cx,
+    cy,
+    midAngle,
+    innerRadius,
+    outerRadius,
+    percent,
+    index,
+  }: any) => {
+    const radius = innerRadius + (outerRadius - innerRadius) * 1.3;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    const manager = rechartsData[index];
+
+    return (
+      <g>
+        <text
+          x={x}
+          y={y}
+          fill="#1F2937"
+          textAnchor={x > cx ? 'start' : 'end'}
+          dominantBaseline="central"
+          className="font-oswald font-bold text-2xl drop-shadow-sm"
+        >
+          {`${(percent * 100).toFixed(0)}%`}
+        </text>
+
+        <text
+          x={x}
+          y={y + 28}
+          fill="#4B5563"
+          textAnchor={x > cx ? 'start' : 'end'}
+          dominantBaseline="central"
+          className="font-oswald font-semibold text-lg uppercase tracking-wider"
+        >
+          {manager.name}
+        </text>
+      </g>
+    );
+  };
+
+  return (
+    <ResponsiveContainer width="100%" height={380}>
+      <PieChart margin={{ top: 20, right: 40, left: 40, bottom: 80 }}>
+        <Pie
+          data={rechartsData}
+          cx="50%"
+          cy="50%"
+          labelLine={{ stroke: '#9CA3AF', strokeWidth: 2 }}
+          label={renderCustomLabel}
+          outerRadius={140}
+          innerRadius={80}
+          dataKey="subscribers"
+          paddingAngle={3}
+        >
+          {rechartsData.map((_, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+
+        {/* Center Total */}
+        <text
+          x="50%"
+          y="38%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="font-oswald font-bold text-3xl fill-gray-800"
+        >
+          {totalSubscribers.toLocaleString()}
+        </text>
+        <text
+          x="50%"
+          y="48%"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          className="font-oswald font-medium text-sm fill-gray-600 uppercase tracking-wider"
+        >
+          Total Subscribers
+        </text>
+
+        {/* Fixed Tooltip formatter */}
+        <Tooltip
+          contentStyle={{
+              backgroundColor: '#ffffff',
+              border: 'none',
+              borderRadius: '12px',
+              boxShadow: '0 10px 25px -5px rgba(0,0,0,0.12)',
+              padding: '12px 16px',
+            }}
+            labelStyle={{
+              fontFamily: 'Oswald, sans-serif',
+              fontWeight: 600,
+              color: '#111827',
+              textTransform: 'uppercase',
+            }}
+            formatter={(value: number | undefined) =>
+              value ? `${value.toLocaleString()} subscribers` : '0'
+            }
+        />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+}

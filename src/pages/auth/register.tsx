@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 interface RegisterProps {
   accountType: 'sales' | 'zone';
@@ -18,66 +19,43 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
   const [isPasswordHidden, setPasswordHidden] = useState(true);
   const [isConfirmPasswordHidden, setConfirmPasswordHidden] = useState(true);
 
-  const [isError, setIsError] = useState('');
   const [isSuccess, setIsSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const navigate = useNavigate();
+  const { mutate, isPending, isError, error } = useRegister();
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setIsError('');
     setIsSuccess('');
 
     // Basic validation
     if (!full_name || !email || !phone || !password || !confirm_password) {
-      setIsError('All fields are required');
+      toast.error('All fields are required');
       setIsLoading(false);
       return;
     }
 
     if (password !== confirm_password) {
-      setIsError('Passwords do not match');
+      toast.error('Passwords do not match');
       setIsLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setIsError('Password must be at least 6 characters');
+      toast.error('Password must be at least 6 characters');
       setIsLoading(false);
       return;
     }
 
-    try {
-      // Replace with your actual API endpoint
-      // const baseUrl = 'https://your-api.com/api';
-      // const response = await fetch(`${baseUrl}/register`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     full_name,
-      //     email,
-      //     phone,
-      //     password,
-      //     role: accountType.toUpperCase(), // e.g., "SALES" or "ZONE"
-      //   }),
-      // });
-
-      // const data = await response.json();
-
-      // Mock success for now
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API
-
-      setIsSuccess('Registration successful! Redirecting...');
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1500);
-    } catch (err) {
-      setIsError('Registration failed. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    mutate({
+      name: full_name.trim(),
+      email: email.toLowerCase().trim(),
+      phone: phone.trim(),
+      password,
+      accountType,
+    });
   };
 
   return (

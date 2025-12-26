@@ -1,3 +1,5 @@
+import { SubscriberPayload } from "./subscriberTypes";
+
 export interface CreateManagerPayload {
   name: string;
   phone: string;
@@ -47,6 +49,7 @@ export interface Manager {
   district: string,
   ppu: number,
   meters: Meters[]
+  subscribers: SubscriberPayload[]
   createdAt: string,
 }
 

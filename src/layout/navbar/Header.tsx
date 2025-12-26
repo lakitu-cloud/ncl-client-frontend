@@ -49,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         setIsLanguageDropdownOpen(false)
     }
 
-    const role = Cookies.get('role');
+    const role = localStorage.getItem('prefferedAccountType') as string
 
     const refreshPage = () => {
         window.location.reload();

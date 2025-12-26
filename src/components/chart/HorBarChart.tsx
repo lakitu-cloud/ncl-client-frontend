@@ -1,40 +1,142 @@
-import { ApexOptions } from "apexcharts";
+// src/components/ManagerPerformanceBar.tsx
 
-export const BarSeries = [{ name: 'Spending', data: [87, 76, 68, 54, 23, 20] }];
+'use client';
 
+import React from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
+import { ManagerChartItem } from '../../types/userType';
 
-// === HORIZONTAL BAR CHART ===
-export const BarOptions: ApexOptions = {
-  chart: { type: 'bar', height: 300, toolbar: { show: false } },
-  plotOptions: {
-    bar: {
-      borderRadius: 8,
-      horizontal: true,
-      barHeight: '60%',
-      distributed: true,
-      dataLabels: { position: 'center' },
-    },
-  },
-  colors: ['#3B82F6'],
-  dataLabels: {
-    enabled: true,
-    textAnchor: 'middle',
-    style: { colors: ['#FFFFFF'], fontSize: '13px', fontWeight: 600 },
-    offsetX: 0,
-    formatter: (val) => `$${val}K`,
-  },
-  xaxis: {
-    categories: ['NGERENGERE', 'MVOMERO', 'KILOMBERO', 'KILOSA', 'MALINYI', "GAIRO"],
-    labels: { show: false },
-  },
-  yaxis: {
-    labels: {
-      style: { colors: '#374151', fontSize: '13px', fontWeight: 500 },
-      align: 'left',
-      offsetX: -15,
-    },
-  },
-  grid: { show: false },
-  tooltip: { enabled: false },
-  states: { hover: { filter: { type: 'none' } } },
+interface ManagerPerformanceBarProps {
+  data: ManagerChartItem[];
+}
+
+const BLUE_SHADES = {
+  meters: '#3B82F6',    // blue-500 – bright for meters
+  revenue: '#1D4ED8',   // blue-700 – darker for revenue contrast
 };
+
+export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarProps) {
+  const chartData = data.map((manager) => ({
+    name: manager.name.toUpperCase(),
+    meters: manager.meters,
+    revenue: manager.revenue,
+  }));
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white p-5 rounded-xl shadow-2xl border border-gray-100">
+          <p className="font-oswald font-bold text-xl text-gray-900 uppercase mb-2">{label}</p>
+          {payload.map((entry: any) => (
+            <p
+              key={entry.name}
+              className="text-base font-oswald font-medium mt-1"
+              style={{ color: entry.color }}
+            >
+              {entry.name === 'Revenue (TZS)'
+                ? `TZS ${entry.value.toLocaleString()}`
+                : `${entry.value.toLocaleString()} meters`}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div className="w-full">
+      <ResponsiveContainer width="100%" height={380}> {/* Same height as pie */}
+        <BarChart
+          data={chartData}
+          margin={{ top: 20, right: 40, left: 40, bottom: 80 }}
+          barSize={50} // Bigger, bolder bars
+        >
+          <CartesianGrid strokeDasharray="4 4" stroke="#E5E7EB" opacity={0.6} />
+
+          {/* X Axis – Manager Names */}
+          <XAxis
+            dataKey="name"
+            angle={-45}
+            textAnchor="end"
+            height={90}
+            tick={{ fontFamily: 'Oswald', fontSize: 15, fill: '#4B5563', fontWeight: 500 }}
+          />
+
+          {/* Left Y Axis – Meters (whole numbers only) */}
+          <YAxis
+            yAxisId="meters"
+            orientation="left"
+            stroke={BLUE_SHADES.meters}
+            domain={[0, 'dataMax + 20']} // slight padding above max
+            tick={{ fontFamily: 'Oswald', fontSize: 14, fill: '#4B5563' }}
+            tickFormatter={(value) => Math.round(value).toLocaleString()}
+            label={{
+              value: 'Total Meters',
+              angle: -90,
+              position: 'insideLeft',
+              offset: -10,
+              style: { fontFamily: 'Oswald', fontWeight: 600, fontSize: 16, fill: BLUE_SHADES.meters },
+            }}
+          />
+
+          {/* Right Y Axis – Revenue (starts ~100K range) */}
+          <YAxis
+            yAxisId="revenue"
+            orientation="right"
+            stroke={BLUE_SHADES.revenue}
+            domain={[100000, 'dataMax + 200000']} // starts around 100K, pads above
+            tick={{ fontFamily: 'Oswald', fontSize: 14, fill: '#4B5563' }}
+            tickFormatter={(value) => `TZS ${Math.round(value / 1000)}K`}
+            label={{
+              value: 'Revenue (TZS)',
+              angle: 90,
+              position: 'insideRight',
+              offset: -10,
+              style: { fontFamily: 'Oswald', fontWeight: 600, fontSize: 16, fill: BLUE_SHADES.revenue },
+            }}
+          />
+
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }} />
+
+          {/* <Legend
+            verticalAlign="top"
+            height={40}
+            wrapperStyle={{ paddingBottom: '20px' }}
+            iconType="rect"
+            formatter={(value) => (
+              <span className="font-oswald font-semibold text-gray-700 text-base">{value}</span>
+            )}
+          /> */}
+
+          {/* Meters Bar – Left Axis */}
+          <Bar
+            yAxisId="meters"
+            dataKey="meters"
+            fill={BLUE_SHADES.meters}
+            radius={[12, 12, 0, 0]}
+            name="Total Meters"
+          />
+
+          {/* Revenue Bar – Right Axis */}
+          <Bar
+            yAxisId="revenue"
+            dataKey="revenue"
+            fill={BLUE_SHADES.revenue}
+            radius={[12, 12, 0, 0]}
+            name="Revenue (TZS)"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}

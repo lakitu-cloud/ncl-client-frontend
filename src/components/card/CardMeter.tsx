@@ -2,10 +2,18 @@ import { HiCube, HiClock, HiCurrencyDollar, HiChartBar } from 'react-icons/hi';
 import { useApp } from '../../context/ContextProvider';
 
 const CardMeter = () => {
-    const { dashboard } = useApp();
-    const { data } = dashboard;
+    const data = {
+        transaction: {
+            total_units: 0,
+            total_revenue: 0
+        },
+        meter: {
+            total: 0,
+            inactive: 0,
+            active: 0,
 
-    console.log(data);
+        }
+    }
 
     // Define card details and icon mapping
     const cardDetails = [

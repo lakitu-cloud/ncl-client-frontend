@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { Copy, Check, Edit2, X, Save, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Header from '../../layout/navbar/Header';
-import { useGetMeterById,  } from '../../hooks/useMeter'; // we'll create update hook
+import { useGetMeterById, } from '../../hooks/useMeter'; // we'll create update hook
 import { Meter } from '../../types/meterTypes';
 import Assign from './Assign';
 import { IoCreateOutline, IoSettingsOutline, IoTrashOutline } from 'react-icons/io5';
@@ -138,7 +138,7 @@ export default function SalesMeterDetail() {
                     type="text"
                     value={editedMeter.name || ''}
                     onChange={(e) => setEditedMeter(prev => ({ ...prev, name: e.target.value }))}
-                    className="text-xl font-bold font-oswald uppercase text-gray-800 border-b-2 border-blue-500 focus:outline-none"
+                    className="text-xl font-bold font-oswald uppercase dark:text-whiteText  text-gray-800 border-b-2 border-blue-500 focus:outline-none"
                     placeholder="Meter description"
                   />
                 ) : (
@@ -182,7 +182,7 @@ export default function SalesMeterDetail() {
             <h3 className="text-lg font-semibold text-gray-800 dark:text-whiteText mb-4 uppercase font-oswald">GENERAL INFORMATION</h3>
             <div className="space-y-5 text-sm font-poppins">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600 dark:text-whiteText font-medium">Serial Number</span>
+                <span className="text-gray-600 dark:text-whiteText font-semibold">Serial Number</span>
                 <div className="flex items-center gap-2">
                   <span className="font-bold">{meter.serial}</span>
                   <button onClick={() => handleCopy(meter.serial, 'serial')}>
@@ -278,14 +278,14 @@ export default function SalesMeterDetail() {
             <div className='mb-8 flex justify-between items-center px-4'>
 
               <div>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-whiteText font-oswald">Meter Overview</h2>
-              <p className="text-gray-600 dark:text-whiteText mt-2 text-sm  ">
-                Serial: <span className="font-poppins font-bold">{meter.serial}</span> • Managed by Sales Team
-              </p>
-              
-            </div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-whiteText font-oswald">Meter Overview</h2>
+                <p className="text-gray-600 dark:text-whiteText mt-2 text-sm  ">
+                  Serial: <span className="font-poppins font-bold">{meter.serial}</span> • Managed by Sales Team
+                </p>
 
-            <div className="flex items-center gap-3">
+              </div>
+
+              <div className="flex items-center gap-3">
                 <button className="p-3 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
                   <IoCreateOutline className="w-4 h-4 text-indigo-600" />
                 </button>
@@ -298,10 +298,10 @@ export default function SalesMeterDetail() {
               </div>
 
             </div>
-            
+
 
             {/* Assigned Manager */}
-            <Assign 
+            <Assign
               meterId={id!}
               subscriberId={meter.subscriberId}
               onAssignmentChange={() => {
@@ -339,7 +339,7 @@ export default function SalesMeterDetail() {
                     <tbody className="divide-y divide-gray-100">
                       {meter.transactions.map((tx) => (
                         <tr key={tx.id} className="hover:bg-blue-50 transition">
-                          <td className="px-8 py-5 font-mono text-sm">{tx.reference}</td>
+                          <td className="px-8 py-5 font-mono text-sm">{tx.receipt}</td>
                           <td className="px-8 py-5 text-sm text-gray-700">{tx.serial}</td>
                           <td className="px-8 py-5 text-sm">{tx.method}</td>
                           <td className="px-8 py-5 text-sm text-right font-semibold">{tx.units.toFixed(1)}</td>
@@ -347,11 +347,10 @@ export default function SalesMeterDetail() {
                             TSH {tx.amount.toLocaleString()}
                           </td>
                           <td className="px-8 py-5 text-center">
-                            <span className={`inline-block px-4 py-2 rounded-full text-xs font-bold ${
-                              tx.status === 'success' ? 'bg-green-100 text-green-800' :
-                              tx.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-red-100 text-red-800'
-                            }`}>
+                            <span className={`inline-block px-4 py-2 rounded-full text-xs font-bold ${tx.status === 'success' ? 'bg-green-100 text-green-800' :
+                                tx.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-red-100 text-red-800'
+                              }`}>
                               {tx.status.toUpperCase()}
                             </span>
                           </td>

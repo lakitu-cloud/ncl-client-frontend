@@ -1,4 +1,3 @@
-// src/lib/navigation.tsx (or wherever you keep it)
 import Cookies from "js-cookie";
 import React from "react";
 import {
@@ -52,7 +51,7 @@ export const getNavigation = (): NavItem[] => {
      {
       name: "Transactions",
       href: `/manager/transactions`,
-      icon: <IoFlashOutline className="w-6 h-6" />,
+      icon: <IoCashOutline className="w-6 h-6" />,
     },
   ];
 
@@ -75,8 +74,8 @@ export const getNavigation = (): NavItem[] => {
   // Only Zone sees this
   if (isZone) {
     items.push({
-      name: "Reports",
-      href: `${basePath}/reports`,
+      name: "Intergration",
+      href: `${basePath}/intergration`,
       icon: <IoDocumentTextOutline className="w-6 h-6" />,
     });
   }

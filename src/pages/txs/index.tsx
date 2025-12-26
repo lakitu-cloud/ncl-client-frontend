@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../../layout/navbar/Header'
 import { useApp } from '../../context/ContextProvider';
-import { Table } from './Table';
+import TransactionsPage from './TransactionPage';
 
 const Transaction = () => {
     const { isButtonPress, setIsButtonPress } = useApp();
@@ -10,7 +10,7 @@ const Transaction = () => {
     <section>
         <Header title="Transaction Management" />
         <div>
-            <Table/>
+            <TransactionsPage/>
         </div>
     </section>
   )

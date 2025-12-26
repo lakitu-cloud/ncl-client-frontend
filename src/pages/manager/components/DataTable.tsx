@@ -30,16 +30,16 @@ export function DataTable<TData>({ columns, data, className }: DataTableProps<TD
   });
 
   return (
-    <div className={cn("rounded-2xl border border-gray-200 bg-white overflow-hidden", className)}>
+    <div className={cn("rounded-md border border-gray-200 dark:bg-blackText dark:border-gray-700 overflow-hidden", className)}>
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
+          <thead className="dark:bg-blackText dark:border-gray-700 border-b border-gray-200">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition"
+                    className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-whiteText uppercase tracking-wider cursor-pointer hover:bg-gray-100 dark:hover:bg-darkTheme transition"
                     onClick={header.column.getToggleSortingHandler()}
                   >
                     <div className="flex items-center gap-2">
@@ -59,11 +59,11 @@ export function DataTable<TData>({ columns, data, className }: DataTableProps<TD
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                className="hover:bg-indigo-50/50 transition-colors"
+                className="hover:bg-blue-50/50 transition-colors"
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="px-6 py-5 text-sm text-gray-900">

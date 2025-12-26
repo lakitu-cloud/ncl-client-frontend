@@ -18,7 +18,6 @@ export const useGetManagers = () => {
     queryKey: managerKeys.all,
     queryFn: async () => {
       const res = await managerService.getAll();
-      console.log(res)
       return res
     },
     retry: 2,
@@ -31,7 +30,7 @@ export const useManagerById = (id: string) => {
     queryKey: managerKeys.byId(id),
     queryFn: async () => {
       const res = await managerService.getById(id);
-      return res
+      return res.manager
     },
     placeholderData: (keepPreviousData) => keepPreviousData,
 
@@ -204,3 +203,15 @@ export const useSalesLogin = () => {
     isLoading: mutation.status === "pending"
   }
 }
+
+export const useDash = () => {
+  return useQuery({
+    queryKey: managerKeys.all,
+    queryFn: async () => {
+      const res = await managerService.dashboard();
+      return res
+    },
+    retry: 2,
+    staleTime: 5 * 60 * 1000,
+  });
+};

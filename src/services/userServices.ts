@@ -1,5 +1,11 @@
+import { apiRequest } from ".";
 import { baseUrl } from "../config/urls";
-import { UserLoginPayload, UserRegistrationPayload } from "../types/user.type";
+import { DashboardData, UserLoginPayload, UserRegistrationPayload } from "../types/userType";
+
+interface DashboardApiResponse {
+  status: 'success';
+  metrics: DashboardData;
+}
 
 export const userService = {
     login: async (payload: UserLoginPayload) => {
@@ -37,5 +43,11 @@ export const userService = {
         })
 
         
+    },
+
+    dashboard: async(): Promise<DashboardApiResponse> => {
+        const res = await apiRequest<DashboardApiResponse>('user/data', 'GET')
+        console.log("form the main source", res.metrics);
+        return res
     }
 }

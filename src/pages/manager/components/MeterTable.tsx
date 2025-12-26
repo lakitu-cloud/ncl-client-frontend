@@ -9,17 +9,20 @@ const columnHelper = createColumnHelper<Meter>();
 
 const columns: ColumnDef<Meter, any>[] = [
   columnHelper.accessor('serial', {
-    header: 'Serial Number',
+    header: 'Meter Number',
     cell: (info) => (
-      <span className="font-mono font-semibold text-indigo-700">
+      <span className="font-poppins font-semibold text-blue-800">
         {info.getValue() || info.row.original.id}
       </span>
     ),
   }),
   columnHelper.accessor('name', {
-    header: 'Subscriber',
-    cell: (info) => info.getValue() || <span className="text-gray-400">—</span>,
-  }),
+    header: 'Customer',
+    cell: (info) => 
+      <span className='text-gray-600 font-poppins dark:text-whiteText'>
+        {( info.getValue() || "-" )}
+      </span>  }),
+
   columnHelper.accessor('status', {
     header: 'Status',
     cell: (info) => (
@@ -31,13 +34,13 @@ const columns: ColumnDef<Meter, any>[] = [
   columnHelper.accessor('phone', {
     header: 'Units Sold',
     cell: (info) => (
-      <span className="font-medium">{(info.getValue() || 0).toFixed(1)} kWh</span>
+      <span className="font-medium text-gray-600 dark:text-whiteText font-poppins">{(info.getValue() || 0).toFixed(1)} m3</span>
     ),
   }),
   columnHelper.accessor('installedAt', {
-    header: 'Revenue',
+    header: 'Installed Date',
     cell: (info) => (
-      <span className="font-bold text-green-600">
+      <span className="font-medium font-poppins text-gray-600 dark:text-whiteText">
         {(info.getValue() || 0).toLocaleString()} TZS
       </span>
     ),
@@ -45,7 +48,7 @@ const columns: ColumnDef<Meter, any>[] = [
   columnHelper.accessor('createdAt', {
     header: 'Added On',
     cell: (info) =>
-      info.getValue() ? format(new Date(info.getValue()!), 'dd MMM yyyy') : '—',
+      <span className='font-medium font-poppins text-gray-600 dark:text-whiteText'>{( info.getValue() ? format(new Date(info.getValue()!), 'dd MMM yyyy') : '—' )}</span>
   }),
 ];
 
@@ -55,7 +58,7 @@ interface MetersTableProps {
 
 export const MetersTable = ({ meters }: MetersTableProps) => {
   return meters.length === 0 ? (
-    <div className="text-center py-16 text-gray-500">
+    <div className="text-center py-16 text-gray-500 ">
       <p className="text-lg">No meters assigned to this manager yet.</p>
     </div>
   ) : (

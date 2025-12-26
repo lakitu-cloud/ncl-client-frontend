@@ -3,13 +3,13 @@ import React, { useState } from 'react';
 import { useManagerById } from '../../hooks/useManager';
 import {
   IoPeopleOutline,
-  IoCheckmarkCircle,
   IoTrashOutline,
   IoSettingsOutline,
   IoCreateOutline,
   IoAnalyticsOutline,
   IoDocumentTextOutline,
   IoPersonOutline,
+  IoCodeWorkingOutline,
 } from 'react-icons/io5';
 import { format } from 'date-fns';
 import { Link, useParams } from 'react-router-dom';
@@ -64,55 +64,55 @@ export const ManagerDetailPage = () => {
 
       <div className="flex h-screen">
         {/* LEFT SIDEBAR - Fixed, Full Height, Scrollable */}
-        <aside className="w-80 border-r border-gray-400 flex flex-col overflow-y-auto">
+        <aside className="w-80 border-r border-gray-400 dark:border-gray-700 flex flex-col overflow-y-auto">
           {/* Profile Section */}
-          <div className="p-8 border-b border-gray-200">
+          <div className="p-8 border-b border-gray-200 dark:border-gray-700">
             <div className="flex flex-col items-center text-center">
               <div className="relative mb-5">
-                <div className="w-32 h-32 uppercase font-oswald bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-5xl font-bold shadow-xl">
+                <div className="w-32 h-32 uppercase font-oswald bg-gradient-to-br from-blueTheme to-blue-800 rounded-full flex items-center justify-center text-white text-5xl font-bold shadow-xl">
                   {manager.name
                     .split(' ')
                     .map((n) => n[0])
                     .join('')
                     .toUpperCase()}
                 </div>
-                <div className="absolute bottom-0 right-0 w-12 h-12 bg-green-500 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
+                {/* <div className="absolute bottom-0 right-0 w-12 h-12 bg-green-500 rounded-full border-4 border-white flex items-center justify-center shadow-lg">
                   <IoCheckmarkCircle className="w-8 h-8 text-white" />
-                </div>
+                </div> */}
               </div>
 
-              <h2 className="text-2xl uppercase font-oswald font-bold text-gray-900">{manager.name}</h2>
-              <p className="text-indigo-600 uppercase font-poppins font-bold mt-1">Sales Manager</p>
+              <h2 className="text-2xl uppercase font-oswald font-bold text-blackText dark:text-whiteText">{manager.name}</h2>
+              <p className="text-blueTheme dark:text-blue-600 uppercase font-poppins font-bold mt-1">Sales Manager</p>
 
             </div>
           </div>
 
           {/* Basic Information */}
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2 font-oswald">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg uppercase font-semibold text-gray-800 dark:text-whiteText mb-6 flex items-center gap-2 font-oswald">
               General Information
             </h3>
 
-            <dl className="space-y-4 text-sm font-poppins">
+            <dl className="space-y-4 text-sm text-blackText dark:text-whiteText font-poppins">
               <div className="flex item-center justify-between">
-                <dt className="text-gray-800 font-semibold">Phone</dt>
-                <dd className="font-medium text-gray-900 mt-1">{manager.phone}</dd>
+                <dt className=" font-medium">Phone</dt>
+                <dd className="font-medium mt-1">{manager.phone}</dd>
               </div>
 
               <div className="flex item-center justify-between">
-                <dt className="text-gray-800 font-semibold">Service Area</dt>
-                <dd className="font-medium text-gray-900 mt-1">
+                <dt className="font-medium">Service Area</dt>
+                <dd className="font-medium mt-1">
                   {manager.ward}, {manager.district}
                 </dd>
               </div>
               <div className="flex item-center justify-between">
-                <div className='text-gray-800 font-semibold'>Region</div>
+                <div className='font-medium'>Region</div>
                 <div>{manager.region}</div>
               </div>
 
               <div className="flex item-center justify-between">
-                <dt className="text-gray-800 font-semibold">Registered</dt>
-                <dd className="font-medium text-gray-900 mt-1">
+                <dt className="font-medium">Registered</dt>
+                <dd className="font-medium mt-1">
                   {manager.createdAt ? format(new Date(manager.createdAt), 'dd MMM yyyy') : '—'}
                 </dd>
               </div>
@@ -120,25 +120,25 @@ export const ManagerDetailPage = () => {
           </div>
 
           {/* Financial & Performance */}
-          <div className="p-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2 font-oswald">
+          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 className="text-lg uppercase font-semibold text-gray-800 dark:text-whiteText mb-6 flex items-center gap-2 font-oswald">
               Financial Summary
             </h3>
 
-             <dl className="space-y-4 text-sm font-poppins">
+             <dl className="space-y-4 text-sm text-blackText dark:text-whiteText font-poppins">
               <div className="flex item-center justify-between">
-                <dt className="text-gray-500">Total Revenue</dt>
-                <dd className="font-medium text-gray-900 mt-1">{manager.phone}</dd>
+                <dt className="font-medium">Total Revenue</dt>
+                <dd className="font-medium mt-1">{manager.phone}</dd>
               </div>
 
               <div className="flex item-center justify-between">
-                <dt className="text-gray-500">Revenue Today</dt>
-                <dd className="font-medium text-gray-900 mt-1">
+                <dt className="font-medium">Revenue Today</dt>
+                <dd className="font-medium mt-1">
                   50500 TZS
                 </dd>
               </div>
               <div className="flex item-center justify-between">
-                <div className='font-semibold'>Price per Unit</div>
+                <div className='font-medium'>Price per Unit</div>
                 <div>{manager.region}</div>
               </div>
             </dl>
@@ -146,24 +146,24 @@ export const ManagerDetailPage = () => {
             
             {/* Performance anaylsis */}
           <div className="p-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2 font-oswald">
+            <h3 className="text-lg uppercase font-semibold text-gray-800 dark:text-whiteText mb-6 flex items-center gap-2 font-oswald">
               Zone Performance 
             </h3>
 
-             <dl className="space-y-4 text-sm font-poppins">
+             <dl className="space-y-4 text-sm text-blackText dark:text-whiteText font-poppins">
               <div className="flex item-center justify-between">
-                <dt className="text-gray-500">Total Customers</dt>
-                <dd className="font-medium text-gray-900 mt-1">54</dd>
+                <dt className="font-medium">Total Customers</dt>
+                <dd className="font-medium mt-1">54</dd>
               </div>
 
               <div className="flex item-center justify-between">
-                <dt className="text-gray-500">Total Meters</dt>
-                <dd className="font-medium text-gray-900 mt-1">
+                <dt className="font-medium">Total Meters</dt>
+                <dd className="font-medium mt-1">
                   50500 Units
                 </dd>
               </div>
               <div className="flex item-center justify-between">
-                <div className='font-semibold'>Volume Consumed</div>
+                <div className='font-medium'>Volume Consumed</div>
                 <div>5034 m3</div>
               </div>
             </dl>
@@ -172,36 +172,36 @@ export const ManagerDetailPage = () => {
         </aside>
 
         {/* MAIN CONTENT AREA */}
-        <main className="flex-1 overflow-y-auto bg-gray-50">
+        <main className="flex-1 overflow-y-auto">
           <div className="max-w-full px-12 py-8">
             {/* Page Header with Actions */}
             <div className="flex items-center justify-between mb-4">
-              <h1 className="text-2xl font-oswald font-bold text-gray-900">Manager Details</h1>
+              <h1 className="text-2xl font-oswald font-bold text-blackText dark:text-whiteText uppercase">Manager Details</h1>
 
               <div className="flex items-center gap-3">
-                <button className="p-3 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
+                <button className="p-3 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition">
                   <IoCreateOutline className="w-4 h-4 text-indigo-600" />
                 </button>
-                <button className="p-3 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 transition">
-                  <IoSettingsOutline className="w-4 h-4 text-gray-600" />
+                <button className="p-3 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition">
+                  <IoCodeWorkingOutline className="w-4 h-4 text-gray-600" />
                 </button>
-                <button className="p-3 bg-red-500 text-white rounded-xl hover:bg-red-600 transition">
+                <button className="p-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition">
                   <IoTrashOutline className="w-4 h-4" />
                 </button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="mb-4 border-b border-default">
+            <div className="mb-4 border-b dark:border-gray-700">
               <nav className="flex flex-wrap -mb-px text-sm font-medium text-center font-poppins">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`inline-block p-4 border-b-2 rounded-t-base text-gray-800 ${
+                    className={`inline-block p-4 border-b-2 rounded-t-base text-gray-800 dark:text-whiteText ${
                       activeTab === tab.id
-                        ? 'text-indigo-600 border-indigo-600'
-                        : 'text-gray-500 border-transparent hover:text-gray-700'
+                        ? 'text-blueTheme border-blue-600'
+                        : 'text-gray-500 border-transparent dark:border-gray-700 hover:text-gray-400'
                     }`}
                   >
                     <span>{tab.label}</span>
@@ -211,10 +211,10 @@ export const ManagerDetailPage = () => {
             </div>
 
             {/* Tab Content */}
-            <div className="mt-8">
+            <div className="mt-8 ">
               {activeTab === 'meters' && <MetersTable meters={manager?.meters || []} />}
 
-              {activeTab === 'subscribers' && <SubscribersTable />}
+              {activeTab === 'subscribers' && <SubscribersTable subscribers={manager?.subscribers}/>}
               {activeTab === 'reports' && <ReportsTab />}
               {activeTab === 'analysis' && <AnalysisTab />}
               {activeTab === 'settings' && <SettingsTab />}

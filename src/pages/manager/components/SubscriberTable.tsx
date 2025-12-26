@@ -2,31 +2,34 @@
 import { ColumnDef, createColumnHelper } from '@tanstack/react-table';
 import { DataTable } from '../components/DataTable';
 import { Badge } from '../components/Badge';
+import { SubscriberPayload } from '../../../types/subscriberTypes';
 
-interface Subscriber {
-  id: string;
-  name: string;
-  phone: string;
-  meterCount: number;
-  totalSpent: number;
-  status: 'active' | 'inactive' | 'suspended';
-}
+// interface Subscriber {
+//   id: string;
+//   name: string;
+//   phone: string;
+//   meterCount: number;
+//   totalSpent: number;
+//   status: 'active' | 'inactive' | 'suspended';
+// }
 
-const columnHelper = createColumnHelper<Subscriber>();
+const columnHelper = createColumnHelper<SubscriberPayload>();
 
-const columns: ColumnDef<Subscriber, any>[] = [
+const columns: ColumnDef<SubscriberPayload, any>[] = [
   columnHelper.accessor('name', {
     header: 'Name',
-    cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+    cell: (info) => <span className="font-medium font-poppins text-gray-600 dark:text-whiteText">{info.getValue()}</span>,
   }),
   columnHelper.accessor('phone', {
     header: 'Phone',
-    cell: (info) => <span className="font-mono">{info.getValue()}</span>,
+    cell: (info) => <span className="font-poppins  font-medium text-gray-600 dark:text-whiteText">{info.getValue()}</span>,
   }),
-  columnHelper.accessor('meterCount', {
-    header: 'Meters',
-    cell: (info) => <Badge variant="outline">{info.getValue()}</Badge>,
+
+  columnHelper.accessor('location', {
+    header: 'Description',
+    cell: (info) => <Badge variant="outline" className='font-medium font-poppins text-gray-600 dark:text-whiteText dark-border-gray-700'>{info.getValue()}</Badge>,
   }),
+
   columnHelper.accessor('status', {
     header: 'Status',
     cell: (info) => (
@@ -43,22 +46,26 @@ const columns: ColumnDef<Subscriber, any>[] = [
       </Badge>
     ),
   }),
-  columnHelper.accessor('totalSpent', {
-    header: 'Total Spent',
-    cell: (info) => (
-      <span className="font-bold text-green-600">
-        {info.getValue().toLocaleString()} TZS
-      </span>
-    ),
-  }),
+  // columnHelper.accessor('totalSpent', {
+  //   header: 'Total Spent',
+  //   cell: (info) => (
+  //     <span className="font-bold text-green-600">
+  //       {info.getValue().toLocaleString()} TZS
+  //     </span>
+  //   ),
+  // }),
 ];
 
-const mockSubscribers: Subscriber[] = [
-  { id: '1', name: 'Amina Juma', phone: '+255 712 345 678', meterCount: 3, totalSpent: 2450000, status: 'active' },
-  { id: '2', name: 'John Kweka', phone: '+255 789 123 456', meterCount: 1, totalSpent: 980000, status: 'active' },
-  { id: '3', name: 'Fatma Ali', phone: '+255 655 987 654', meterCount: 2, totalSpent: 1670000, status: 'suspended' },
-];
+interface SubscriberTableProps {
+  subscribers: SubscriberPayload[];
+}
 
-export const SubscribersTable = () => {
-  return <DataTable columns={columns} data={mockSubscribers} />;
+export const SubscribersTable = ({ subscribers }: SubscriberTableProps) => {
+  return subscribers.length === 0 ? ( 
+    <div className="text-center py-16 text-gray-500">
+      <p className="text-lg">No meters assigned to this manager yet.</p>
+    </div> 
+    ) : ( 
+      <DataTable columns={columns} data={subscribers} /> 
+    )
 };

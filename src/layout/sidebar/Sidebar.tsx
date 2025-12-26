@@ -31,18 +31,19 @@ const Sidebar: React.FC = () => {
         }}
       >
         <div className="flex flex-col h-full mt-2">
-          <div className="flex items-center">
-            {/* <Link to={role === "zone" ? "manager/sales/dashboard": "manager/zone/dashboard"} className="flex items-center -ml-2 mb-4"> */}
-              <Logo
-                width={82}
-                height={82}
-                color="white"
-                className="text-white p-2 duration-300 transition-all hover:scale-110 overflow-x-hidden font-oswald"
-              />
-              <p className=" ml-2 font-bold text-2xl text-white font-oswald dark:text-white hidden lg:block lg:group-hover:block uppercase">
-                Nyirendas
-              </p>
-            {/* </Link> */}
+          <div className="flex items-center justify-center h-24 "> {/* Added justify-center for collapsed state */}
+            <Logo
+              width={72}
+              height={72}
+              color="white"
+              className="text-white"
+            />
+
+          {/* Brand Name - visible only on hover (when expanded) */}
+          {/* <p className="ml-4 font-bold text-2xl text-white font-oswald uppercase whitespace-nowrap 
+                         opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+            Nyirendas
+          </p> */}
           </div>
 
           {/* <div className=" border-b-[1px]"></div> */}
@@ -69,7 +70,7 @@ const Sidebar: React.FC = () => {
                 <li>
                   <a className="flex items-center gap-x-2 text-gray-600 p-2 rounded-lg">
                     <div className="text-gray-500">
-                        {/* @ts-ignore */}
+                      {/* @ts-ignore */}
                       <IoHelpCircleOutline className="w-6 h-6" />
                     </div>
                   </a>
@@ -80,7 +81,7 @@ const Sidebar: React.FC = () => {
                     className="flex items-center gap-x-2 text-gray-600 p-2 rounded-lg"
                   >
                     <div className="text-gray-500">
-                        {/* @ts-ignore */}
+                      {/* @ts-ignore */}
                       <IoSettingsOutline className="w-6 h-6" />
                     </div>
                   </a>
@@ -92,7 +93,7 @@ const Sidebar: React.FC = () => {
                     className="flex items-center gap-x-2 text-gray-600 p-2 rounded-lg"
                   >
                     <div className="text-gray-500">
-                        {/* @ts-ignore */}
+                      {/* @ts-ignore */}
                       <IoLogOutOutline className="w-6 h-6" />
                     </div>
                   </a>

@@ -1,6 +1,7 @@
 // services/managerService.ts
 import { apiRequest } from ".";
 import { CreateManagerPayload, Manager, ManagerLoginPayload, UpdateManagerPayload } from "../types/managerType";
+import { SubscriberPayload } from "../types/subscriberTypes";
 
 export interface ApiResponse<T = any> {
   status: "success" | "error";
@@ -21,10 +22,9 @@ export const managerService = {
     return await apiRequest<ApiResponse>("manager", "POST", payload);
   },
 
-  getById: async (id: string): Promise<Manager> => {
-    const res = await apiRequest<ApiResponse<{ manager: Manager }>>(`manager/${id}`, "GET");
-    if (res.manager) return res.manager;
-    throw new Error("Manager not found");
+  getById: async (id: string) => {
+    const res = await apiRequest<ApiResponse<{status: string, manager: Manager[] }>>(`manager/${id}`, "GET");
+    return res;
   },
 
   delete: async (id: string): Promise<ApiResponse> => {
@@ -40,5 +40,9 @@ export const managerService = {
   update: async(id: string, payload: UpdateManagerPayload): Promise<ApiResponse> => {
     const res = await apiRequest<ApiResponse>(`manager/${id}`, 'PUT', payload)
     return res
+  },
+
+  dashboard: async(): Promise<any> => {
+    const res = await apiRequest<any>('manager/data', 'GET')
   }
 };

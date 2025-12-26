@@ -3,8 +3,14 @@ import { HiCube } from 'react-icons/hi';
 import { useApp } from '../../context/ContextProvider';
 
 const CardSubscriber = () => {
-      const { dashboard } = useApp();
-        const { data } = dashboard;
+      const data = {
+        subscriber: {
+            total: 0,
+            active: 0,
+            postpaid: 0,
+            inactive: 0
+        }
+      }
 
    
     return (

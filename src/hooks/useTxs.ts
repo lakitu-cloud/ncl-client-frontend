@@ -4,9 +4,9 @@ import { TransactionPayload } from "../types/tsxTypes";
 import { transactionService } from "../services/transactionService";
 
 
-export const useFetchTxs = (options?: UseQueryOptions< TransactionPayload[], Error, TransactionPayload[], ['token'] >) => {
+export const useFetchTxs = (options?: UseQueryOptions< TransactionPayload[], Error >) => {
   return useQuery({
-    queryKey: ["token"],
+    queryKey: ["transactions"],
     queryFn: async () => {
       const response = await transactionService.get();
 
