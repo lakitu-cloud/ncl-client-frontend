@@ -90,7 +90,7 @@ export default function ZoneMeters() {
             type="checkbox"
             checked={table.getIsAllPageRowsSelected()}
             onChange={table.getToggleAllPageRowsSelectedHandler()}
-            className="w-4 h-4 rounded border-gray-300"
+            className="w-4 h-4 rounded border-gray-300 dark:bg-blackText dark:border-gray-700"
           />
         ),
         cell: ({ row }) => (
@@ -109,14 +109,14 @@ export default function ZoneMeters() {
         cell: ({ getValue }) => {
           const status = getValue() as string;
           return (
-            <div className="flex justify-center">
+            <div className="flex justify-start">
               {status === "active" && <FaCircleCheck className="text-green-600 text-lg" />}
               {status === "inactive" && <FaCircleXmark className="text-red-600 text-lg" />}
               {status === "locked" && <FaCircleStop className="text-orange-600 text-lg" />}
             </div>
           );
         },
-        size: 2,
+        size: -10,
       },
       {
         id: "actions",
@@ -128,7 +128,7 @@ export default function ZoneMeters() {
                 setSelectedId(row.original.id);
                 setIsModalOpen("configure");
               }}
-              className="text-gray-600 hover:text-blue-600"
+              className="text-gray-600 dark:text-gray-400 hover:text-blue-600"
               title="Configure"
             >
               <TbAdjustmentsCancel size={20} />
@@ -138,24 +138,25 @@ export default function ZoneMeters() {
                 setSelectedId(row.original.id);
                 setIsModalOpen("jobs");
               }}
-              className="text-gray-600 hover:text-indigo-600"
+              className="text-gray-600 dark:text-gray-400 hover:text-indigo-600"
               title="View Jobs"
             >
               <FiEye size={18} />
             </button>
+
             <button
               onClick={() => {
                 setSelectedId(row.original.id);
                 setIsModalOpen("delete");
               }}
-              className="text-gray-600 hover:text-red-600"
+              className="text-gray-600 dark:text-gray-400 hover:text-red-600"
               title="Delete"
             >
               <FiTrash size={18} />
             </button>
           </div>
         ),
-        size: 5,
+        size: 2,
       },
       {
         accessorKey: "serial",
@@ -176,28 +177,31 @@ export default function ZoneMeters() {
         },
       },
       {
-        accessorKey: "type",
-        header: "Type",
-        cell: ({ getValue }) => <span className="capitalize">{getValue() as string}</span>,
-      },
-      {
         accessorKey: "description",
         header: "Description",
         cell: ({ getValue }) => (
-          <p className="max-w-xs truncate" title={getValue() as string}>
-            kdjskdjksjdksjd
+          <p className="max-w-xs truncate dark:text-whiteText font-poppins text-nowrap text-md font-semibold" title={getValue() as string}>
+            {getValue() as string}
           </p>
         ),
+        size: 600
+
       },
+      {
+        accessorKey: "type",
+        header: "Type",
+        cell: ({ getValue }) => <span className="uppercase font-bold dark:text-whiteTex dark:text-whiteText text-sm">{getValue() as string}</span>,
+      },
+
       {
         accessorKey: "lock",
         header: "Locked",
         cell: ({ getValue }) => (
-          <div className="flex justify-center">
+          <div className="flex justify-start">
             {getValue() ? (
-              <FaToggleOn className="text-red-600 text-2xl" />
+              <FaToggleOn className="text-red-600 text-2xl w-8" />
             ) : (
-              <FaToggleOff className="text-gray-400 text-2xl" />
+              <FaToggleOff className="text-blue-600 text-2xl w-8" />
             )}
           </div>
         ),
@@ -205,8 +209,14 @@ export default function ZoneMeters() {
       {
         accessorKey: "installedAt",
         header: "Installed At",
-        cell: ({ getValue }) =>
-          format(new Date(getValue() as string), "dd MMM yyyy, HH:mm"),
+        cell: ({ getValue }) => {
+          return (
+            <span className="dark:text-whiteText font-poppins">
+              {format(new Date(getValue() as string), "dd MMM yyyy, HH:mm")}
+            </span>
+          )
+        }
+
       },
     ],
     []
@@ -252,44 +262,46 @@ export default function ZoneMeters() {
   }
 
   return (
-    <div className="p-6 space-y-6 w-full">
+    <div className="mt-6 space-y-6 w-full">
 
-      <div className="flex flex-wrap items-center gap-4 max-w-full"  >
-        {/* Status Filter */}
-        <div className="relative">
-          <button
-            // onClick={() => setOpenStatusDropdown(!openStatusDropdown)}
-            className="inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 transition"
-          >
-            Status: {statusFilter || "All"} <FaChevronDown className="ml-2 w-3 h-3" />
-          </button>
-          {openStatusDropdown && (
-            <div className="absolute top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 w-44">
-              <ul className="py-2 text-sm text-gray-700">
-                {["", "active", "inactive", "locked"].map((status) => (
-                  <li key={status || "all"}>
-                    <button
-                      onClick={() => {
-                        setStatusFilter(status);
-                        setOpenStatusDropdown(false);
-                      }}
-                      className="w-full text-left px-4 py-2 hover:bg-gray-100 capitalize"
-                    >
-                      {status || "All"}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+      <div className="flex flex-wrap items-center justify-between gap-4 max-w-full"  >
 
-        <div className="grid grid-flow-col gap-x-4 max-w-full ">
+        <div className="flex space-x-4 mr-4">
+
+          {/* Status Filter */}
+          <div className="relative">
+            <button
+              // onClick={() => setOpenStatusDropdown(!openStatusDropdown)}
+              className="inline-flex items-center text-gray-500 bg-white border dark:bg-blackText dark:text-whiteText font-poppins dark:border-gray-700 border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 transition"
+            >
+              Status: {statusFilter || "All"} <FaChevronDown className="ml-2 w-3 h-3" />
+            </button>
+            {openStatusDropdown && (
+              <div className="absolute top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 w-44">
+                <ul className="py-2 text-sm text-gray-700">
+                  {["", "active", "inactive", "locked"].map((status) => (
+                    <li key={status || "all"}>
+                      <button
+                        onClick={() => {
+                          setStatusFilter(status);
+                          setOpenStatusDropdown(false);
+                        }}
+                        className="w-full text-left px-4 py-2 hover:bg-gray-100 capitalize"
+                      >
+                        {status || "All"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
           {/* Type Filter */}
           <div className="relative">
             <button
               // onClick={() => setOpenTypeDropdown(!openTypeDropdown)}
-              className="inline-flex items-center text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-4 py-2 transition"
+              className="inline-flex items-center text-gray-500 bg-white border dark:bg-blackText dark:text-whiteText font-poppins dark:border-gray-700 border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 transition"
             >
               Type: {typeFilter || "All"} <FaChevronDown className="ml-2 w-3 h-3" />
             </button>
@@ -314,63 +326,59 @@ export default function ZoneMeters() {
             )}
           </div>
 
-          {/* Search */}
-          <div className="flex-1 relative max-w-md">
-            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search meters..."
-              value={globalFilter}
-              // onChange={(e) => setGlobalFilter(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-            />
-          </div>
-
-          {/* Right Side Controls */}
-          <div className="flex items-center gap-4">
-
-
-            <div className="flex items-center gap-3">
-              <button
-                // onClick={() => setToggle(!toggle)}
-                className="text-xl transition"
-                title={toggle ? "Hide inactive" : "Show all"}
-              >
-                {toggle ? <FaToggleOn className="text-blue-600" /> : <FaToggleOff className="text-gray-400" />}
-              </button>
-
-              <button
-                // onClick={handleRefresh} 
-                disabled={isRefreshing}
-                className="text-gray-600 hover:text-gray-800">
-                <FaSync className={`text-xl ${isRefreshing ? "animate-spin" : ""}`} />
-              </button>
-
-              <button onClick={handleExport} className="text-gray-600 hover:text-gray-800">
-                <FaDownload className="text-xl" />
-              </button>
-
-              <button onClick={() => setIsSettingsOpen(true)} className="text-gray-600 hover:text-gray-800">
-                <FaCog className="text-xl" />
-              </button>
-            </div>
-          </div>
         </div>
 
+        {/* Search */}
+        <div className="flex-1 relative max-w-auto mr-24">
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 " />
+          <input
+            type="text"
+            placeholder="Search meters..."
+            value={globalFilter}
+            // onChange={(e) => setGlobalFilter(e.target.value)}
+            className="pl-12 pr-4 py-2 w-full border border-gray-300 font-poppins rounded-md dark:bg-blackText dark:border-gray-700 dark:text-whiteText focus:ring-2 focus:ring-blue-500 outline-none transition"
+          />
+        </div>
+
+        {/* Right Side Controls */}
+        <div className="flex items-center gap-6">
+          <button
+            // onClick={() => setToggle(!toggle)}
+            className="text-xl transition"
+            title={toggle ? "Hide inactive" : "Show all"}
+          >
+            {toggle ? <FaToggleOn className="text-blue-600 text-md dark:text-white text-lg" /> : <FaToggleOff className="text-gray-400 dark:text-gray-600 text-lg" />}
+          </button>
+
+          <button
+            // onClick={handleRefresh} 
+            disabled={isRefreshing}
+            className="text-gray-600 hover:text-gray-800">
+            <FaSync className={`text-lg dark:text-white ${isRefreshing ? "animate-spin" : ""}`} />
+          </button>
+
+          <button onClick={handleExport} className="text-gray-600 hover:text-gray-800">
+            <FaDownload className="text-lg dark:text-white" />
+          </button>
+
+          <button onClick={() => setIsSettingsOpen(true)} className="text-gray-600 hover:text-gray-800">
+            <FaCog className="text-lg dark:text-white " />
+          </button>
+        </div>
 
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg shadow ring-1 ring-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-darkTheme rounded-md shadow overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="w-full divide-y divide-gray-600">
+            <thead className="bg-gray-50 dark:bg-blackText/20">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-6 py-4 text-left text-sm font-semibold text-gray-500 dark:text-whiteText uppercase tracking-wider"
                     >
                       {header.isPlaceholder
                         ? null
@@ -380,18 +388,21 @@ export default function ZoneMeters() {
                 </tr>
               ))}
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white dark:bg-darkTheme divide-y divide-gray-600 max-h-lg">
               {table.getRowModel().rows.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="text-center py-12 text-gray-500">
-                    No meters found
+                  <td colSpan={columns.length} className="text-center py-20 text-gray-500 dark:text-gray-400">
+                    <div className="space-y-3">
+                      <p className="text-xl font-medium">No meters found</p>
+                      <p className="text-sm">Try adjusting filters or refresh the data</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
                 table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50">
+                  <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-darkTheme">
                     {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-6 py-4 text-sm text-gray-900">
+                      <td key={cell.id} className="px-6 py-4 text-sm text-gray-900 dark:gray-200">
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </td>
                     ))}
@@ -403,30 +414,39 @@ export default function ZoneMeters() {
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="bg-gray-50 dark:bg-blackText/20 px-6 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2 dark:text-whiteText">
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition"
             >
               Previous
             </button>
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="px-3 py-1 border rounded disabled:opacity-50"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition"
             >
               Next
             </button>
-            <span className="text-sm text-gray-600">
-              Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+
+            {/* FIXED: Safe page display */}
+            <span className="text-sm text-gray-600 dark:text-gray-300 mx-4">
+              Page{" "}
+              <strong>
+                {table.getPageCount() === 0
+                  ? 0
+                  : table.getState().pagination.pageIndex + 1}
+              </strong>{" "}
+              of <strong>{Math.max(1, table.getPageCount())}</strong>
             </span>
           </div>
+
           <select
             value={table.getState().pagination.pageSize}
             onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="text-sm border rounded px-2 py-1"
+            className="text-sm max-w-md border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-blackText focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {[10, 25, 50, 100].map((size) => (
               <option key={size} value={size}>

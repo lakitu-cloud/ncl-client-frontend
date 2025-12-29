@@ -27,7 +27,6 @@ const TokenTopUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [tokenType, setTokenType] = useState<string | null>("set");
-  const { meters } = useApp();
   const { data: tableItems = [], isPending, isError } = useFetchTokens()
 
 

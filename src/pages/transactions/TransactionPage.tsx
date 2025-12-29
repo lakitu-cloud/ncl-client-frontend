@@ -61,13 +61,13 @@ const TransactionsPage: React.FC = () => {
           <SortableHeader column={column}>Receipt</SortableHeader>
         ),
         cell: ({ row }) => (
-          <div className="font-poppins text-black text-sm font-semibold">{row.original.receipt}</div>
+          <div className="font-poppins text-black dark:text-white text-sm font-semibold">{row.original.receipt ? row.original.receipt : row.original.accountNo}</div>
         ),
       },
       {
         accessorKey: 'serial',
         header: 'Meter Serial',
-        cell: ({ row }) => <span className="font-medium">{row.original.serial}</span>,
+        cell: ({ row }) => <span className="font-medium te">{row.original.serial}</span>,
       },
       {
         accessorKey: 'method',
@@ -82,7 +82,7 @@ const TransactionsPage: React.FC = () => {
         accessorKey: 'units',
         header: 'Units (m³)',
         cell: ({ row }) => (
-          <div className="text-start font-medium">{row.original.units}</div>
+          <div className="text-start font-medium">{row.original.units} unit{row.original.units > 1 ? "s" : ""}</div>
         ),
       },
       {
@@ -172,7 +172,7 @@ const TransactionsPage: React.FC = () => {
     children,
   }) => (
     <button
-      className="flex items-center gap-1 font-medium hover:text-indigo-600"
+      className="flex items-center dark:text-white font-semibold gap-1 dark:hover:text-gray-700 hover:text-indigo-600"
       onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
     >
       {children}
@@ -190,7 +190,7 @@ const TransactionsPage: React.FC = () => {
       {/* Page Header */}
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold font-oswald uppercase text-gray-900 dark:text-white">
+          <h1 className="text-xl font-bold font-oswald uppercase text-gray-900 dark:text-white">
             All Transactions
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1 font-poppins">
@@ -215,7 +215,7 @@ const TransactionsPage: React.FC = () => {
               setMethodFilter(e.target.value);
               table.getColumn('method')?.setFilterValue(e.target.value || undefined);
             }}
-            className="px-4 py-2.5 border font-poppins border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600"
+            className="px-4 py-2.5 border font-poppins border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-500 dark:bg-blackText dark:text-whiteText  dark:border-gray-700"
           >
             <option value="">All Methods</option>
             {uniqueMethods.map((method) => (
@@ -233,7 +233,7 @@ const TransactionsPage: React.FC = () => {
               value={globalFilter ?? ''}
               onChange={(e) => setGlobalFilter(e.target.value)}
               placeholder="Search transactions..."
-              className="pl-12 pr-4 py-2.5 w-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:border-gray-600"
+              className="pl-12 pr-4 py-2.5 w-80 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-gray-500 font-poppins dark:bg-blackText dark:border-gray-700"
             />
           </div>
         </div>
@@ -287,7 +287,7 @@ const TransactionsPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-900">
+      <div className="overflow-x-auto shadow-sm bg-white dark:text-whiteText font-poppins">
         {transactions.length === 0 ? (
           <>
             <div className="p-8 text-center">
@@ -298,7 +298,7 @@ const TransactionsPage: React.FC = () => {
           </>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-800 uppercase text-xs font-medium text-gray-600 dark:text-gray-300">
+            <thead className="bg-gray-50 dark:bg-blackText uppercase text-xs font-medium text-gray-600 dark:text-whiteText">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
@@ -311,7 +311,7 @@ const TransactionsPage: React.FC = () => {
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y dark:bg-darkTheme divide-gray-200 dark:divide-gray-700">
               {table.getRowModel().rows.map((row) => (
                 <tr
                   key={row.id}

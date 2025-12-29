@@ -1,7 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { IoBusiness, IoCloseOutline } from "react-icons/io5";
 import { useApp } from '../../context/ContextProvider';
 import { useCreateManager } from "../../hooks/useManager";
+import { useAvailableMeters } from "../../hooks/useUser";
+import { queryClient } from "../..";
+import { toast } from "react-toastify";
+import { MotionModal } from "../motion/motionModal";
+import { Loader } from "lucide-react";
 
 interface AddSalesManagerProps {
   isOpen: boolean;
@@ -13,7 +18,7 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
   const [searchMeter, setSearchMeter] = useState("");
   const [assignedMeters, setAssignedMeters] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { meters } = useApp();
+  const { data: availableMeters = [], isLoading: loadingMeters } = useAvailableMeters();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -34,8 +39,19 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
       setAssignedMeters([]);
       setFormData({ name: "", phone: "", ward: "", district: "", region: "Lindi", ppu: 2000 });
       setIsSubmitting(false);
+      setAssignedMeters([]);
+
     }
   }, [isOpen]);
+
+   const filteredAvailableMeters = useMemo(() => {
+      const lowerSearch = searchMeter.toLowerCase().trim();
+      return availableMeters.filter(
+        (m) =>
+          m.toLowerCase().includes(lowerSearch) &&
+          !assignedMeters.includes(m)
+      );
+    }, [availableMeters, searchMeter, assignedMeters]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +65,22 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
       ...formData,
       ppu: Number(formData.ppu),
       meters: assignedMeters
-    });
+    }, {
+      onSuccess: () => {
+        queryClient.setQueryData<string[]>(['availableMeters', ], (old = []) =>
+          old.filter((m) => !assignedMeters.includes(m))
+        );
+
+        queryClient.invalidateQueries({ queryKey: ['managers'] }); 
+
+        toast.success('Manager created successfully!');
+        onClose();
+      },
+      onError: (err) => {
+        toast.error('Failed to create manager');
+        console.error(err);
+      },
+    },);
 
     if (!createManager.isPending) {
       onClose();
@@ -85,6 +116,7 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
       <div className="fixed inset-0 font-poppins bg-black/60 backdrop-blur-md z-40" onClick={onClose} />
 
       <div className="fixed inset-4 md:inset-8 lg:inset-16 z-50 flex items-center justify-center">
+        <MotionModal isOpen={isOpen} onClose={onClose}>
         <div className="bg-white rounded-md shadow-md w-full max-w-6xl max-h-[95vh] flex flex-col">
           {/* Full scrollable area including header */}
           <div className="flex-1 overflow-y-auto">
@@ -93,11 +125,11 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center gap-4">
                   <div className="p-2 bg-blue-400 rounded-md">
-                    <IoBusiness className="w-8 h-8 text-white" />
+                    <IoBusiness className="w-6 h-6 text-white" />
                   </div>
                   <div>
                     <h2 className="text-md font-bold font-oswald">Create Sales Manager</h2>
-                    <p className="text-gray-400 text-sm">Fill details and assign prepaid meters</p>
+                    <p className="text-gray-400 font-poppins text-sm">Fill details and assign prepaid meters</p>
                   </div>
                 </div>
                 <button onClick={onClose} className="p-3 hover:bg-white/20 rounded-xl transition">
@@ -170,8 +202,10 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
                 {step === 2 && (
                   <div className="space-y-8">
                     <h3 className="text-md font-oswald font-bold flex justify-between">
-                      <span>Assign Prepaid Meters</span>
-                      <span className="text-gray-600">{assignedMeters.length} selected</span>
+                      <span className="text-xl font-oswald font-bold">Assign Prepaid Meters</span>
+                      <span className="text-md font-poppins text-gray-600 font-medium">
+                        {assignedMeters.length} meter{assignedMeters.length !== 1 ? "s" : ""} assigned
+                      </span>
                     </h3>
 
                     <div className="relative">
@@ -188,31 +222,38 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
                     </div>
 
                     <div className="grid lg:grid-cols-2 gap-8">
-                      {/* Available */}
                       <div onDragOver={onDragOver} onDrop={onDropAssign} className="bg-gray-50 rounded-lg px-4 py-2 border-2 border-dashed border-gray-300 min-h-96">
-                        <h4 className="font-bold text-md mb-6">Available Meters</h4>
+                        <h4 className="font-bold text-md mb-6">Available Meters ({filteredAvailableMeters.length})</h4>
                         <div className="space-y-2 max-h-96 overflow-y-auto">
-                          {meters
-                            .filter((m) => m.includes(searchMeter) && !assignedMeters.includes(m))
-                            .map((m) => (
+                           {loadingMeters ? (
+                            <p className="text-center py-8 text-gray-500"> <Loader /></p>
+                          ) : filteredAvailableMeters.length === 0 ? (
+                            <p className="text-center py-8 text-gray-500">No meters found</p>
+                          ) : (
+                            filteredAvailableMeters.map((m) => (
                               <div
                                 key={m}
                                 draggable
                                 onDragStart={(e) => onDragStart(e, m)}
-                                onClick={() => setAssignedMeters((p) => [...p, m])}
-                                className="p-3 bg-white rounded-md shadow-md border cursor-move hover:shadow-lg hover:border-blue-400 transition-all flex items-center justify-between group"
+                                onClick={() => {
+                                  if (!assignedMeters.includes(m)) {
+                                    setAssignedMeters((prev) => [...prev, m]);
+                                  }
+                                }}
+                                className="px-6 py-2 bg-white rounded-md shadow-md border-2 border-transparent cursor-move hover:shadow-xl hover:border-blue-400 transition-all flex items-center justify-between group"
                               >
                                 <div className="flex items-center gap-4">
                                   <div className="p-3 bg-blue-100 rounded-xl">
-                                    <IoBusiness className="w-6 h-6 text-blue-600" />
+                                    <IoBusiness className="w-7 h-7 text-blue-700" />
                                   </div>
-                                  <div>
-                                    <code className="font-mono font-bold">{m}</code>
-                                  </div>
+                                  <code className="font-mono font-bold text-lg">{m}</code>
                                 </div>
-                                <span className="opacity-0 group-hover:opacity-100 text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full">Drag or Click</span>
+                                <span className="opacity-0 group-hover:opacity-100 text-sm bg-blue-100 text-blue-800 px-4 py-2 rounded-full transition-opacity">
+                                  Drag or Click
+                                </span>
                               </div>
-                            ))}
+                            ))
+                          )}
                         </div>
                       </div>
 
@@ -221,7 +262,7 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
                         <div className="flex justify-between mb-4">
                           <h4 className="font-bold text-md">Assigned Meters</h4>
                           {assignedMeters.length > 0 && (
-                            <button type="button" onClick={() => setAssignedMeters([])} className="text-red-600 hover:text-red-700 text-sm">
+                            <button type="button" onClick={() => setAssignedMeters([])} className="text-red-600 hover:text-red-700 font-medium text-sm underline">
                               Clear all
                             </button>
                           )}
@@ -247,13 +288,14 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
               </div>
 
               {/* Footer - fixed at bottom */}
-              <div className="p-8 bg-gray-50 flex justify-between border-t border-gray-200">
+              <div className="p-6 bg-gray-50 flex justify-between border-t border-gray-200">
                 <button type="button" onClick={step === 1 ? onClose : () => setStep(1)} className="px-4 py-2 rounded-md border-2 border-gray-300 hover:bg-gray-100 font-bold font-oswald">
                   {step === 1 ? "Cancel" : "Back"}
                 </button>
 
                 {step === 1 && (
-                  <button type="button" onClick={() => setStep(2)} className="px-4 py-2 bg-blue-600 text-white font-bold rounded-md font-oswald hover:bg-blue-700 transition">
+                  <button type="button" onClick={() => setStep(2)} 
+                    className="px-4 py-2 bg-blue-600 text-white font-bold rounded-md font-oswald hover:bg-blue-700 transition">
                     Next: Assign Meters
                   </button>
                 )}
@@ -264,13 +306,14 @@ export const AddSalesManager: React.FC<AddSalesManagerProps> = ({ isOpen, onClos
                     disabled={createManager.isPending || assignedMeters.length === 0}
                     className="px-12 py-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-3"
                   >
-                    {isSubmitting ? "Creating..." : "Create Manager"}
+                    {isSubmitting ? <> <Loader /></>  : "Create Manager"}
                   </button>
                 )}
               </div>
             </form>
           </div>
         </div>
+        </MotionModal>
       </div>
     </>
   );

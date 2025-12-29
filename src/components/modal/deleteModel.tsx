@@ -27,7 +27,7 @@ const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+      <div className="relative w-full max-w-md rounded-md bg-white dark:bg-blackText p-6 shadow-sm">
         <button
           onClick={onClose}
           className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
@@ -52,7 +52,7 @@ const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName,
             </svg>
           </div>
 
-          <h3 className="mb-2 text-lg font-semibold text-gray-900">
+          <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-whiteText">
             Delete Manager
           </h3>
           <p className="mb-6 text-sm text-gray-500">
@@ -64,7 +64,7 @@ const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName,
           <div className="flex justify-center gap-4">
             <button
               onClick={onClose}
-              className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-lg border border-gray-300 bg-white dark:bg-blackText dark:hover:bg-blue-900 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancel
             </button>

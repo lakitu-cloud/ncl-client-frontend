@@ -116,7 +116,7 @@ export const SettingsTab = memo(function SettingsTab() {
   }, []);
 
   return (
-    <div className="max-w-4xl mx-auto py-8">
+    <div className="max-w-4xl py-8">
       {/* <h2 className="text-3xl font-bold mb-8">Manager Settings</h2> */}
 
       <div className="space-y-6 font-poppins">

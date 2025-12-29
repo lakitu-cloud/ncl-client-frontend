@@ -40,18 +40,7 @@ export const ManagerList: React.FC = () => {
     
   }
 
-  const handleDelete = (id: string, name: string) => {
-    if (!toast.warning(`Are you sure you want to delete manager "${name}"?`)) return;
 
-    deleteManager.mutate(id, {
-      onSuccess: () => {
-        toast.success(`Manager "${name}" deleted successfully`);
-      },
-      onError: () => {
-        toast.error("Failed to delete manager");
-      },
-    });
-  };
 
   if (isLoading) {
     return (
@@ -71,7 +60,7 @@ export const ManagerList: React.FC = () => {
 
   if (managers.length === 0) {
     return (
-      <div className="text-center py-20 text-gray-500">
+      <div className="text-center justify-center mx-auto my-auto max-h-full text-gray-500">
         <IoBusiness className="w-16 h-16 mx-auto mb-4 text-gray-300" />
         <p className="text-lg">No sales managers yet.</p>
         <p>Create your first manager to get started!</p>
@@ -83,20 +72,21 @@ export const ManagerList: React.FC = () => {
     <div className="overflow-x-auto">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="border-b-2 border-gray-200 text-left">
-            <th className="py-4 px-6 font-bold text-gray-700">Manager</th>
-            <th className="py-4 px-6 font-bold text-gray-700">Contact</th>
-            <th className="py-4 px-6 font-bold text-gray-700">Location</th>
-            <th className="py-4 px-6 font-bold text-gray-700 text-center">Meters</th>
-            <th className="py-4 px-6 font-bold text-gray-700 text-right">Price Per Unit</th>
-            <th className="py-4 px-6 font-bold text-gray-700 text-center">Actions</th>
+          <tr className="border-b-2 border-gray-200 text-left text-gray-700 dark:text-whiteText">
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText">Manager</th>
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText">Contact</th>
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText">Location</th>
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Meters</th>
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Customers</th>
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-right">Price Per Unit</th>
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {managers.map((manager: Manager) => (
             <tr
               key={manager.id}
-              className="border-b border-gray-100 hover:bg-gray-50 transition"
+              className="border-b border-gray-100 font-poppins hover:bg-gray-50 dark:hover:bg-blackText transition"
             >
               {/* Name + Avatar */}
              <td className="py-5 px-6">
@@ -115,7 +105,7 @@ export const ManagerList: React.FC = () => {
 
               {/* Phone */}
               <td className="py-5 px-6">
-                <p className="font-mono font-semibold">{manager.phone}</p>
+                <p className="font-poppins font-semibold">{manager.phone}</p>
               </td>
 
               {/* Location */}
@@ -130,6 +120,13 @@ export const ManagerList: React.FC = () => {
               <td className="py-5 px-6 text-center">
                 <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-2 rounded-lg font-bold text-md">
                   {manager.meters.length} meter{manager.meters.length !== 1 ? 's' : ''}
+                </span>
+              </td>
+
+              {/* Subscriber count */}
+              <td className="py-5 px-6 text-center">
+                <span className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-2 rounded-lg font-bold text-md">
+                  {manager.subscribers.length} customer{manager.subscribers.length !== 1 ? 's' : ''}
                 </span>
               </td>
 

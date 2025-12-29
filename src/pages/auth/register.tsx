@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useRegister } from '../../hooks/useUser';
 
 interface RegisterProps {
   accountType: 'sales' | 'zone';
@@ -54,7 +55,6 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
       email: email.toLowerCase().trim(),
       phone: phone.trim(),
       password,
-      accountType,
     });
   };
 
@@ -186,14 +186,16 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
             </div>
 
             <div className="flex gap-4 mt-8">
-              <button
-                type="button"
-                onClick={() => setActiveTab('Details')}
-                className="flex-1 py-3 border-2 border-blue-800 text-blue-800 font-semibold rounded-lg hover:bg-blue-50 transition"
-                disabled={isLoading}
-              >
-                Back
-              </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                   window.location.reload();
+                  }}
+                  className="flex-1 py-3 border-2 border-blue-800 text-blue-800 font-semibold rounded-lg hover:bg-blue-50 transition"
+                  disabled={isLoading}
+                >
+                  Back
+                </button>
               <button
                 type="submit"
                 disabled={isLoading}

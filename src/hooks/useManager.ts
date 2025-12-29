@@ -2,7 +2,7 @@ import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import { queryClient } from "..";
 import { managerService } from "../services/managerServices";
-import { CreateManagerPayload, Manager, ManagerLoginPayload, UpdateManagerPayload } from "../types/managerType";
+import { CreateManagerPayload, Manager, ManagerLoginPayload, MetricsPayload, UpdateManagerPayload } from "../types/managerType";
 import { managerKeys } from "../lib/queryKeys";
 import { baseUrl } from "../config/urls";
 import Cookies from "js-cookie";
@@ -46,13 +46,6 @@ export const useCreateManager = () => {
       if (response.status === "success") {
         toast.success("Manager created!");
 
-        // Remove assigned meters from localStorage
-        const currentMeters = JSON.parse(localStorage.getItem('meters') || '[]') as string[];
-        const updatedMeters = currentMeters.filter(
-          (serial: string) => !variables.meters.includes(serial)
-        );
-        localStorage.setItem('meters', JSON.stringify(updatedMeters));
-
         queryClient.invalidateQueries({ queryKey: managerKeys.all });
       } else {
         toast.error(response.message || "Failed");
@@ -86,6 +79,8 @@ export const useDeleteManager = () => {
         toast.success(data.message);
 
         queryClient.invalidateQueries({ queryKey: ["meters"] });
+        queryClient.invalidateQueries({ queryKey: ["availableMeters"] });
+        queryClient.invalidateQueries({ queryKey: ["managers"] });
       }
       if (data.status === "error") {
         toast.dismiss("LOADING");
@@ -124,12 +119,6 @@ export const useUpdateManager = () => {
       toast.dismiss("create-manager");
       if (response.status === "success") {
         toast.success("Manager created!");
-
-        // Remove assigned meters from localStorage
-
-        // localStorage.setItem('meters', JSON.stringify());
-
-        // Optimistically update the cache (optional, faster UX)
 
         queryClient.invalidateQueries({ queryKey: managerKeys.all });
       } else {
@@ -205,13 +194,14 @@ export const useSalesLogin = () => {
 }
 
 export const useDash = () => {
-  return useQuery({
-    queryKey: managerKeys.all,
+  return useQuery<MetricsPayload, Error>({
+    queryKey: ['sales_dashboard'],
     queryFn: async () => {
       const res = await managerService.dashboard();
-      return res
+      return res.metrics
     },
     retry: 2,
     staleTime: 5 * 60 * 1000,
+       refetchOnWindowFocus: false,
   });
 };

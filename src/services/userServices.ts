@@ -49,5 +49,10 @@ export const userService = {
         const res = await apiRequest<DashboardApiResponse>('user/data', 'GET')
         console.log("form the main source", res.metrics);
         return res
+    },
+
+    availableMeter: async(): Promise<{status: string, meters: string[]}> => {
+        const res = await apiRequest<{status: string, meters: string[]}>('user/available', 'GET')
+        return res
     }
 }

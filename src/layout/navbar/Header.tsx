@@ -64,10 +64,10 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             <section className="flex md:flex-row justify-between  items-start md:items-center space-y-4 md:space-y-0">
                 {/* Title Section */}
                 <div className="flex gap-2 max-w-xs md:w-auto my-2">
-                    <Link to="/dashboard" className="text-blue-800  dark:text-white text-nowrap hidden uppercase md:inline-block text-md md:text-2xl font-bold font-oswald">
+                    {/* <Link to="/dashboard" className="text-blue-800  dark:text-white text-nowrap hidden uppercase md:inline-block text-md md:text-2xl font-bold font-oswald">
                         {role === 'zone' ? "ZONE MANAGER" : "Sales Manager"}
                        
-                    </Link>
+                    </Link> */}
                     
                     <div className='border-r-4 border-blue-800 h-8 dark:border-white'></div>
                     <p className="text-blue-800 dark:text-white font-oswald text-md md:text-2xl text-nowrap font-bold">{title}

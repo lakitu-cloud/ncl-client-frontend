@@ -96,8 +96,8 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
     <main className="max-w-lg">
       <form onSubmit={handleLogin} className="space-y-4">
         {/* Identifier Field */}
-        <div className="form-field">
-          <label className="animated-label absolute z-10 ml-[.8rem] mt-[-8px] bg-white dark:bg-gray-900 px-1 text-sm text-gray-700 dark:text-gray-300">
+        <div className="relative my-[1rem]">
+          <label className="animated-label absolute z-10 ml-[.8rem] mt-[-8px] bg-white dark:bg-transparent px-1 text-sm text-gray-700 rounded font-poppins dark:text-whiteText ">
             {label}
           </label>
           <div className="relative mt-2">
@@ -110,15 +110,15 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
               onChange={(e) => setIdentifier(e.target.value)}
               autoFocus
               required
-              className="w-full rounded-md border bg-transparent py-3 pl-4 pr-12 text-gray-700 dark:text-gray-300 shadow-sm outline-none focus:border-blue-600 transition"
+              className="w-full rounded-md border bg-transparent py-3 pl-4 pr-12 text-gray-700 font-poppins dark:text-whiteText dark:bg-blackText dark:border-gray-700 outline-none focus:border-blue-600 transition"
               // placeholder={accountType === 'zone' ? 'admin@ruwasa.com' : '0755481857'}
             />
           </div>
         </div>
 
         {/* Password Field */}
-        <div className="form-field">
-          <label className="animated-label absolute z-10 ml-[.8rem] mt-[-8px] bg-white dark:bg-gray-900 px-1 text-sm text-gray-700 dark:text-gray-300">
+        <div className="relative block my-[1rem]">
+          <label className="animated-label absolute z-10 ml-[.8rem] mt-[-8px] bg-white rounded-md dark:bg-gray-900 px-1 text-sm text-gray-700 dark:text-gray-300">
             Password
           </label>
           <div className="relative mt-2">
@@ -144,12 +144,12 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-lg border bg-transparent py-3 pl-4 pr-12 text-gray-700 dark:text-gray-300 shadow-sm outline-none focus:border-blue-600"
+              className="w-full rounded-md border bg-transparent py-3 pl-4 pr-12 text-gray-700 font-poppins dark:text-whiteText dark:bg-blackText dark:border-gray-700 shadow-sm outline-none focus:border-blue-600"
             />
           </div>
         </div>
 
-        <div className="flex justify-between text-sm text-blue-600 dark:text-blue-400">
+        <div className="flex justify-between text-sm text-blue-600 dark:text-whiteText">
           <Link to="/forgot-password" className="underline hover:opacity-80">
             Forgot Password?
           </Link>
@@ -161,7 +161,7 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium transition flex items-center justify-center gap-2"
+          className="py-3 px-6 rounded-md max-w-lg justify-end bg-blue-800 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold font-oswald dark:bg-whiteText dark:text-blackText text-md transition flex items-center gap-2"
         >
           {isPending ? (
             <>

@@ -20,7 +20,7 @@ const integrations: Integration[] = [
     id: 'gepg',
     title: 'GePG',
     description: 'Integrate with Government Electronic Payment Gateway for bill payments and reconciliation.',
-    logoUrl: require('../../assets/images/logo/logo.png'),
+    logoUrl: require('../../assets/images/logo/3.png'),
     alt: 'GePG Official Logo',
     status: 'not-connected',
     docsUrl: 'https://www.gepg.go.tz',
@@ -44,33 +44,33 @@ const integrations: Integration[] = [
     // connectedAt: '2025-11-15',
     docsUrl: 'https://africastalking.com',
   },
-  {
-    id: 'halopesa',
-    title: 'HaloPesa',
-    description: 'Enable direct payments from HaloPesa wallets for seamless customer transactions.',
-    logoUrl: 'https://clickpesa.com/wp-content/uploads/2024/08/halopesa-logo.png',
-    alt: 'HaloPesa Official Logo',
-    status: 'not-connected',
-    docsUrl: 'https://halotel.co.tz/halopesa',
-  },
-  {
-    id: 'mpesa',
-    title: 'M-Pesa (Vodacom)',
-    description: 'Connect to Vodacom M-Pesa API for mobile money collections and disbursements.',
-    logoUrl: 'https://vodacom.co.tz/uploads/Digital_Payments_304_175_Mpesa_2615a771fa.jpg',
-    alt: 'M-Pesa Vodacom Tanzania Logo',
-    status: 'not-connected',
-    docsUrl: 'https://developer.vodacom.co.tz',
-  },
-  {
-    id: 'tigopesa',
-    title: 'Tigo Pesa',
-    description: 'Integrate Tigo Pesa for instant mobile money payments and customer notifications.',
-    logoUrl: 'https://cdn.prod.website-files.com/64199d190fc7afa82666d89c/6491beebed5bfcd9b9608baf_tigo_pesa.webp',
-    alt: 'Tigo Pesa Official Logo',
-    status: 'not-connected',
-    docsUrl: 'https://www.tigo.co.tz',
-  },
+  // {
+  //   id: 'halopesa',
+  //   title: 'HaloPesa',
+  //   description: 'Enable direct payments from HaloPesa wallets for seamless customer transactions.',
+  //   logoUrl: 'https://clickpesa.com/wp-content/uploads/2024/08/halopesa-logo.png',
+  //   alt: 'HaloPesa Official Logo',
+  //   status: 'not-connected',
+  //   docsUrl: 'https://halotel.co.tz/halopesa',
+  // },
+  // {
+  //   id: 'mpesa',
+  //   title: 'M-Pesa (Vodacom)',
+  //   description: 'Connect to Vodacom M-Pesa API for mobile money collections and disbursements.',
+  //   logoUrl: 'https://vodacom.co.tz/uploads/Digital_Payments_304_175_Mpesa_2615a771fa.jpg',
+  //   alt: 'M-Pesa Vodacom Tanzania Logo',
+  //   status: 'not-connected',
+  //   docsUrl: 'https://developer.vodacom.co.tz',
+  // },
+  // {
+  //   id: 'tigopesa',
+  //   title: 'Tigo Pesa',
+  //   description: 'Integrate Tigo Pesa for instant mobile money payments and customer notifications.',
+  //   logoUrl: 'https://cdn.prod.website-files.com/64199d190fc7afa82666d89c/6491beebed5bfcd9b9608baf_tigo_pesa.webp',
+  //   alt: 'Tigo Pesa Official Logo',
+  //   status: 'not-connected',
+  //   docsUrl: 'https://www.tigo.co.tz',
+  // },
 ];
 
 const IntegrationsPage: React.FC = () => {
@@ -107,7 +107,7 @@ const IntegrationsPage: React.FC = () => {
           {integrations.map((integration) => (
             <div
               key={integration.id}
-              className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300"
+              className="bg-white dark:bg-blackText border border-gray-200 dark:border-gray-700 rounded-md shadow-sm hover:shadow-lg transition-shadow duration-300"
             >
               <div className="p-6">
                 <div className="flex items-start justify-between mb-6">
@@ -150,7 +150,7 @@ const IntegrationsPage: React.FC = () => {
                     className={`px-6 py-3 rounded-lg font-medium transition ${
                       integration.status === 'connected'
                         ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600'
+                        : 'bg-blue-600 text-white dark:text-black hover:bg-blue-700 dark:bg-white dark:hover:bg-whiteText'
                     }`}
                   >
                     {integration.status === 'connected' ? 'Connected' : 'Connect Now'}

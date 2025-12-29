@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import Home from '../pages/wecome';
 // import Auth from '../pages/auth';
 import "../styles/styles.css"
-import SubscriberDetailPage from '../pages/subscribers/view';
+import SubscriberDetailPage from '../pages/subscribers/subscriberView';
 import Manager from '../pages/manager/index'
 import Meters from '../pages/meters';
 import NotFound from '../pages/404';
@@ -16,7 +16,7 @@ import Wakala from '../pages/wakala';
 import Subscribers from '../pages/subscribers';
 import SalesMeterDetails from '../pages/meters/SalesMeterDetails';
 import ZoneMeterDetailPage from '../pages/meters/ZoneMeterDetails';
-import Transaction from '../pages/txs';
+import Transaction from '../pages/transactions';
 import IntegrationsPage from '../pages/intergration';
 
 const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {

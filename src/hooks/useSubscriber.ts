@@ -5,6 +5,7 @@ import { useApp } from "../context/ContextProvider";
 import { subscriberService } from "../services/subServices";
 import { useDebounce } from 'use-debounce'; 
 import { SubscriberCreatePayload, SubscriberPayload, SubscriberUpdatePayload } from "../types/subscriberTypes";
+import { useMemo } from "react";
 
 export const useGetSubs = ( options?: UseQueryOptions< SubscriberPayload[], Error, SubscriberPayload[], ['subscriber'] >) => {
   return useQuery({
@@ -167,5 +168,42 @@ export const useSearchSubscribers = (query: string) => {
     queryFn: () => subscriberService.search(debouncedQuery),
     enabled: debouncedQuery.length >= 2,
   });
+};
+
+export const useSubscriberStats = () => {
+  const { data: subscriber = [], isLoading, isError, error } = useGetSubs();
+
+  const stats = useMemo(() => {
+    if (isLoading || !subscriber.length) {
+      return {
+        total: 0,
+        token: 0,
+        active: 0,
+        inactive: 0,
+      };
+    }
+
+    let active = 0;
+    let token = 0;
+    let inactive = 0;
+
+    subscriber.forEach((subscriber: SubscriberPayload) => {
+      const type = subscriber.type?.toLowerCase();
+      const status = subscriber.status?.toLowerCase();
+
+      if (type === 'token') token++;
+      if (type === 'active') active++;
+      if (status === 'inactive' || status === 'locked') inactive++;
+    });
+
+    return {
+      total: subscriber.length,
+      active,
+      token,
+      inactive,
+    };
+  }, [subscriber, isLoading]);
+
+  return { stats, isLoading, isError, error, subscriber };
 };
 

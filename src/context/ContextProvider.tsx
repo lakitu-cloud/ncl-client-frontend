@@ -7,8 +7,6 @@ interface AppContextProps {
     setActiveTab: (tab: string) => void;
     showTokenTopUpIU?: string;
     setShowTokenTopUpUI: (value: string) => void;
-    meters: string[];
-    setMeters: React.Dispatch<React.SetStateAction<string[]>>;
     isButtonPress: boolean;
     setIsButtonPress: React.Dispatch<React.SetStateAction<boolean>>;
     accountType: 'sales' | 'zone' | null;
@@ -31,13 +29,6 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({ children })
         }
     }, []);
 
-    const storedMeters = JSON.parse(localStorage.getItem('meters') || '[]');
-    const [meters, setMeters] = useState<string[]>(storedMeters);
-
-    useEffect(() => {
-        localStorage.setItem('meters', JSON.stringify(meters));
-    }, [meters]);
-
 
     return (
         <AppContext.Provider
@@ -46,8 +37,6 @@ export const ContextProvider: React.FC<{ children: ReactNode }> = ({ children })
                 setActiveTab,
                 showTokenTopUpIU,
                 setShowTokenTopUpUI,
-                meters,
-                setMeters,
                 isButtonPress,
                 setIsButtonPress,
                 accountType,

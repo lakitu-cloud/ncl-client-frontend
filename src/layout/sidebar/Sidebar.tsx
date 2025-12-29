@@ -15,6 +15,7 @@ import { motion } from "framer-motion";
 const navigation = getNavigation();
 
 const Sidebar: React.FC = () => {
+  
   const { logout } = useAuth();
   return (
     <>
@@ -30,8 +31,8 @@ const Sidebar: React.FC = () => {
           animation: "shimmer 8s ease infinite",
         }}
       >
-        <div className="flex flex-col h-full mt-2">
-          <div className="flex items-center justify-center h-24 "> {/* Added justify-center for collapsed state */}
+        <div className="flex flex-col h-full ">
+          <div className="flex items-center justify-center h-24 -mt-6"> {/* Added justify-center for collapsed state */}
             <Logo
               width={72}
               height={72}

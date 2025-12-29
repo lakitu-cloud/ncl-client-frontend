@@ -58,10 +58,10 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
       <ResponsiveContainer width="100%" height={380}> {/* Same height as pie */}
         <BarChart
           data={chartData}
-          margin={{ top: 20, right: 40, left: 40, bottom: 80 }}
-          barSize={50} // Bigger, bolder bars
+          margin={{ top: 60, right: 40, left: 40, bottom: 40 }}
+          barSize={50} 
         >
-          <CartesianGrid strokeDasharray="4 4" stroke="#E5E7EB" opacity={0.6} />
+          {/* <CartesianGrid strokeDasharray="4 4" stroke="#E5E7EB" opacity={0.6} /> */}
 
           {/* X Axis – Manager Names */}
           <XAxis
@@ -69,7 +69,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             angle={-45}
             textAnchor="end"
             height={90}
-            tick={{ fontFamily: 'Oswald', fontSize: 15, fill: '#4B5563', fontWeight: 500 }}
+            tick={{ fontFamily: 'poppins', fontSize: 10, fill: '#4B5563', fontWeight: 500 }}
           />
 
           {/* Left Y Axis – Meters (whole numbers only) */}
@@ -85,7 +85,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
               angle: -90,
               position: 'insideLeft',
               offset: -10,
-              style: { fontFamily: 'Oswald', fontWeight: 600, fontSize: 16, fill: BLUE_SHADES.meters },
+              style: { fontFamily: 'Oswald', fontWeight: 600, fontSize: 12, fill: BLUE_SHADES.meters },
             }}
           />
 
@@ -96,27 +96,27 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             stroke={BLUE_SHADES.revenue}
             domain={[100000, 'dataMax + 200000']} // starts around 100K, pads above
             tick={{ fontFamily: 'Oswald', fontSize: 14, fill: '#4B5563' }}
-            tickFormatter={(value) => `TZS ${Math.round(value / 1000)}K`}
+            tickFormatter={(value) => `${Math.round(value / 1000)}`}
             label={{
               value: 'Revenue (TZS)',
               angle: 90,
               position: 'insideRight',
               offset: -10,
-              style: { fontFamily: 'Oswald', fontWeight: 600, fontSize: 16, fill: BLUE_SHADES.revenue },
+              style: { fontFamily: 'Oswald', fontWeight: 600, fontSize: 12, fill: BLUE_SHADES.revenue },
             }}
           />
 
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(59, 130, 246, 0.05)' }} />
 
-          {/* <Legend
-            verticalAlign="top"
-            height={40}
-            wrapperStyle={{ paddingBottom: '20px' }}
+          <Legend
+            verticalAlign="bottom"
+            height={20}
+            wrapperStyle={{ paddingBottom: '12px' }}
             iconType="rect"
             formatter={(value) => (
-              <span className="font-oswald font-semibold text-gray-700 text-base">{value}</span>
+              <span className="font-popins font-md text-gray-700 text-sm">{value}</span>
             )}
-          /> */}
+          />
 
           {/* Meters Bar – Left Axis */}
           <Bar
@@ -124,7 +124,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             dataKey="meters"
             fill={BLUE_SHADES.meters}
             radius={[12, 12, 0, 0]}
-            name="Total Meters"
+            name="Meters"
           />
 
           {/* Revenue Bar – Right Axis */}

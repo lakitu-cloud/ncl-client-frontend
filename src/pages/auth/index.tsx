@@ -159,7 +159,7 @@ export const Auth = () => {
                         </h1>
                         */}
 
-                        <h1 className="text-3xl sm:text-5xl font-bold font-oswald text-blue-800 dark:text-gray-200 uppercase">
+                        <h1 className="text-3xl sm:text-5xl font-bold mb-4 font-oswald text-blue-800 dark:text-gray-200 uppercase">
                             {showLogin && accountType
                                 ? `${accountType.toUpperCase()} MANAGER ${activeTab === 'login' ? 'LOGIN' : 'REGISTRATION'}`
                                 : activeTab === 'login'

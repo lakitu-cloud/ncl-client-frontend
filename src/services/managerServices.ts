@@ -1,6 +1,6 @@
 // services/managerService.ts
 import { apiRequest } from ".";
-import { CreateManagerPayload, Manager, ManagerLoginPayload, UpdateManagerPayload } from "../types/managerType";
+import { CreateManagerPayload, Manager, ManagerLoginPayload, MetricsPayload, UpdateManagerPayload } from "../types/managerType";
 import { SubscriberPayload } from "../types/subscriberTypes";
 
 export interface ApiResponse<T = any> {
@@ -10,6 +10,7 @@ export interface ApiResponse<T = any> {
   manager?: any;
   token: string;
   data?: T;
+  metrics?: MetricsPayload
 }
 
 export const managerService = {
@@ -43,6 +44,7 @@ export const managerService = {
   },
 
   dashboard: async(): Promise<any> => {
-    const res = await apiRequest<any>('manager/data', 'GET')
+    const res = await apiRequest<ApiResponse>('manager/data', 'GET')
+    return res  
   }
 };

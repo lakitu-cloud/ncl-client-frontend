@@ -4,6 +4,7 @@ import { Meter, MeterPayload, MeterDetailApiResponse } from "../types/meterTypes
 import { toast } from "react-toastify";
 import { queryClient } from "..";
 import { meterKeys } from "../lib/queryKeys";
+import { useMemo } from "react";
 
 export const useGetAllMeter = () => {
   return useQuery<Meter[], Error>({
@@ -30,7 +31,7 @@ export const useGetMeter = (
     queryFn: async () => {
       const data = await meterService.get();
       toast.dismiss('LOADING');
-      return data.meters; 
+      return data.meters;
     },
     retry: 3,
     staleTime: 5 * 60 * 1000, // Optional: cache for 5 mins
@@ -59,42 +60,42 @@ export const useDeleteMeter = () => {
   return useMutation({
     mutationFn: meterService.delete,
     onSuccess: (data) => {
-        if (data.status === "success") {
-            toast.dismiss("LOADING");
-            toast.success(data.message);
-           
-            queryClient.invalidateQueries({ queryKey: ["meters"] });
-          }
-          if (data.status === "error") {
-            toast.dismiss("LOADING");
-            toast.error(data.message);
-          }
+      if (data.status === "success") {
+        toast.dismiss("LOADING");
+        toast.success(data.message);
+
+        queryClient.invalidateQueries({ queryKey: ["meters"] });
+      }
+      if (data.status === "error") {
+        toast.dismiss("LOADING");
+        toast.error(data.message);
+      }
     },
-        onError: (error) => {
-            toast.dismiss("LOADING");
-            toast.error(error.message)
-        }
+    onError: (error) => {
+      toast.dismiss("LOADING");
+      toast.error(error.message)
+    }
   });
 };
 
 export const useSetting = () => {
   return useMutation({
-      mutationFn: meterService.createConfiguration,
-      onSuccess: (data) => {
-        toast.dismiss("LOADING");
+    mutationFn: meterService.createConfiguration,
+    onSuccess: (data) => {
+      toast.dismiss("LOADING");
 
-        if (data.status === "success") {
-          toast.success(data.message);
-         
-          queryClient.invalidateQueries({ queryKey: ["meters"] });
-        }
-        if (data.status === "error") {
-          toast.dismiss("LOADING");
-          toast.error(data.message);
-        }
+      if (data.status === "success") {
+        toast.success(data.message);
+
+        queryClient.invalidateQueries({ queryKey: ["meters"] });
       }
-  
-    });
+      if (data.status === "error") {
+        toast.dismiss("LOADING");
+        toast.error(data.message);
+      }
+    }
+
+  });
 
 }
 
@@ -126,10 +127,47 @@ export const useAvailableMeters = (search: string = '', enabled: boolean = true)
   return useQuery<{ id: string, serial: string }[], Error>({
     queryKey: ['available-meters', search],
     queryFn: () => meterService.getAvailable(search),
-    enabled: enabled && search.length >= 2, // Start fetching after 2 chars for better UX/performance
-    staleTime: 5 * 60 * 1000, // 5 minutes — meters don't change often
-    gcTime: 10 * 60 * 1000,   // Cache longer
+    enabled: enabled && search.length >= 2,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,
   });
+};
+
+export const useMeterStats = () => {
+  const { data: meters = [], isLoading, isError, error } = useGetAllMeter();
+
+  const stats = useMemo(() => {
+    if (isLoading || !meters.length) {
+      return {
+        total: 0,
+        token: 0,
+        card: 0,
+        inactive: 0,
+      };
+    }
+
+    let token = 0;
+    let card = 0;
+    let inactive = 0;
+
+    meters.forEach((meter: Meter) => {
+      const type = meter.type?.toLowerCase();
+      const status = meter.status?.toLowerCase();
+
+      if (type === 'token') token++;
+      if (type === 'card') card++;
+      if (status === 'inactive' || status === 'locked') inactive++;
+    });
+
+    return {
+      total: meters.length,
+      token,
+      card,
+      inactive,
+    };
+  }, [meters, isLoading]);
+
+  return { stats, isLoading, isError, error, meters };
 };

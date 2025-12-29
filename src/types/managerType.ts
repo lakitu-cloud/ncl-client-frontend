@@ -1,4 +1,5 @@
 import { SubscriberPayload } from "./subscriberTypes";
+import { DashboardRevenue, DashboardTotals, DashboardVolume } from "./userType";
 
 export interface CreateManagerPayload {
   name: string;
@@ -60,4 +61,19 @@ export interface UpdateManagerPayload {
   region: string,
   ppu: number,
   meters: String[]
+}
+
+
+export interface chartDashboardData {
+  daily:[],
+  weekly:[],
+  monthly:[],
+  yearly:[]
+}
+
+export interface MetricsPayload {
+  totals: DashboardTotals;
+  revenue: DashboardRevenue;
+  volume: DashboardVolume;
+  chart: chartDashboardData
 }

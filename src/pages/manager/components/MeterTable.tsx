@@ -31,10 +31,10 @@ const columns: ColumnDef<Meter, any>[] = [
       </Badge>
     ),
   }),
-  columnHelper.accessor('phone', {
-    header: 'Units Sold',
+  columnHelper.accessor('type', {
+    header: 'Meter Type',
     cell: (info) => (
-      <span className="font-medium text-gray-600 dark:text-whiteText font-poppins">{(info.getValue() || 0).toFixed(1)} m3</span>
+      <span className="font-semibold uppercase text-gray-600 dark:text-whiteText font-poppins">{info.getValue()}</span>
     ),
   }),
   columnHelper.accessor('installedAt', {

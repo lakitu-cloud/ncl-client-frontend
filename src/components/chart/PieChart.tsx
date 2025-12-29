@@ -1,5 +1,5 @@
 import React from 'react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { ManagerChartItem } from '../../types/userType'; // adjust path
 
 interface ManagerDonutChartProps {
@@ -68,7 +68,7 @@ export default function ManagerDonutChart({ data }: ManagerDonutChartProps) {
 
   return (
     <ResponsiveContainer width="100%" height={380}>
-      <PieChart margin={{ top: 20, right: 40, left: 40, bottom: 80 }}>
+      <PieChart margin={{ top: 40, right: 40, left: 40, bottom: 60 }}>
         <Pie
           data={rechartsData}
           cx="50%"
@@ -108,22 +108,33 @@ export default function ManagerDonutChart({ data }: ManagerDonutChartProps) {
         {/* Fixed Tooltip formatter */}
         <Tooltip
           contentStyle={{
-              backgroundColor: '#ffffff',
-              border: 'none',
-              borderRadius: '12px',
-              boxShadow: '0 10px 25px -5px rgba(0,0,0,0.12)',
-              padding: '12px 16px',
-            }}
-            labelStyle={{
-              fontFamily: 'Oswald, sans-serif',
-              fontWeight: 600,
-              color: '#111827',
-              textTransform: 'uppercase',
-            }}
-            formatter={(value: number | undefined) =>
-              value ? `${value.toLocaleString()} subscribers` : '0'
-            }
+            backgroundColor: '#ffffff',
+            border: 'none',
+            borderRadius: '12px',
+            boxShadow: '0 10px 25px -5px rgba(0,0,0,0.12)',
+            padding: '12px 16px',
+          }}
+          labelStyle={{
+            fontFamily: 'Oswald, sans-serif',
+            fontWeight: 600,
+            color: '#111827',
+            textTransform: 'uppercase',
+          }}
+          formatter={(value: number | undefined) =>
+            value ? `${value.toLocaleString()} subscribers` : '0'
+          }
         />
+
+{/* 
+        <Legend
+          verticalAlign="bottom"
+          height={20}
+          wrapperStyle={{ paddingBottom: '12px' }}
+          iconType="rect"
+          formatter={(value) => (
+            <span className="font-popins font-md text-gray-700 text-sm">{value}</span>
+          )}
+        /> */}
       </PieChart>
     </ResponsiveContainer>
   );

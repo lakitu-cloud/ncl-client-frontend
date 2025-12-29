@@ -9,9 +9,7 @@ import { queryClient } from "..";
 
 
 export const useZoneLogin = () => {
-    const { setMeters } = useApp();
     const navigate = useNavigate();
-
 
     const mutation = useMutation({
         mutationFn: async (payload: UserLoginPayload) => await userService.login(payload),
@@ -44,8 +42,7 @@ export const useZoneLogin = () => {
                     secure: true,
                     sameSite: 'strict'
 
-                }); // Save token to cookies
-                setMeters(data.login.meters);
+                });
 
                 queryClient.invalidateQueries({
                     queryKey: ['user']
@@ -94,15 +91,27 @@ export const useRefreshToken = () => { }
 
 export const useDash = () => {
     return useQuery<DashboardData, Error>({
-        queryKey: ['dashboard'],
+        queryKey: ['zone_dashboard'],
         queryFn: async () => {
             const res = await userService.dashboard()
-            console.log(res)
-            console.log(res.metrics)
             return res.metrics
         },
         staleTime: 5 * 60 * 1000, // 5 minutes – metrics update async, no need super fresh
         refetchOnWindowFocus: false,
         retry: 2,
     })
+}
+
+
+export const useAvailableMeters = () => {
+    return useQuery<string[], Error>({
+    queryKey: ['availableMeters'],
+    queryFn: async() => {
+        const res = await userService.availableMeter()
+        return res.meters
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes — fresh enough
+    gcTime: 1000 * 60 * 30, // keep in memory 30 min
+
+  });
 }

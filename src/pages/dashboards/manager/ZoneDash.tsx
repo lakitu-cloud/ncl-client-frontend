@@ -41,7 +41,7 @@ export default function ZoneDash() {
   /* --------------------------- Top 4 KPIs --------------------------- */
   const topKpis = [
     {
-      value: data.total.revenue.toLocaleString(),
+      value: `TZS ${data.total.revenue} `,
       label: 'Total Revenue',
       trendUp: true,
       chart: [65, 78, 45, 89, 67, 82, 91],
@@ -55,7 +55,7 @@ export default function ZoneDash() {
       ),
     },
     {
-      value: data.total.meter.toLocaleString(),
+      value: `${data.total.meter}`,
       label: 'Total Meters',
       trendUp: true,
       chart: [45, 67, 34, 78, 56, 89, 67],
@@ -68,7 +68,7 @@ export default function ZoneDash() {
       ),
     },
     {
-      value: data.total.manager.toLocaleString(),
+      value: `${data.total.manager}`,
       label: 'Active Managers',
       trendUp: false,
       chart: [78, 65, 89, 67, 45, 78, 56],
@@ -80,7 +80,7 @@ export default function ZoneDash() {
       ),
     },
     {
-      value: data.total.transaction.toLocaleString(),
+      value: `${data.total.transaction}`,
       label: 'Transactions',
       trendUp: true,
       chart: [55, 60, 58, 62, 65, 70, 68],
@@ -124,7 +124,7 @@ export default function ZoneDash() {
                 {kpi.icon}
               </div>
               <div className="flex-1">
-                <div className="text-3xl font-bold">TZS {kpi.value}</div>
+                <div className="text-3xl font-bold"> {kpi.value}</div>
                 <div className="text-sm opacity-90 mt-1">{kpi.label}</div>
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function ZoneDash() {
             <h2 className="text-xl font-semibold uppercase font-oswald">Manager Performance</h2>
             <RankIcon />
           </div>
-<ManagerPerformanceBar data={data.chart} />
+          <ManagerPerformanceBar data={data.chart} />
         </div>
       </section>
     </div>

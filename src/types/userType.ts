@@ -43,10 +43,12 @@ export interface ManagerChartItem {
 }
 
 export interface DashboardTotals {
-  manager: number;
+  manager?: number;
   meter: number;
   revenue: number;
   transaction: string;
+  subscriber?: number,
+  wakala?: number
 }
 
 export interface DashboardData {

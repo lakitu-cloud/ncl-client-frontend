@@ -25,7 +25,7 @@ const AccountTypeSelector: React.FC<Props> = ({ onSelect }) => {
                     </div>
                     <div className='text-start'>
                         <h1 className="font-bold mb-1 text-md sm:text-sm font-oswald">Zone Manager</h1>
-                        <p className='text-xs text-blue-100 sm:text-xs opacity-90'>Access, monitor and contrl your entire prepaid water meter utilities from
+                        <p className='text-xs text-blue-100 sm:text-xs opacity-90 font-poppins'>Access, monitor and contrl your entire prepaid water meter utilities from
                             a single web browser-based interface. Compatible with most browsers accross
                             all platforms requires no installation or additional
                         </p>
@@ -37,7 +37,7 @@ const AccountTypeSelector: React.FC<Props> = ({ onSelect }) => {
                 <button
                     type='button'
                     onClick={() => onSelect('sales', remember)}
-                    className='flex align-start justify-between gap-8 bg-white border-2 p-4 sm:p-2 lg:p-4 border-gray-200 text-gray-700 rounded-md shadow-sm hover:shadow-sm hover:border-gray-300 transform hover:-translate-y-3 transition-all duration-300 overflow-hidden dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400'>
+                    className='flex align-start justify-between gap-8 bg-white border-2 p-4 sm:p-2 lg:p-4 border-gray-200 text-gray-700 rounded-md shadow-sm hover:shadow-sm hover:border-gray-300 transform hover:-translate-y-3 transition-all duration-300 overflow-hidden dark:bg-blackText dark:border-gray-700 dark:text-gray-400'>
                     <div className='w-96 h-32 sm:w-72 sm:h-28 text-start '>
                         <svg className="w-full h-full drop-shadow" viewBox="0 0 64 64" fill="currentColor">
                             <path d="M32 2C15.43 2 2 15.43 2 32s13.43 30 30 30 30-13.43 30-30S48.57 2 32 2zm0 54c-13.25 0-24-10.75-24-24s10.75-24 24-24 24 10.75 24 24-10.75 24-24 24z" />
@@ -46,7 +46,7 @@ const AccountTypeSelector: React.FC<Props> = ({ onSelect }) => {
                     </div>
                     <div className='text-start'>
                         <h1 className='font-bold mb-1 text-md sm:text-sm font-oswald'>Sales Manager</h1>
-                        <p className='text-sm sm:text-xs'>
+                        <p className='text-sm sm:text-xs font-poppins'>
                             Access, monitor and contrl your entire prepaid water meter utilities from
                             a single web browser-based interface. Compatible with most browsers accross
                             all platforms requires no installation or additional

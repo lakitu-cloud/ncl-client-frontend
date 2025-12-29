@@ -44,7 +44,7 @@ export const SalesDash = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-2 justify-between gap-x-8 mt-12">
               <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.subscriber.total ? data.subscriber.total : 0}
+                  {data?.totals.subscriber ? data.totals.subscriber : 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Customers</span>
@@ -53,7 +53,7 @@ export const SalesDash = () => {
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.meter.total || 0}
+                  {data?.totals.meter || 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Meter</span>
@@ -62,7 +62,7 @@ export const SalesDash = () => {
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.transaction.total_count || 0}
+                  {data?.totals.transaction || 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Transactions</span>
@@ -71,7 +71,7 @@ export const SalesDash = () => {
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.wakala.total || 0}
+                  {data?.totals.wakala || 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Wakala</span>
@@ -119,7 +119,7 @@ export const SalesDash = () => {
             <div className="flex flex-wrap justify-between gap-x-8 mt-12">
               <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.subscriber.active || 0}
+                  {data?.totals.subscriber ? data.totals.subscriber : 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Customers</span>
@@ -128,7 +128,7 @@ export const SalesDash = () => {
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.meter.inactive || 0}
+                  {data?.totals.meter || 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Meter</span>
@@ -173,7 +173,7 @@ export const SalesDash = () => {
             <div className="flex flex-wrap justify-between gap-x-8 mt-12">
               <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.wakala.total || 0}
+                  {data?.totals.wakala || 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Point of Sale</span>
@@ -182,7 +182,7 @@ export const SalesDash = () => {
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center">
                 <p className="font-oswald text-semibold text-3xl mb-4">
-                  {data?.meter.total || 0}
+                  {data?.totals.meter || 0}
                 </p>
                 <p className="flex flex-col">
                   <span>Meter</span>
@@ -210,24 +210,25 @@ export const SalesDash = () => {
               </p>
 
               <p className="text-4xl font-bold text-gray-900 font-oswald">
-                {new Intl.NumberFormat("en-US", {
+                {/* {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
-                }).format((data?.liters?.today ?? 0) * 0.001)}{" "}
+                }).format((data?.volume?.today ?? 0) * 0.001)}{" "} */}
+                {data?.volume.today}
                 m³
               </p>
               {/* Growth Indicator */}
               <div className="flex items-center gap-1 text-sm font-medium">
                 {(() => {
-                  const todayLiters = data?.liters?.today ?? 0;
-                  const yesterdayLiters = data?.liters?.yesterday ?? 0;
+                  const todayvolume = data?.volume?.today ?? 0;
+                  const yesterdayvolume = data?.volume?.yesterday ?? 0;
 
                   // Handle division by zero and initial state
                   let growthPercentage = 0;
-                  if (yesterdayLiters > 0) {
+                  if (yesterdayvolume > 0) {
                     growthPercentage =
-                      ((todayLiters - yesterdayLiters) / yesterdayLiters) * 100;
-                  } else if (todayLiters > 0) {
+                      ((todayvolume - yesterdayvolume) / yesterdayvolume) * 100;
+                  } else if (todayvolume > 0) {
                     // Handle case where previous value was zero
                     growthPercentage = 100;
                   }
@@ -252,7 +253,7 @@ export const SalesDash = () => {
                             : "text-gray-500"
                         }
                       >
-                        {yesterdayLiters === 0 && todayLiters === 0
+                        {yesterdayvolume === 0 && todayvolume === 0
                           ? "0%"
                           : `${Math.abs(growthPercentage).toFixed(0)}%`}
                         <span className="text-gray-400 text-xs font-normal ml-1">
@@ -282,13 +283,13 @@ export const SalesDash = () => {
                 {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
-                }).format((data?.liters?.thisWeek ?? 0) * 0.001)}{" "}
+                }).format((data?.volume?.thisWeek ?? 0) * 0.001)}{" "}
                 m³
               </p>
               <div className="flex items-center text-sm font-medium">
                 {(() => {
-                  const current = data?.liters?.thisWeek ?? 0;
-                  const previous = data?.liters?.lastWeek ?? 0;
+                  const current = data?.volume?.thisWeek ?? 0;
+                  const previous = data?.volume?.lastWeek ?? 0;
                   let growth = 0;
 
                   if (previous > 0) {
@@ -347,13 +348,13 @@ export const SalesDash = () => {
                 {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
-                }).format((data?.liters?.thisMonth ?? 0) * 0.001)}{" "}
+                }).format((data?.volume?.thisMonth ?? 0) * 0.001)}{" "}
                 m³
               </p>
               <div className="flex items-center text-sm font-medium">
                 {(() => {
-                  const current = data?.liters?.thisMonth ?? 0;
-                  const previous = data?.liters?.lastMonth ?? 0;
+                  const current = data?.volume?.thisMonth ?? 0;
+                  const previous = data?.volume?.lastMonth ?? 0;
                   let growth = 0;
 
                   if (previous > 0) {
@@ -412,13 +413,13 @@ export const SalesDash = () => {
                 {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
-                }).format((data?.liters?.thisYear ?? 0) * 0.001)}{" "}
+                }).format((data?.volume?.thisYear ?? 0) * 0.001)}{" "}
                 m³
               </p>
               <div className="flex items-center text-sm font-medium">
                 {(() => {
-                  const current = data?.liters?.thisYear ?? 0;
-                  const previous = data?.liters?.lastYear ?? 0;
+                  const current = data?.volume?.thisYear ?? 0;
+                  const previous = data?.volume?.lastYear ?? 0;
                   let growth = 0;
 
                   if (previous > 0) {
@@ -702,7 +703,7 @@ export const SalesDash = () => {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
             <div className="text-center sm:text-left">
               <h2 className="text-lg sm:text-xl font-bold">
-                TZS {data?.transaction.total_revenue || 0}
+                TZS {data?.totals.revenue || 0}
                 {/* <span className="text-green-600 ml-2 ">+23,982</span> */}
               </h2>
               <p className="text-xs sm:text-sm">You total revenue</p>
