@@ -221,7 +221,7 @@ const SubscriberForm: React.FC<Props> = ({ IsAddModalOpen, setIsAddModalOpen }) 
           disabled={createSubscriber.isPending}
           className="px-12 py-4 bg-blueTheme text-white font-bold rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center gap-3 dark:bg-white dark:text-gray-800 dark:hover:bg-gray-200 dark:hover:text-gray-800"
         >
-          {createSubscriber.isPending ? "Creating..." : "Create Manager"}
+          {createSubscriber.isPending ? "Creating..." : "Create Customers"}
         </button>
 
       </div>

@@ -7,7 +7,7 @@ import Register from './register';
 import Login from './login';
 import { useApp } from '../../context/ContextProvider';
 import { Logo } from '../../assets/Logo';
-import { ForgetPassword } from './password';
+import { ChangePassword } from './password';
 
 export const Auth = () => {
     const { accountType, setAccountType } = useApp();
@@ -184,10 +184,6 @@ export const Auth = () => {
                             {activeTab === 'login' && (
                                 <Login 
                                     accountType={accountType!} 
-                                    onChangePassword={() => {
-                                        console.log("change password clicked!! ")
-                                        setActiveTab('password')
-                                    }}
                                     onChangeAccountType={() => {
                                         setShowLogin(false);
                                         setAccountType(null);
@@ -197,17 +193,11 @@ export const Auth = () => {
                             {activeTab === 'register' && accountType === "zone" && (
                                 <Register />
                             )}
-                            {activeTab === 'password' && accountType === "sales" && (
-                                <ForgetPassword 
-                                    accountType={accountType!} 
-                                    onBack={() => setActiveTab('login')} // Add back prop
-                                />
-                            )}
+                           
 
                         </>
 
                     )}
-
 
                 </div>
             </aside>

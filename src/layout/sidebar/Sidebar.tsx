@@ -11,17 +11,37 @@ import {
 import "./sidebar.css";
 import { useAuth } from "../../context/AuthProvider";
 import { motion } from "framer-motion";
+import Cookies from "js-cookie";
 
 
 const Sidebar: React.FC = () => {
   const [navigation, setNavigation] = React.useState(getNavigation());
 
-   React.useEffect(() => {
+  React.useEffect(() => {
     const handler = () => setNavigation(getNavigation());
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
   }, []);
-  
+
+  const handleShowUser = () => {
+    const userCookie = Cookies.get("user");
+
+    if (!userCookie) {
+      alert("No user data found");
+      return;
+    }
+
+    const user = JSON.parse(userCookie);
+
+    alert(
+      `User Details:
+        Name: ${user.name}
+        Email: ${user.email}
+        Phone: ${user.phone}`
+    );
+  };
+
+
   const { logout } = useAuth();
   return (
     <>
@@ -46,8 +66,8 @@ const Sidebar: React.FC = () => {
               className="text-white"
             />
 
-          {/* Brand Name - visible only on hover (when expanded) */}
-          {/* <p className="ml-4 font-bold text-2xl text-white font-oswald uppercase whitespace-nowrap 
+            {/* Brand Name - visible only on hover (when expanded) */}
+            {/* <p className="ml-4 font-bold text-2xl text-white font-oswald uppercase whitespace-nowrap 
                          opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
             Nyirendas
           </p> */}
@@ -76,10 +96,9 @@ const Sidebar: React.FC = () => {
               <ul className="px-4 pb-4 text-sm font-medium">
                 <li>
                   <a className="flex items-center gap-x-2 text-gray-600 p-2 rounded-lg">
-                    <div className="text-gray-500">
-                      {/* @ts-ignore */}
+                    <button type="button" onClick={handleShowUser} className="text-gray-500">
                       <IoHelpCircleOutline className="w-6 h-6" />
-                    </div>
+                    </button>
                   </a>
                 </li>
                 <li>

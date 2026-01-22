@@ -47,6 +47,12 @@ export const managerService = {
     return res  
   },
 
+   changePassword: async(payload: any) : Promise<{ status: string, message:string}>=> {
+        const res = await apiRequest<{status: string, message: string}>(`manager/reset`, 'PUT', payload)
+        return res
+
+    }
+
   // download: async(id: string): Promise<any> => {
   //   const res = await apiRequest<any>(`report/${id}/download`, 'GET')
   //   return res

@@ -22,6 +22,9 @@ import ReportProblemModal from "../../components/modal/reportProblem";
 import { CountUp } from "../../components/motion/countUp";
 import { fadeUp, springTransition } from "../../components/motion/preset";
 import { AnimatePresence, motion } from "framer-motion";
+import { FaReceipt } from "react-icons/fa";
+import { TransactionPayload } from "../../types/tsxTypes";
+import ReceiptModal from "../../components/modal/receiptModal";
 
 export default function ZoneMeterDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -29,6 +32,8 @@ export default function ZoneMeterDetailPage() {
   const [activeTab, setActiveTab] = useState<Tab>("transactions");
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
   const [isReportProblemOpen, setIsReportProblemOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<TransactionPayload | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   type Tab = "transactions" | "token" | "configurations";
 
@@ -104,6 +109,11 @@ export default function ZoneMeterDetailPage() {
 
   const totalVolume = meter.transactions.reduce((sum, tx) => sum + tx.units, 0);
 
+  const openReceiptModal = (tx: TransactionPayload) => {
+    setSelectedTx(tx);
+    setModalOpen(true);
+  };
+
   return (
     <>
       <Header title="Meter Management" />
@@ -118,10 +128,10 @@ export default function ZoneMeterDetailPage() {
           className="w-96 border-r border-gray-200 shadow-md overflow-y-auto dark:text-whiteText dark:border-gray-700">
           <div className="p-6">
             {/* Device Image */}
-            <motion.div 
-               initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={springTransition}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={springTransition}
               className="mb-6 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-md border-2 border-gray-200 overflow-hidden dark:border-gray-700 shadow-sm relative group">
               <div className="relative w-full h-56">
                 {" "}
@@ -396,7 +406,7 @@ export default function ZoneMeterDetailPage() {
                             <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Methods
                             </th>
-                             <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <th className="text-left px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
                               Token
                             </th>
                             <th className="text-right px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -425,8 +435,12 @@ export default function ZoneMeterDetailPage() {
                               <td className="px-6 py-4 text-sm">
                                 {tx.method || "Anonymous"}
                               </td>
-                               <td className="px-6 py-4 text-sm">
+                              <td className="px-6 py-4 text-sm flex items-center justify-center space-x-2">
                                 {tx.token || "Anonymous"}
+                                <FaReceipt
+                                  className="ml-2 cursor-pointer w-4 h-6 animate-pulse text-blue-500 transition-all duration-200 ease-out hover:scale-110 -translate-y-0.5 active:scale-95"
+                                  onClick={() => openReceiptModal(tx)} // Assuming openReceiptModal is a function that toggles the modal/sidebar with tx data
+                                />
                               </td>
                               <td className="px-6 py-4 text-sm text-right font-medium">
                                 {tx.units.toFixed(1)}
@@ -591,6 +605,15 @@ export default function ZoneMeterDetailPage() {
             }}
           />
         )}
+
+        {modalOpen && (
+          <ReceiptModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            transaction={selectedTx}
+          />
+        )}
+
       </div>
     </>
   );

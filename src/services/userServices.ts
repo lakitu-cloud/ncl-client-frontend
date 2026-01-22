@@ -58,5 +58,11 @@ export const userService = {
     availableMeter: async(): Promise<{status: string, meters: string[]}> => {
         const res = await apiRequest<{status: string, meters: string[]}>('user/available', 'GET')
         return res
+    },
+
+    changePassword: async(payload: any) : Promise<{ status: string, message:string}>=> {
+        console.log(payload)
+        const res = await apiRequest<{status: string, message: string}>('user/reset', 'PUT', payload)
+        return res
     }
 }

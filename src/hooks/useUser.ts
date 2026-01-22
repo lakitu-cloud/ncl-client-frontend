@@ -24,7 +24,12 @@ export const useZoneLogin = () => {
 
             if (data.status === "success") {
                 toast.success(data.message as string);
-                // Cookies.set('role', 'zone')
+                 Cookies.set("user", JSON.stringify(data.login), {
+                    expires: 1, // 1 day
+                    secure: true,
+                    sameSite: "strict"
+                });
+                
                 Cookies.set('auth', data.token, {
                     expires: 1 / 24,
                     secure: true,
@@ -99,7 +104,6 @@ export const useDash = () => {
     })
 }
 
-
 export const useAvailableMeters = () => {
     return useQuery<string[], Error>({
         queryKey: ['availableMeters'],
@@ -139,6 +143,43 @@ export const useRefresh = () => {
     },
   });
 };
+
+export const useChangeZonePassword = () => {
+    return useMutation({
+        mutationFn: async (payload: {
+            identifier: string;       // email for zone manager
+            currentPassword: string;
+            newPassword: string;
+        }) => {
+            // Make sure userService.changePassword returns a Promise
+            const response = await userService.changePassword(payload);
+            return response;
+        },
+
+        onSuccess: () => {
+            toast.success('Password changed successfully!', {
+                position: 'top-right',
+                autoClose: 4000,
+            });
+        },
+
+        onError: (error: any) => {
+            const message =
+                error?.response?.data?.message ||
+                error?.message ||
+                'Failed to update password. Please check your current password.';
+
+            toast.error(message, {
+                position: 'top-right',
+                autoClose: 5000,
+            });
+        },
+
+        retry: 1,
+    });
+};
+
+
 
 
 

@@ -194,6 +194,43 @@ export const useSalesLogin = () => {
   }
 }
 
+
+export const useChangeSalesPassword = () => {
+    return useMutation({
+        mutationFn: async (payload: {
+            identifier: string;       // phone for sales manager
+            currentPassword: string;
+            newPassword: string;
+        }) => {
+            const response = await managerService.changePassword(payload);
+            return response;
+        },
+
+        onSuccess: () => {
+          window.location.reload()
+            toast.success('Password changed successfully!', {
+                position: 'top-right',
+                autoClose: 4000,
+            });
+      
+        },
+
+        onError: (error: any) => {
+            const message =
+                error?.response?.data?.message ||
+                error?.message ||
+                'Failed to update password. Please check your current password.';
+
+            toast.error(message, {
+                position: 'top-right',
+                autoClose: 5000,
+            });
+        },
+
+        retry: 1,
+    });
+};
+
 export const useDash = () => {
   return useQuery<MetricsPayload, Error>({
     queryKey: ['sales_dashboard'],
@@ -279,6 +316,7 @@ export const useDownloadManagerReport = () => {
     }
   };
 
+
   return {
     downloadReport,
     isLoading: state === 'loading',
@@ -286,3 +324,4 @@ export const useDownloadManagerReport = () => {
     isError: state === 'error',
   };
 }
+

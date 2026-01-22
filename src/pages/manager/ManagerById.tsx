@@ -6,8 +6,6 @@ import {
   IoTrashOutline,
   IoSettingsOutline,
   IoCreateOutline,
-  IoAnalyticsOutline,
-  IoDocumentTextOutline,
   IoPersonOutline,
   IoDownload,
 } from "react-icons/io5";
@@ -81,6 +79,14 @@ export const ManagerDetailPage = () => {
     (m) => m.status === "active",
   ).length;
   const totalSubscribers = manager.subscribers.length;
+  const totalRevenue = manager.transactions?.reduce(
+  (sum, tx) => sum + Number(tx.amount || 0),
+  0
+);
+  const today = new Date().toISOString().split("T")[0];
+
+const revenueToday = manager.transactions?.filter(tx => tx.createdAt?.startsWith(today))
+  .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     {
@@ -194,14 +200,14 @@ export const ManagerDetailPage = () => {
               <div className="flex item-center justify-between">
                 <dt className="font-medium">Total Revenue</dt>
                 <dd className="font-medium mt-1">
-                  <CountUp value={Number(manager.metrics.collectiveRevenue)} />
+                  <CountUp value={totalRevenue} />
                 </dd>
               </div>
 
               <div className="flex item-center justify-between">
                 <dt className="font-medium">Revenue Today</dt>
                 <dd className="font-medium mt-1">
-                  <CountUp value={Number(manager.metrics.revenueToday)} />
+                  <CountUp value={Number(revenueToday)} />
                 </dd>
               </div>
               <div className="flex item-center justify-between">

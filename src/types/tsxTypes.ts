@@ -27,6 +27,8 @@ export type TransactionPayload = {
   managerId: string;
   wakalaId: string | null;
   subscriberId: string;
+  subscriber: any
+  userId: string
   createdAt: string;
   updatedAt: string;
   deletedAt: boolean | null;

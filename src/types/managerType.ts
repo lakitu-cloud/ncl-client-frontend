@@ -1,4 +1,5 @@
 import { SubscriberPayload } from "./subscriberTypes";
+import { TransactionPayload } from "./tsxTypes";
 import { DashboardRevenue, DashboardTotals, DashboardVolume } from "./userType";
 
 export interface CreateManagerPayload {
@@ -41,7 +42,7 @@ export interface Meters {
   installedAt: string;
 }
 
-export interface Manager {
+export interface  Manager {
   id: string,
   name: string,
   phone: string,
@@ -51,7 +52,8 @@ export interface Manager {
   ppu: number,
   meters: Meters[]
   metrics: Metrics
-  subscribers: SubscriberPayload[]
+  subscribers: SubscriberPayload[],
+  transactions: TransactionPayload[]
   createdAt: string,
 }
 
