@@ -18,8 +18,17 @@ import { useFetchTxs } from '../../hooks/useTxs';
 import { TransactionPayload } from '../../types/tsxTypes';
 import { formatSafeDate } from '../../lib/date';
 import { IoCopyOutline } from 'react-icons/io5';
+import { motion } from 'framer-motion';
+import { fadeUp, pageMotion } from '../../components/motion/preset';
+import { CountUp } from '../../components/motion/countUp';
 
-const TransactionsPage: React.FC = () => {
+interface TransactionListProps {
+  data: TransactionPayload[];
+  isLoading: boolean;
+  isError: boolean;
+}
+
+const TransactionsPage: React.FC<TransactionListProps> = ({ data: transactions = [], isLoading, isError = false }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -27,8 +36,6 @@ const TransactionsPage: React.FC = () => {
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-
-  const { data: transactions = [], isPending, isError } = useFetchTxs();
 
   const totalRevenue = useMemo(
     () => transactions.reduce((sum, tx) => sum + tx.amount, 0),
@@ -61,13 +68,13 @@ const TransactionsPage: React.FC = () => {
           <SortableHeader column={column}>Receipt</SortableHeader>
         ),
         cell: ({ row }) => (
-          <div className="font-poppins text-black dark:text-white text-sm font-semibold">{row.original.receipt ? row.original.receipt : row.original.accountNo}</div>
+          <div className="font-poppins text-black dark:text-whiteText text-sm font-semibold">{row.original.receipt ? row.original.receipt : row.original.accountNo}</div>
         ),
       },
       {
         accessorKey: 'serial',
         header: 'Meter Serial',
-        cell: ({ row }) => <span className="font-medium te">{row.original.serial}</span>,
+        cell: ({ row }) => <span className="font-medium dark:text-whiteText">{row.original.serial}</span>,
       },
       {
         accessorKey: 'method',
@@ -186,9 +193,15 @@ const TransactionsPage: React.FC = () => {
 
   return (
 
-    <div className="p-8 max-w-full">
+    <motion.div 
+      {...pageMotion  }
+      className="p-8 max-w-full">
       {/* Page Header */}
-      <div className="mb-8 flex justify-between items-center">
+      <motion.div 
+          variants={fadeUp}
+          initial="initial"
+          animate="animate"
+        className="mb-8 flex justify-between items-center">
         <div>
           <h1 className="text-xl font-bold font-oswald uppercase text-gray-900 dark:text-white">
             All Transactions
@@ -200,13 +213,18 @@ const TransactionsPage: React.FC = () => {
         <div className="text-right">
           <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
           <p className="text-2xl font-bold text-green-600">
-            TSH {totalRevenue.toLocaleString()}
+            TSH <CountUp value={totalRevenue ?? 0} />
           </p>
         </div>
-      </div>
+      </motion.div>
 
   {/* Controls Bar */}
-      <div className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+      <motion.div 
+          variants={fadeUp}
+          initial="initial"
+          animate="animate"
+          transition={{ delay: 0.05 }}
+        className="mb-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div className="flex gap-4 items-center">
           {/* Method Filter */}
           <select
@@ -284,7 +302,7 @@ const TransactionsPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Table */}
       <div className="overflow-x-auto shadow-sm bg-white dark:text-whiteText font-poppins">
@@ -302,7 +320,7 @@ const TransactionsPage: React.FC = () => {
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <th key={header.id} className="px-6 py-4 text-left">
+                    <th key={header.id} className="px-6 py-4 text-left dark:text-whiteText">
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -352,7 +370,7 @@ const TransactionsPage: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

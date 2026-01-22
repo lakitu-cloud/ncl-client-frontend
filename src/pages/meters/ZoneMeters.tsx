@@ -1,253 +1,95 @@
-// src/pages/MetersPage.tsx
-import React, { useMemo, useState, useEffect } from "react";
+// components/zone/ZoneMeters.tsx
+import React, { useState, useMemo } from "react";
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  SortingState,
-  ColumnFiltersState,
-} from "@tanstack/react-table";
-import {
-  FaSearch,
+  FaChevronDown,
   FaSync,
+  FaToggleOff,
+  FaToggleOn,
+  FaSearch,
   FaDownload,
   FaCog,
-  FaToggleOn,
-  FaToggleOff,
+  FaExclamationTriangle,
 } from "react-icons/fa";
 import { FiEye, FiTrash } from "react-icons/fi";
 import { TbAdjustmentsCancel } from "react-icons/tb";
-import { FaCircleCheck, FaCircleXmark, FaCircleStop, FaChevronDown } from "react-icons/fa6";
-import { toast } from "react-toastify";
-import * as XLSX from "xlsx";
+import {
+  FaCircleCheck,
+  FaCircleStop,
+  FaCircleXmark,
+} from "react-icons/fa6";
+import { Link } from "react-router-dom";
 import { format } from "date-fns";
 
+import { MeterListCards } from "../../components/card/meterListCards";
 import { useGetAllMeter } from "../../hooks/useMeter";
-import type { Meter } from "../../types/meterTypes";
+import { useRefresh } from "../../hooks/useUser";
 import DeleteModel from "../../components/modal/deleteModel";
-import Jobs from "./Jobs";
 import Setting from "./Setting";
-import { Link } from "react-router-dom";
+import Jobs from "./Jobs";
+import { Meter } from "../../types/meterTypes";
 
-export default function ZoneMeters() {
-  const { data: meters = [], isLoading, isError, error, refetch } = useGetAllMeter();
+const ZoneMeters = () => {
+  const {
+    data: meters = [],
+    isLoading,
+    isError,
+    error,
+  } = useGetAllMeter();
 
-  const [globalFilter, setGlobalFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState<"delete" | "jobs" | "configure" | "">("");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { mutate: refreshMeters, isPending: isRefreshing } = useRefresh();
+
   const [toggle, setToggle] = useState(true);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [selectedMeter, setSelectedMeter] = useState<Meter | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<"delete" | "jobs" | "configure" | "">("");
 
-  // Real dropdown state (no Flowbite needed)
+  // Filters
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [typeFilter, setTypeFilter] = useState<string>("");
   const [openStatusDropdown, setOpenStatusDropdown] = useState(false);
   const [openTypeDropdown, setOpenTypeDropdown] = useState(false);
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      await refetch();
-      toast.success("Meters refreshed successfully");
-    } catch {
-      toast.error("Failed to refresh meters");
-    } finally {
-      setIsRefreshing(false);
+  // Pagination
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageSize = 10;
+
+  const filteredMeters = useMemo(() => {
+    let result = toggle ? meters : meters.filter((m) => m.status !== "inactive");
+
+    if (statusFilter) {
+      result = result.filter((m) => m.status === statusFilter);
     }
-  };
 
-  const handleExport = () => {
-    const exportData = table.getFilteredRowModel().rows.map((row) => row.original);
-    const worksheet = XLSX.utils.json_to_sheet(
-      exportData.map((m) => ({
-        "Serial No": m.serial,
-        Type: m.type,
-        Status: m.status,
-        Description: m.description,
-        "Installed At": format(new Date(m.installedAt), "dd MMM yyyy, HH:mm"),
-        Locked: m.lock ? "Yes" : "No",
-      }))
-    );
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Meters");
-    XLSX.writeFile(workbook, `meters_${format(new Date(), "yyyy-MM-dd")}.xlsx`);
-    toast.success("Exported successfully");
-  };
+    if (typeFilter) {
+      result = result.filter((m) => m.type.toLowerCase() === typeFilter.toLowerCase());
+    }
 
-  const columns = useMemo<ColumnDef<Meter>[]>(
-    () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <input
-            type="checkbox"
-            checked={table.getIsAllPageRowsSelected()}
-            onChange={table.getToggleAllPageRowsSelectedHandler()}
-            className="w-4 h-4 rounded border-gray-300 dark:bg-blackText dark:border-gray-700"
-          />
-        ),
-        cell: ({ row }) => (
-          <input
-            type="checkbox"
-            checked={row.getIsSelected()}
-            onChange={row.getToggleSelectedHandler()}
-            className="w-4 h-4 rounded border-gray-300"
-          />
-        ),
-        size: 2,
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ getValue }) => {
-          const status = getValue() as string;
-          return (
-            <div className="flex justify-start">
-              {status === "active" && <FaCircleCheck className="text-green-600 text-lg" />}
-              {status === "inactive" && <FaCircleXmark className="text-red-600 text-lg" />}
-              {status === "locked" && <FaCircleStop className="text-orange-600 text-lg" />}
-            </div>
-          );
-        },
-        size: -10,
-      },
-      {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                setSelectedId(row.original.id);
-                setIsModalOpen("configure");
-              }}
-              className="text-gray-600 dark:text-gray-400 hover:text-blue-600"
-              title="Configure"
-            >
-              <TbAdjustmentsCancel size={20} />
-            </button>
-            <button
-              onClick={() => {
-                setSelectedId(row.original.id);
-                setIsModalOpen("jobs");
-              }}
-              className="text-gray-600 dark:text-gray-400 hover:text-indigo-600"
-              title="View Jobs"
-            >
-              <FiEye size={18} />
-            </button>
+    if (globalFilter) {
+      const lower = globalFilter.toLowerCase();
+      result = result.filter(
+        (m) =>
+          m.serial.toLowerCase().includes(lower) ||
+          m.description?.toLowerCase().includes(lower) ||
+          m.type.toLowerCase().includes(lower) ||
+          m.error?.toLowerCase().includes(lower)
+      );
+    }
 
-            <button
-              onClick={() => {
-                setSelectedId(row.original.id);
-                setIsModalOpen("delete");
-              }}
-              className="text-gray-600 dark:text-gray-400 hover:text-red-600"
-              title="Delete"
-            >
-              <FiTrash size={18} />
-            </button>
-          </div>
-        ),
-        size: 2,
-      },
-      {
-        accessorKey: "serial",
-        header: "Serial No",
-        cell: ({ row }) => {
-          const serial = row.original.serial;
-          const id = row.original.id;
+    return result;
+  }, [meters, toggle, statusFilter, typeFilter, globalFilter]);
 
-          return (
-            <Link
-              to={`/manager/zone/meter/${id}`}
-              className="font-oswald font-semibold text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-              onClick={(e) => e.stopPropagation()} // Prevent row click if you add it later
-            >
-              {serial}
-            </Link>
-          );
-        },
-      },
-      {
-        accessorKey: "description",
-        header: "Description",
-        cell: ({ getValue }) => (
-          <p className="max-w-xs truncate dark:text-whiteText font-poppins text-nowrap text-md font-semibold" title={getValue() as string}>
-            {getValue() as string}
-          </p>
-        ),
-        size: 600
+  const paginatedMeters = useMemo(() => {
+    const start = pageIndex * pageSize;
+    return filteredMeters.slice(start, start + pageSize);
+  }, [filteredMeters, pageIndex]);
 
-      },
-      {
-        accessorKey: "type",
-        header: "Type",
-        cell: ({ getValue }) => <span className="uppercase font-bold dark:text-whiteTex dark:text-whiteText text-sm">{getValue() as string}</span>,
-      },
+  const totalPages = Math.ceil(filteredMeters.length / pageSize);
 
-      {
-        accessorKey: "lock",
-        header: "Locked",
-        cell: ({ getValue }) => (
-          <div className="flex justify-start">
-            {getValue() ? (
-              <FaToggleOn className="text-red-600 text-2xl w-8" />
-            ) : (
-              <FaToggleOff className="text-blue-600 text-2xl w-8" />
-            )}
-          </div>
-        ),
-      },
-      {
-        accessorKey: "installedAt",
-        header: "Installed At",
-        cell: ({ getValue }) => {
-          return (
-            <span className="dark:text-whiteText font-poppins">
-              {format(new Date(getValue() as string), "dd MMM yyyy, HH:mm")}
-            </span>
-          )
-        }
-
-      },
-    ],
-    []
-  );
-
-  const table = useReactTable({
-    data: meters,
-    columns,
-    state: {
-      sorting,
-      globalFilter,
-      rowSelection,
-      columnFilters: [
-        ...(statusFilter ? [{ id: "status", value: statusFilter }] : []),
-        ...(typeFilter ? [{ id: "type", value: typeFilter }] : []),
-      ],
-    },
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  });
-
-  const selectedCount = Object.keys(rowSelection).length;
+  const handleRefresh = () => refreshMeters();
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center py-20">
         <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div>
       </div>
     );
@@ -255,225 +97,345 @@ export default function ZoneMeters() {
 
   if (isError) {
     return (
-      <div className="text-center py-12 text-red-600">
-        Error: {(error as Error)?.message}
+      <div className="text-center py-20 text-red-600">
+        Error loading meters: {error?.message || "Unknown error"}
+        <button onClick={handleRefresh} className="ml-4 text-blue-600 underline">
+          Retry
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="mt-6 space-y-6 w-full">
+    <>
+      <MeterListCards meters={filteredMeters} isLoading={isLoading} />
 
-      <div className="flex flex-wrap items-center justify-between gap-4 max-w-full"  >
-
-        <div className="flex space-x-4 mr-4">
-
-          {/* Status Filter */}
+      {/* Toolbar */}
+      <div className="flex flex-wrap items-center justify-between gap-4 mt-6 mb-4">
+        {/* Left Filters */}
+        <div className="flex flex-wrap gap-3">
+          {/* Status */}
           <div className="relative">
             <button
-              // onClick={() => setOpenStatusDropdown(!openStatusDropdown)}
-              className="inline-flex items-center text-gray-500 bg-white border dark:bg-blackText dark:text-whiteText font-poppins dark:border-gray-700 border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 transition"
+              onClick={() => setOpenStatusDropdown(!openStatusDropdown)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition"
             >
-              Status: {statusFilter || "All"} <FaChevronDown className="ml-2 w-3 h-3" />
+              Status <FaChevronDown className="w-3 h-3" />
             </button>
             {openStatusDropdown && (
-              <div className="absolute top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 w-44">
-                <ul className="py-2 text-sm text-gray-700">
-                  {["", "active", "inactive", "locked"].map((status) => (
-                    <li key={status || "all"}>
-                      <button
-                        onClick={() => {
-                          setStatusFilter(status);
-                          setOpenStatusDropdown(false);
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 capitalize"
-                      >
-                        {status || "All"}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+              <div className="absolute z-20 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border dark:border-gray-700">
+                {["All", "Active", "Inactive", "Locked", "Suspended"].map((opt) => (
+                  <div
+                    key={opt}
+                    onClick={() => {
+                      setStatusFilter(opt === "All" ? "" : opt.toLowerCase());
+                      setOpenStatusDropdown(false);
+                    }}
+                    className="px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-sm"
+                  >
+                    {opt}
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
-          {/* Type Filter */}
+          {/* Type - can be expanded later */}
           <div className="relative">
             <button
-              // onClick={() => setOpenTypeDropdown(!openTypeDropdown)}
-              className="inline-flex items-center text-gray-500 bg-white border dark:bg-blackText dark:text-whiteText font-poppins dark:border-gray-700 border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 transition"
+              onClick={() => setOpenTypeDropdown(!openTypeDropdown)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition"
             >
-              Type: {typeFilter || "All"} <FaChevronDown className="ml-2 w-3 h-3" />
+              Type <FaChevronDown className="w-3 h-3" />
             </button>
-            {openTypeDropdown && (
-              <div className="absolute top-full mt-1 z-50 bg-white rounded-lg shadow-lg border border-gray-200 w-44">
-                <ul className="py-2 text-sm text-gray-700">
-                  {["", "Token", "Card", "Direct"].map((type) => (
-                    <li key={type || "all"}>
-                      <button
-                        onClick={() => {
-                          setTypeFilter(type);
-                          setOpenTypeDropdown(false);
-                        }}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                      >
-                        {type || "All"}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {/* ... similar dropdown ... */}
           </div>
-
         </div>
 
         {/* Search */}
-        <div className="flex-1 relative max-w-auto mr-24">
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 " />
+        <div className="flex-1 min-w-[280px] relative">
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
-            placeholder="Search meters..."
+            placeholder="Search serial, description, error..."
             value={globalFilter}
-            // onChange={(e) => setGlobalFilter(e.target.value)}
-            className="pl-12 pr-4 py-2 w-full border border-gray-300 font-poppins rounded-md dark:bg-blackText dark:border-gray-700 dark:text-whiteText focus:ring-2 focus:ring-blue-500 outline-none transition"
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
           />
         </div>
 
-        {/* Right Side Controls */}
-        <div className="flex items-center gap-6">
+        {/* Right Controls */}
+        <div className="flex items-center gap-5">
           <button
-            // onClick={() => setToggle(!toggle)}
-            className="text-xl transition"
-            title={toggle ? "Hide inactive" : "Show all"}
+            onClick={() => setToggle(!toggle)}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+            title={toggle ? "Hide inactive meters" : "Show all meters"}
           >
-            {toggle ? <FaToggleOn className="text-blue-600 text-md dark:text-white text-lg" /> : <FaToggleOff className="text-gray-400 dark:text-gray-600 text-lg" />}
+            {toggle ? (
+              <FaToggleOn className="text-blue-600 text-2xl" />
+            ) : (
+              <FaToggleOff className="text-gray-500 text-2xl" />
+            )}
           </button>
 
           <button
-            // onClick={handleRefresh} 
+            onClick={handleRefresh}
             disabled={isRefreshing}
-            className="text-gray-600 hover:text-gray-800">
-            <FaSync className={`text-lg dark:text-white ${isRefreshing ? "animate-spin" : ""}`} />
-          </button>
-
-          <button onClick={handleExport} className="text-gray-600 hover:text-gray-800">
-            <FaDownload className="text-lg dark:text-white" />
-          </button>
-
-          <button onClick={() => setIsSettingsOpen(true)} className="text-gray-600 hover:text-gray-800">
-            <FaCog className="text-lg dark:text-white " />
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+          >
+            <FaSync className={`text-xl ${isRefreshing ? "animate-spin" : ""}`} />
           </button>
         </div>
-
       </div>
 
-      {/* Table */}
-      <div className="bg-white dark:bg-darkTheme rounded-md shadow overflow-hidden">
+      {/* Modern Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full divide-y divide-gray-600">
-            <thead className="bg-gray-50 dark:bg-blackText/20">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="px-6 py-4 text-left text-sm font-semibold text-gray-500 dark:text-whiteText uppercase tracking-wider"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
+          <table className="w-full min-w-max">
+            <thead>
+              <tr className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="py-4 px-6 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Actions
+                </th>
+                <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Serial Number
+                </th>
+                <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Error
+                </th>
+                <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Type
+                </th>
+                <th className="py-4 px-6 text-center text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Locked
+                </th>
+                <th className="py-4 px-6 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                  Installed
+                </th>
+              </tr>
             </thead>
-            <tbody className="bg-white dark:bg-darkTheme divide-y divide-gray-600 max-h-lg">
-              {table.getRowModel().rows.length === 0 ? (
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
+              {paginatedMeters.length === 0 ? (
                 <tr>
-                  <td colSpan={columns.length} className="text-center py-20 text-gray-500 dark:text-gray-400">
-                    <div className="space-y-3">
-                      <p className="text-xl font-medium">No meters found</p>
-                      <p className="text-sm">Try adjusting filters or refresh the data</p>
-                    </div>
+                  <td colSpan={7} className="py-16 text-center text-gray-500 dark:text-gray-400">
+                    <p className="text-lg font-medium">No meters found</p>
+                    <p className="text-sm mt-2">Try changing filters or refreshing the list</p>
                   </td>
                 </tr>
               ) : (
-                table.getRowModel().rows.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-darkTheme">
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-6 py-4 text-sm text-gray-900 dark:gray-200">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                paginatedMeters.map((meter) => {
+                  const hasError = meter.error !== null;
+                  const isSuspended = meter.managerId === null;
+
+                  return (
+                    <tr
+                      key={meter.id}
+                      className={`hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${isSuspended ? "bg-red-50/40 dark:bg-red-950/30" : ""
+                        }`}
+                    >
+                      {/* Status */}
+                      <td className="py-5 px-6">
+                        <div className="flex items-center gap-2">
+
+                          {
+                            isSuspended ? (
+                              <FaCircleXmark className="text-orange-600 text-xl" />
+
+                            ) : (
+                              <FaCircleCheck className="text-green-600 text-xl" />
+
+                            )
+                          }
+
+                          {/* {isSuspended && (
+                            <span className="text-xs font-medium text-red-700 dark:text-red-400">
+                              Pending Error
+                            </span>
+                          )} */}
+                        </div>
                       </td>
-                    ))}
-                  </tr>
-                ))
+
+                      {/* Actions */}
+                      <td className="py-5 px-6">
+                        <div className="flex justify-center gap-4">
+                          <button
+                            onClick={() => {
+                              setSelectedMeter(meter);
+                              setIsModalOpen("configure");
+                            }}
+                            className="text-gray-600 hover:text-blue-600 transition p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                            title="Configure"
+                          >
+                            <TbAdjustmentsCancel size={20} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedMeter(meter);
+                              setIsModalOpen("jobs");
+                            }}
+                            className="text-gray-600 hover:text-indigo-600 transition p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                            title="View Jobs"
+                          >
+                            <FiEye size={20} />
+                          </button>
+                          <button
+                            onClick={() => {
+                              setSelectedMeter(meter);
+                              setIsModalOpen("delete");
+                            }}
+                            className="text-gray-600 hover:text-red-600 transition p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
+                            title="Delete"
+                          >
+                            <FiTrash size={20} />
+                          </button>
+                        </div>
+                      </td>
+
+                      {/* Serial */}
+                      <td className="py-5 px-6">
+                        <Link
+                          to={`/manager/zone/meter/${meter.id}`}
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline transition"
+                        >
+                          {meter.serial}
+                        </Link>
+                      </td>
+
+                      {/* Description + Error */}
+                      <td className="py-5 px-6">
+                        <div className="space-y-1 max-w-xl">
+                          <p className="text-gray-900 dark:text-gray-200 font-medium truncate">
+                            {meter.description || "—"}
+                          </p>
+
+                        </div>
+                      </td>
+
+                      {/* Error */}
+                      <td className="py-5 px-6">
+                        <div className="space-y-1 max-w-xl">
+
+                          {hasError ? (
+                            <div className="text-sm text-red-700 px-3 py-1.5">
+                              {/* { meter.error ? (<> <span className="font-medium">Error: </span> {meter.error}</>):
+                                (<> 
+                                  <span className="font-medium">None </span></>)
+                              } */}
+                              <FaExclamationTriangle className="text-red-600 text-xl" />
+
+                            </div>
+                          ) : <>None</>}
+                        </div>
+                      </td>
+
+
+                      {/* Type */}
+                      <td className="py-5 px-6">
+                        <span className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-full text-xs font-medium uppercase">
+                          {meter.type}
+                        </span>
+                      </td>
+
+                      {/* Locked */}
+                      <td className="py-5 px-6 text-center">
+                        {meter.lock ? (
+                          <FaToggleOn className="text-red-600 text-3xl mx-auto" />
+                        ) : (
+                          <FaToggleOff className="text-green-600 text-3xl mx-auto" />
+                        )}
+                      </td>
+
+                      {/* Installed At */}
+                      <td className="py-5 px-6 text-gray-700 dark:text-gray-300">
+                        {format(new Date(meter.installedAt), "dd MMM yyyy • HH:mm")}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
 
         {/* Pagination */}
-        <div className="bg-gray-50 dark:bg-blackText/20 px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2 dark:text-whiteText">
-            <button
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition"
-            >
-              Next
-            </button>
-
-            {/* FIXED: Safe page display */}
-            <span className="text-sm text-gray-600 dark:text-gray-300 mx-4">
-              Page{" "}
-              <strong>
-                {table.getPageCount() === 0
-                  ? 0
-                  : table.getState().pagination.pageIndex + 1}
-              </strong>{" "}
-              of <strong>{Math.max(1, table.getPageCount())}</strong>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-6 py-4 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPageIndex(0)}
+                disabled={pageIndex === 0}
+                className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {"<<"}
+              </button>
+              <button
+                onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+                disabled={pageIndex === 0}
+                className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {"<"}
+              </button>
+              <button
+                onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={pageIndex === totalPages - 1}
+                className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {">"}
+              </button>
+              <button
+                onClick={() => setPageIndex(totalPages - 1)}
+                disabled={pageIndex === totalPages - 1}
+                className="px-4 py-2 border rounded-lg disabled:opacity-50 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {">>"}
+              </button>
+            </div>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              Page <strong>{pageIndex + 1}</strong> of <strong>{totalPages}</strong>
             </span>
           </div>
-
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => table.setPageSize(Number(e.target.value))}
-            className="text-sm max-w-md border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 bg-white dark:bg-blackText focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {[10, 25, 50, 100].map((size) => (
-              <option key={size} value={size}>
-                Show {size}
-              </option>
-            ))}
-          </select>
-        </div>
+        )}
       </div>
 
       {/* Modals */}
-      {/* {isModalOpen === "delete" && selectedId && (
+      {isModalOpen === "delete" && selectedMeter && (
         <DeleteModel
-          selectedId={selectedId}
-          setSelectedId={setSelectedId}
-          setIsModalOpen={setIsModalOpen}
-          setRowSelection={setRowSelection}
+          id={selectedMeter.id}
+          onClose={() => {
+            setIsModalOpen("");
+            setSelectedMeter(null);
+          }}
         />
-      )} */}
+      )}
 
-      {/* {isModalOpen === "jobs" && selectedId && (
-        <Jobs selectedId={selectedId} onClose={() => setIsModalOpen("")} />
-      )} */}
+      {isModalOpen === "jobs" && selectedMeter && (
+        <Jobs
+          id={selectedMeter.id}
+          isOpen={true}
+          onClose={() => {
+            setIsModalOpen("");
+            setSelectedMeter(null);
+          }}
+        />
+      )}
 
-      {/* {isModalOpen === "configure" && selectedId && (
-        <Setting serial={selectedId} onClose={() => setIsModalOpen("")} />
-      )} */}
-    </div>
+      {isModalOpen === "configure" && selectedMeter && (
+        <Setting
+          serial={selectedMeter.serial}
+          onClose={() => {
+            setIsModalOpen("");
+            setSelectedMeter(null);
+          }}
+        />
+      )}
+    </>
   );
-}
+};
+
+export default ZoneMeters;

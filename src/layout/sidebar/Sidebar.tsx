@@ -12,9 +12,15 @@ import "./sidebar.css";
 import { useAuth } from "../../context/AuthProvider";
 import { motion } from "framer-motion";
 
-const navigation = getNavigation();
 
 const Sidebar: React.FC = () => {
+  const [navigation, setNavigation] = React.useState(getNavigation());
+
+   React.useEffect(() => {
+    const handler = () => setNavigation(getNavigation());
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []);
   
   const { logout } = useAuth();
   return (

@@ -16,22 +16,10 @@ export const useZoneLogin = () => {
         onSuccess: async (response) => {
             toast.dismiss('LOADING');
 
-            if (!response.ok) {
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        toast.error("Error: UnAuthorized Access")
-                    }
-                    if (response.status === 500) {
-                        toast.error("Error: Server Error")
-                    }
-                }
-            }
-
             const data = await response.json()
 
             if (data.status === "error") {
-                toast.dismiss('LOADING');
-                toast.error(data.message as string);
+                toast.error(data.message);
             }
 
             if (data.status === "success") {
@@ -44,7 +32,7 @@ export const useZoneLogin = () => {
 
                 });
 
-                queryClient.invalidateQueries({
+                queryClient.invalidateQueries({ 
                     queryKey: ['user']
                 })
 
@@ -72,14 +60,23 @@ export const useRegister = () => {
     const navigate = useNavigate();
     return useMutation({
         mutationFn: async (payload: UserRegistrationPayload) => userService.register(payload),
-        onSuccess: (data) => {
-            toast.success('Registration successful! Welcome!');
+        onSuccess: async (response) => {
+            toast.dismiss('LOADING');
+
+            const data = await response.json()
+
+            if (data.status === "error"){
+                toast.error(data.message);
+            }
+
+            if (data.status === "success"){
+                toast.success(data.message);
+                 window.location.reload()
+            }
             // Optional: save token if your backend returns one
             // localStorage.setItem('token', data.token);
 
-            setTimeout(() => {
-                navigate('/auth');
-            }, 1500);
+           
         },
         onError: (error: Error) => {
             toast.error(error.message || 'Something went wrong. Please try again.');
@@ -105,13 +102,43 @@ export const useDash = () => {
 
 export const useAvailableMeters = () => {
     return useQuery<string[], Error>({
-    queryKey: ['availableMeters'],
-    queryFn: async() => {
-        const res = await userService.availableMeter()
-        return res.meters
-    },
-    staleTime: 1000 * 60 * 5, // 5 minutes — fresh enough
-    gcTime: 1000 * 60 * 30, // keep in memory 30 min
+        queryKey: ['availableMeters'],
+        queryFn: async () => {
+            const res = await userService.availableMeter()
+            return res.meters
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutes — fresh enough
+        gcTime: 1000 * 60 * 30, // keep in memory 30 min
 
-  });
+    });
 }
+
+export const useRefresh = () => {
+
+  return useMutation({
+    mutationFn: async () => {
+      const res = await userService.refresh();
+      return res;
+    },
+    onSuccess: (response) => {
+      toast.dismiss("LOADING");
+
+      if (response.status === "success") {
+        toast.success(response.message || "Meters refreshed successfully!");
+
+        // Invalidate relevant queries for instant UI update
+        queryClient.invalidateQueries({ queryKey: ["meters"] });
+        queryClient.invalidateQueries({ queryKey: ["availableMeters"] });
+      } else {
+        toast.error(response.message || "Failed to refresh meters");
+      }
+    },
+    onError: (error: any) => {
+      toast.dismiss("LOADING");
+      toast.error(error?.message || "An error occurred while refreshing meters");
+    },
+  });
+};
+
+
+

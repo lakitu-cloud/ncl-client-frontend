@@ -1,6 +1,7 @@
 import { apiRequest } from ".";
 import { baseUrl } from "../config/urls";
 import { DashboardData, UserLoginPayload, UserRegistrationPayload } from "../types/userType";
+import { ApiResponse } from "./managerServices";
 
 interface DashboardApiResponse {
   status: 'success';
@@ -10,7 +11,7 @@ interface DashboardApiResponse {
 export const userService = {
     login: async (payload: UserLoginPayload) => {
 
-        return await fetch(`${baseUrl}/user/login`, {
+        return await fetch(`${baseUrl}user/login`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -21,7 +22,7 @@ export const userService = {
     },
 
      register: async (payload: UserRegistrationPayload) => {
-        return await fetch(`${baseUrl}/user`, {
+        return await fetch(`${baseUrl}user`, {
             method: "POST",
             credentials: 'include',
             headers: {
@@ -33,22 +34,25 @@ export const userService = {
         
     },
 
-    refresh: async (token: string) => {
-        return  await fetch(`${baseUrl}/user/${token}/refresh`, {
+    token: async (token: string) => {
+        return  await fetch(`${baseUrl}user/${token}/refresh`, {
             method: "POST",
             credentials: 'include',
             headers: {
                 'Content-Type': "application/json"
             },
         })
-
         
+    },
+
+    refresh: async(): Promise<ApiResponse> => {
+        const res = await apiRequest<ApiResponse>('user/refresh', 'POST')
+        return res
     },
 
     dashboard: async(): Promise<DashboardApiResponse> => {
         const res = await apiRequest<DashboardApiResponse>('user/data', 'GET')
-        console.log("form the main source", res.metrics);
-        return res
+            return res
     },
 
     availableMeter: async(): Promise<{status: string, meters: string[]}> => {

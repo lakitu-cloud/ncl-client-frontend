@@ -177,7 +177,7 @@ const TokenTopUp = () => {
                         )}
                         <IoCopyOutline
                           className="ml-2 text-gray-600 w-4 h-4 hover:text-gray-400"
-                          onClick={() => handleCopyToken(item.token)}
+                        // onClick={() => handleCopyToken(item.token)}
                         />
                       </td>
                       <td className="px-6 py-2">
@@ -239,7 +239,7 @@ const TokenTopUp = () => {
                         ) : null}
                       </td>
                       <td className="px-6 py-2">
-                        {new Date(item.created_at).toLocaleString("en-US", {
+                        {new Date(item.createdAt).toLocaleString("en-US", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
@@ -263,11 +263,10 @@ const TokenTopUp = () => {
               <li className="me-2">
                 <button
                   onClick={() => setTokenType("set")}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg  hover:text-gray-600 ${
-                    tokenType === "set"
+                  className={`inline-block p-4 border-b-2 rounded-t-lg  hover:text-gray-600 ${tokenType === "set"
                       ? "border-blue-600 hover:text-blue-600"
                       : "border-b-transparent hover:text-gray-600"
-                  }`}
+                    }`}
                 >
                   Generate Token
                 </button>
@@ -275,11 +274,10 @@ const TokenTopUp = () => {
               <li className="me-2">
                 <button
                   onClick={() => setTokenType("clear")}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg hover:border-gray-300 ${
-                    tokenType === "clear"
+                  className={`inline-block p-4 border-b-2 rounded-t-lg hover:border-gray-300 ${tokenType === "clear"
                       ? "border-blue-600 hover:text-blue-600"
                       : "border-b-transparent hover:text-gray-600"
-                  }`}
+                    }`}
                 >
                   Clear Temper
                 </button>

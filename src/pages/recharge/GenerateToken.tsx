@@ -4,31 +4,35 @@ import { AiOutlineInfoCircle, AiOutlinePlus } from "react-icons/ai";
 import { Spinner } from "../../components/Spinner";
 import { useGenerateToken } from "../../hooks/useToken";
 import { IoCloseOutline } from "react-icons/io5";
+
+
 const GenerateToken = () => {
   const [serial, setSerial] = useState("");
   const [account, setAccount] = useState("");
-  const [amount, setAmount] = useState<number>(0);
+  const [units, setUnits] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isError, setIsError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const { mutate } = useGenerateToken()
 
   const handleGenerateToken = async () => {
-    if (!serial || (amount ?? 0) <= 0 || !account.trim()) {
+    if (!serial || (parseFloat(units) ?? 0) <= 0 || !account.trim()) {
       setIsError("Please enter a valid Meter ID, Units, and Phone Number.");
       return;
     }
-    
-    mutate({serial, amount, account})
+
+    const unit = parseFloat(units)
+
+    mutate({ serial, unit })
 
   };
 
   return (
     <div className="max-w-md mx-auto">
-       <div className="mb-6 p-4 z-50 bg-yellow-50 dark:bg-blackText rounded-lg border border-yellow-200 dark:border-gray-200">
+      <div className="mb-6 p-4 z-50 bg-yellow-50 dark:bg-blackText rounded-lg border border-yellow-200 dark:border-gray-200">
         <button className="absolute text-end p-3 hover:bg-white/20 rounded-xl transition">
-                          <IoCloseOutline className="w-6 h-6" />
-                        </button>
+          <IoCloseOutline className="w-6 h-6" />
+        </button>
         <h3 className="font-semibold mb-2 flex items-center gap-2 text-yellow-800 dark:text-gray-200">
           <AiOutlineInfoCircle className="shrink-0" />
           Before Generating Token:
@@ -67,7 +71,7 @@ const GenerateToken = () => {
               Meter Number
             </label>
           </div>
-          
+
         </div>
         <div>
           <div className="relative z-0">
@@ -92,23 +96,34 @@ const GenerateToken = () => {
           </div>
         </div>
         <div>
-        <div className="relative z-0">
-          <input
-            type="number"
-            id="units"
-            className="block py-2.5 px-0 w-full text-md text-gray-700 bg-transparent border-0 border-b-2 border-gray-600 appearance-none dark:text-white dark:border-gray-500 dark:focus:border-gray-500 focus:outline-none focus:ring-0 focus:border-gray-600 peer"
-            value={amount}
-            placeholder=" "
-            onChange={(e) => {
-              const value = parseInt(e.target.value);
-              setAmount(isNaN(value) ? 0 : value);
-            }}
-          />
-          <label htmlFor="units" 
-          className="absolute text-sm text-gray-600 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
-          >
-            Kiasi (TZS)
-          </label>
+          <div className="relative z-0">
+            <input
+              type="number"
+              id="units"
+              step="0.01"
+              className="block py-2.5 px-0 w-full text-md text-gray-700 bg-transparent border-0 border-b-2 border-gray-600 appearance-none dark:text-white dark:border-gray-500 focus:outline-none focus:ring-0 focus:border-gray-600 peer"
+              value={units}
+              placeholder=" "
+              onChange={(e) => {
+                const value = e.target.value;
+
+                // Allow empty input
+                if (value === "") {
+                  setUnits("");
+                  return;
+                }
+
+                // Allow numbers with up to 2 decimals
+                if (/^\d+(\.\d{0,2})?$/.test(value)) {
+                  setUnits(value);
+                }
+              }}
+            />
+            <label htmlFor="units"
+              className="absolute text-sm text-gray-600 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto"
+            >
+              Units
+            </label>
           </div>
         </div>
         <button

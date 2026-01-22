@@ -7,9 +7,9 @@ import { useDebounce } from 'use-debounce';
 import { SubscriberCreatePayload, SubscriberPayload, SubscriberUpdatePayload } from "../types/subscriberTypes";
 import { useMemo } from "react";
 
-export const useGetSubs = ( options?: UseQueryOptions< SubscriberPayload[], Error, SubscriberPayload[], ['subscriber'] >) => {
+export const useGetSubs = ( options?: UseQueryOptions< SubscriberPayload[], Error, SubscriberPayload[], ['subscribers'] >) => {
   return useQuery({
-    queryKey: ['subscriber'],
+    queryKey: ['subscribers'],
     queryFn: async () => {
       const response = await subscriberService.get();
       
@@ -29,9 +29,12 @@ export const useGetSubsById = (subscriberId: string) => {
     return useQuery({
         queryKey: ['subscriber'],
         queryFn: async () => {
-            const data = await subscriberService.getById(subscriberId as string)
-            return data
-        }
+            return await subscriberService.getById(subscriberId as string)
+        },
+        enabled: !!subscriberId,               // don't run if ID is missing/falsy
+        staleTime: 5 * 60 * 1000,             // 5 minutes – good balance
+        gcTime: 10 * 60 * 1000,               // keep in cache longer than stale
+        retry: 1,
     })
 }
 
@@ -42,7 +45,7 @@ export const useAddSubs = () => {
             toast.dismiss("LOADING")
             // toast.success(data.message as string);
             queryClient.invalidateQueries({
-                queryKey: ['subscriber']
+                queryKey: ['subscribers']
             })
         },
         onError(error) {
@@ -159,8 +162,7 @@ export const useUpdateSub = () => {
     }
 }
 
-
-// // Search subscribers
+// Search subscribers
 export const useSearchSubscribers = (query: string) => {
   const debouncedQuery = useDebounce(query, 300)[0];
   return useQuery<SubscriberPayload[]>({

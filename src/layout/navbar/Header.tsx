@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                     </Link> */}
                     
                     <div className='border-r-4 border-blue-800 h-8 dark:border-white'></div>
-                    <p className="text-blue-800 dark:text-white font-oswald text-md md:text-2xl text-nowrap font-bold">{title}
+                    <p className="text-blue-800 dark:text-white font-oswald text-md md:text-2xl text-lg uppercase text-nowrap font-bold">{title}
                    
                     </p>
                 </div>
@@ -139,7 +139,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
                         </div>
                        
                         {isNotificationDropdownOpen && (
-                            <div className="absolute right-[-32px]  w-72 bg-gray-50 shadow-md rounded-md">
+                            <div className="absolute right-[-32px] z-20 w-72 bg-gray-50 shadow-md rounded-md">
                                 <p className="bg-white px-4 py-2">No new notifications</p>
                             </div>
                         )}
@@ -196,7 +196,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
 
             </section>
             {isMobileMenuOpen && (
-                <div className='md:hidden absolute right-0 flex flex-col mt-8 w-48 bg-gray-50 text-gray-600 shadow-md rounded-md'>
+                <div className='md:hidden absolute z-10 right-0 flex flex-col mt-2 w-48 bg-gray-50 text-gray-600 shadow-md rounded-md'>
                     <div className=' hover:bg-blue-100 py-2 border-b-[1px] border-gray-300'>
                         <button type='button' onClick={handleNotification} className='w-full flex items-center justify-between space-x-2 px-4'>
                             <MdNotificationsNone className='w-6 h-6' />

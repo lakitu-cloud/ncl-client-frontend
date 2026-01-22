@@ -7,6 +7,7 @@ import { managerKeys } from "../lib/queryKeys";
 import { baseUrl } from "../config/urls";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 interface UpdateManagerVariables {
   id: string;
@@ -45,8 +46,9 @@ export const useCreateManager = () => {
       toast.dismiss("create-manager");
       if (response.status === "success") {
         toast.success("Manager created!");
-
+        window.location.reload();
         queryClient.invalidateQueries({ queryKey: managerKeys.all });
+        
       } else {
         toast.error(response.message || "Failed");
       }
@@ -74,8 +76,8 @@ export const useDeleteManager = () => {
       return res
     },
     onSuccess: (data) => {
+       toast.dismiss("LOADING");
       if (data.status === "success") {
-        toast.dismiss("LOADING");
         toast.success(data.message);
 
         queryClient.invalidateQueries({ queryKey: ["meters"] });
@@ -83,7 +85,6 @@ export const useDeleteManager = () => {
         queryClient.invalidateQueries({ queryKey: ["managers"] });
       }
       if (data.status === "error") {
-        toast.dismiss("LOADING");
         toast.error(data.message);
       }
     },
@@ -167,7 +168,7 @@ export const useSalesLogin = () => {
           secure: true,
           sameSite: 'strict'
 
-        }); // Save token to cookies
+        }); 
 
         queryClient.invalidateQueries({
           queryKey: ['user']
@@ -205,3 +206,83 @@ export const useDash = () => {
        refetchOnWindowFocus: false,
   });
 };
+
+type DownloadState = 'idle' | 'loading' | 'success' | 'error';
+
+export const useDownloadManagerReport = () => {
+  const [state, setState] = useState<DownloadState>('idle');
+
+  const downloadReport = async (managerId: string, managerName?: string) => {
+    if (state === 'loading') return;
+     toast.loading("LOADING...!")
+
+
+    setState('loading');
+    const toastId = toast.loading(`Generating report for ${managerName || 'manager'}...`);
+
+    try {
+      const response = await fetch(`${baseUrl}/report/${managerId}/download`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/pdf',
+          "Authorization": `Bearer ${Cookies.get('auth')}`
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => 'Unknown error');
+        throw new Error(`Failed to generate report: ${response.status} - ${errorText}`);
+      }
+
+      // const response = await managerService.download(managerId)
+
+      if(!response.ok){
+        toast.error("Failed to connect to the server")
+      }
+
+      const blob = await response.blob();
+
+
+      const url = window.URL.createObjectURL(blob);
+
+      // Create invisible link and trigger download
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${managerId}-report.pdf`;
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setState('success');
+      // toast.update(toastId, {
+      //   render: `Report downloaded successfully`,
+      //   type: 'success',
+      //   isLoading: false,
+      //   autoClose: 4000,
+      // });
+      toast.success("Report downloaded successfully!")
+    } catch (err: any) {
+      console.error('Report download failed:', err);
+      setState('error');
+      toast.update(toastId, {
+        render: err.message || 'Failed to download report',
+        type: 'error',
+        isLoading: false,
+        autoClose: 5000,
+      });
+    } finally {
+      // Reset state after short delay (UX improvement)
+      setTimeout(() => setState('idle'), 1200);
+    }
+  };
+
+  return {
+    downloadReport,
+    isLoading: state === 'loading',
+    isSuccess: state === 'success',
+    isError: state === 'error',
+  };
+}

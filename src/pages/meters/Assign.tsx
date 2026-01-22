@@ -37,13 +37,12 @@ const MeterAssignment: React.FC<MeterAssignmentProps> = ({
   } = useGetSubsById(subscriberId as string);
 
   // Extract the actual subscriber from response (adjust based on your API shape)
-  const subscriber: SubscriberPayload | undefined = subscriberResponse?.data;
+  const subscriber = subscriberResponse?.data.subscriber
 
   const isAssigned = !!subscriberId && subscriberId.length > 0;
 
   const handleAssign = (newSubscriberId: string) => {
-    assignMutation.mutate(
-      { meterId, subscriberId: newSubscriberId },
+    assignMutation.mutate({ meterId, subscriberId: newSubscriberId },
       {
         onSuccess: () => {
           toast.success('Meter assigned successfully!');
@@ -56,8 +55,7 @@ const MeterAssignment: React.FC<MeterAssignmentProps> = ({
   };
 
   const handleUnassign = () => {
-    unassignMutation.mutate(
-      { meterId },
+    unassignMutation.mutate({ meterId },
       {
         onSuccess: () => {
           toast.success('Meter unassigned successfully');
@@ -69,9 +67,9 @@ const MeterAssignment: React.FC<MeterAssignmentProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-blackText rounded-md shadow-md border border-gray-200 p-8 mb-8">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-gray-800">Meter Assignment</h3>
+    <div className="bg-white dark:bg-blackText rounded-md shadow-md border border-gray-200 p-8 mb-4">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-xl font-oswald font-semibold text-gray-800">Meter Assignment</h3>
 
         {isAssigned && subscriber && (
           <button
@@ -80,7 +78,7 @@ const MeterAssignment: React.FC<MeterAssignmentProps> = ({
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition disabled:opacity-50"
           >
             <UserX className="w-4 h-4" />
-            {unassignMutation.isPending ? 'Unassigning...' : 'Unassign Meter'}
+            {unassignMutation.isPending ? 'Unassigned...' : 'Unassign Meter'}
           </button>
         )}
       </div>
@@ -101,39 +99,39 @@ const MeterAssignment: React.FC<MeterAssignmentProps> = ({
             </div>
           </div>
         ) : subscriber ? (
-          <div className="flex items-center gap-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
-            <div className="w-28 h-28 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+          <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-md font-poppins">
+            {/* <div className="w-28 h-28 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-xl">
               {subscriber.name}
-            </div>
+            </div> */}
 
             <div className="flex-1">
               <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Subscriber Name</p>
-                  <p className="text-xl font-bold text-gray-900">{subscriber.name}</p>
+                <div className='flex text-center space-x-2'>
+                  <p className="text-sm text-gray-600 mb-1">Subscriber Name:</p>
+                  <p className="text-sm font-bold text-gray-900">{subscriber.name}</p>
                 </div>
-                <div>
+                <div className='flex text-center space-x-2'>
                   <p className="text-sm text-gray-600 mb-1">Phone Number</p>
-                  <p className="text-lg font-semibold text-gray-800">{subscriber.phone}</p>
+                  <p className="text-sm font-semibold text-gray-800">{subscriber.phone}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Account ID</p>
-                  <p className="font-mono text-sm bg-gray-100 px-3 py-1 rounded-lg inline-block">
-                    {subscriber.id}
+                <div className='flex text-center space-x-2'>
+                  <p className="text-sm text-gray-600 mb-1">Account Type</p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {subscriber.type}
                   </p>
                 </div>
-                <div>
+                <div className='flex text-center space-x-2'>
                   <p className="text-sm text-gray-600 mb-1">Current Balance</p>
-                  <p className="text-xl font-bold text-green-700">
+                  <p className="text-sm font-bold text-green-700">
                     TSH {subscriber.balance?.toLocaleString() || '0'}
                   </p>
                 </div>
               </div>
 
               {subscriber.location && (
-                <div className="mt-5">
+                <div className="mt-5 text-center flex space-x-2">
                   <p className="text-sm text-gray-600 mb-1">Address</p>
-                  <p className="text-gray-800 font-medium">{subscriber.location}</p>
+                  <p className="text-sm text-gray-800 font-semibold">{subscriber.location}</p>
                 </div>
               )}
             </div>

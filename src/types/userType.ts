@@ -8,6 +8,7 @@ export interface UserRegistrationPayload {
     email: string
     phone: string
     password: string
+    ppl: number
 }
 
 

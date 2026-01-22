@@ -50,8 +50,33 @@ export interface Manager {
   district: string,
   ppu: number,
   meters: Meters[]
+  metrics: Metrics
   subscribers: SubscriberPayload[]
   createdAt: string,
+}
+
+export interface Metrics {
+  managerId: string,
+  revenueToday: string,
+  revenueYesterday: string,
+  revenueThisWeek: string,
+  revenueLastWeek: string,
+  revenueThisMonth: string,
+  revenueLastMonth: string,
+  revenueThisYear: string,
+  revenueLastYear: string,
+  volumeToday: string,
+  volumeYesterday: string,
+  volumeThisWeek: string,
+  volumeLastWeek: string,
+  volumeThisMonth: string,
+  volumeLastMonth: string,
+  volumeThisYear: string,
+  volumeLastYear: string,
+  collectiveRevenue: string,
+  collectiveVolume: string,
+  updatedAt: string
+      
 }
 
 export interface UpdateManagerPayload {

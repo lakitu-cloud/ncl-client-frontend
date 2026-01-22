@@ -1,20 +1,21 @@
 // components/managers/ManagerList.tsx
 import React, { useState } from "react";
 import { IoTrashOutline, IoBusiness, IoPencilOutline } from "react-icons/io5";
-import { useGetManagers, useDeleteManager } from "../../hooks/useManager";
+import { useGetManagers, useDeleteManager, useDownloadManagerReport } from "../../hooks/useManager";
 import { toast } from "react-toastify";
 import { Manager } from "../../types/managerType";
 import DeleteModal from "../../components/modal/deleteModel";
 import { UpdateSalesManager } from "../../components/modal/updateManager";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
-export const ManagerList: React.FC = () => {
+const ManagerList: React.FC = () => {
   const { data: managers = [], isLoading, error } = useGetManagers();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [managerToDelete, setManagerToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [managerToEdit, setManagerToEdit] = useState<Manager | null>(null);
-  
+  const { downloadReport, isLoading: isReportLoading } = useDownloadManagerReport()
+
   const navigate = useNavigate()
 
   const openUpdateModal = (manager: Manager) => {
@@ -22,7 +23,7 @@ export const ManagerList: React.FC = () => {
     setIsUpdateModalOpen(true);
   };
 
-  const deleteManager = useDeleteManager(); 
+  const deleteManager = useDeleteManager();
 
   const openDeleteModal = (id: string, name: string) => {
     setManagerToDelete({ id, name });
@@ -37,7 +38,7 @@ export const ManagerList: React.FC = () => {
   const handleGetManager = (id: string, name: string) => {
     toast.loading(`Getting manager ${name}` as string)
     navigate(`manager/sales/manager/${id}`)
-    
+
   }
 
 
@@ -73,12 +74,14 @@ export const ManagerList: React.FC = () => {
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b-2 border-gray-200 text-left text-gray-700 dark:text-whiteText">
+            {/* <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Name</th> */}
             <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText">Manager</th>
             <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText">Contact</th>
             <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText">Location</th>
             <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Meters</th>
             <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Customers</th>
             <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-right">Price Per Unit</th>
+            <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Report</th>
             <th className="py-4 px-6 font-bold text-gray-700 dark:text-whiteText text-center">Actions</th>
           </tr>
         </thead>
@@ -89,19 +92,19 @@ export const ManagerList: React.FC = () => {
               className="border-b border-gray-100 font-poppins hover:bg-gray-50 dark:hover:bg-blackText transition"
             >
               {/* Name + Avatar */}
-             <td className="py-5 px-6">
-              <Link to={`/manager/zone/manager/${manager.id}`} className="flex items-center gap-4 hover:opacity-80 transition">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <span className="text-xl font-bold text-blue-700">
-                    {manager.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div>
-                  <p className="font-bold text-lg hover:text-indigo-600 transition">{manager.name}</p>
-                  <p className="text-sm text-gray-500">Sales Manager</p>
-                </div>
-              </Link>
-            </td>
+              <td className="py-5 px-6">
+                <Link to={`/manager/zone/manager/${manager.id}`} className="flex items-center gap-4 hover:opacity-80 transition">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-xl font-bold text-blue-700">
+                      {manager.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-bold text-lg hover:text-indigo-600 transition">{manager.name}</p>
+                    <p className="text-sm text-gray-500">Sales Manager</p>
+                  </div>
+                </Link>
+              </td>
 
               {/* Phone */}
               <td className="py-5 px-6">
@@ -136,6 +139,23 @@ export const ManagerList: React.FC = () => {
                   {manager.ppu.toLocaleString()} TZS
                 </span>
               </td>
+              <td className="py-5 px-6 text-right">
+                <button
+                  type="button"
+                  data-tooltip-id="report-tooltip"
+                  data-tooltip-content="Download performance report"
+                  onClick={() => downloadReport(manager.id, manager.name)}
+                  className={`
+                      p-2 rounded-md transition border border-gray-400
+                      ${isReportLoading
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : ' text-gray-700 hover:bg-gray-400'
+                    }
+                    `}
+                >
+                  Download
+                </button>
+              </td>
 
               {/* Actions */}
               <td className="py-5 px-6">
@@ -162,11 +182,11 @@ export const ManagerList: React.FC = () => {
           ))}
         </tbody>
       </table>
-      
+
       {isDeleteModalOpen && managerToDelete && (
         <DeleteModal
-          managerId={managerToDelete.id}
-          managerName={managerToDelete.name}
+          id={managerToDelete.id}
+          value={managerToDelete.name}
           onClose={closeDeleteModal}
         />
       )}
@@ -180,3 +200,5 @@ export const ManagerList: React.FC = () => {
     </div>
   );
 };
+
+export default ManagerList;

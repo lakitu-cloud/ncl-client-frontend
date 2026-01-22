@@ -6,12 +6,14 @@ import AccountTypeSelector from './select';
 import Register from './register';
 import Login from './login';
 import { useApp } from '../../context/ContextProvider';
+import { Logo } from '../../assets/Logo';
+import { ForgetPassword } from './password';
 
 export const Auth = () => {
     const { accountType, setAccountType } = useApp();
-    const [activeTab, setActiveTab] = useState<'login' | 'register'>('login');
+    const [activeTab, setActiveTab] = useState<'login' | 'register' | 'password'>('login');
     const [backgroundImage, setBackgroundImage] = useState('');
-    const [showLogin, setShowLogin] = useState(false);
+    const [showLogin, setShowLogin] = useState(true);
 
     const backgroundImages = [
         require('../../assets/images/background2.png'),
@@ -33,33 +35,6 @@ export const Auth = () => {
         }
     }, []);
 
-    const handleAccountSelect = (type: 'sales' | 'zone', remember: boolean) => {
-        setAccountType(type);
-        if (remember) {
-            localStorage.setItem('preferredAccountType', type);
-        } else {
-            localStorage.removeItem('preferredAccountType');
-        }
-        setShowLogin(true);
-    };
-
-    const handleBackToSelector = () => {
-        setShowLogin(false);
-        setAccountType(null);
-        setActiveTab("login");
-        localStorage.removeItem('preferredAccountType');
-    };
-
-    const handleSwitchToRegister = () => {
-        setActiveTab('register');
-        setShowLogin(false); // Go back to selector first (recommended flow)
-        setAccountType(null);
-    };
-
-    const handleSwitchToLogin = () => {
-        setActiveTab('login');
-        setShowLogin(false);
-    };
 
     return (
         <section className="auth-view dark:bg-darkTheme">
@@ -75,8 +50,8 @@ export const Auth = () => {
             >
                 <div className="app-logo">
                     <div className='flex absolute top-8 left-8 items-center '>
-                        {/* <Logo width={86} height={86} className="text-[#001a77]" color="#fff" /> */}
-                        <p className='text-white text-3xl font-bold font-oswald hidden lg:block'>PPREPAID | METERS</p>
+                        <Logo width={86} height={86} className="text-[#001a77]" color="#fff" />
+                        <p className='text-white text-3xl font-bold font-oswald hidden lg:block '>PREPAID | METERS</p>
                     </div>
 
                     <h1 className="app-title font-oswald">
@@ -90,8 +65,8 @@ export const Auth = () => {
                         </div>
                         <div className="auth-description">
                             <div>
-                                <h2>Manufacture Products</h2>
-                                <p>
+                                <h2 className='font-oswald'>Manufacture Products</h2>
+                                <p className='font-poppins'>
                                     Our prepaid water meters are engineered to
                                     deliver reliable, secure, and swift
                                     deployment of water management solutions.
@@ -106,8 +81,8 @@ export const Auth = () => {
                             </div>
 
                             <div>
-                                <h2>Install Products</h2>
-                                <p>
+                                <h2 className='font-oswald'>Install Products</h2>
+                                <p className='font-poppins'>
                                     Our advanced installation tools facilitate
                                     the seamless integration of prepaid water
                                     meters into existing systems. The intuitive
@@ -121,8 +96,8 @@ export const Auth = () => {
                             </div>
 
                             <div>
-                                <h2>Maintenance Products</h2>
-                                <p>
+                                <h2 className='font-oswald'>Maintenance Products</h2>
+                                <p className='font-poppins'>
                                     Inspired by our partners' innovative
                                     approaches, we offer prepaid water meters
                                     that are dependable, secure, and
@@ -161,28 +136,33 @@ export const Auth = () => {
 
                         <h1 className="text-3xl sm:text-5xl font-bold mb-4 font-oswald text-blue-800 dark:text-gray-200 uppercase">
                             {showLogin && accountType
-                                ? `${accountType.toUpperCase()} MANAGER ${activeTab === 'login' ? 'LOGIN' : 'REGISTRATION'}`
-                                : activeTab === 'login'
-                                    ? 'Welcome Back!'
-                                    : 'Create Your Account'}
+                                ? ` ${activeTab === 'login' ? 'LOGIN' : 'REGISTRATION'}`
+                                : activeTab === 'login' ? 'Welcome Back!' : 'Create Your Account'}
                         </h1>
 
                         {accountType === "zone" ? (
                             <>
-                                <p className="mt-3 text-semibold sm:text-lg  font-poppins">
+                                {/* <p className="mt-3 text-semibold sm:text-lg  font-poppins">
                                     You are invited
-                                </p>
-                                <p className='text-flex text-sm my-2'>Prepaid Water Meter Management Sytstem is design to converniently monitor and manage all your Meters</p>
-                                {activeTab === 'login' && (
+                                </p> */}
+                                <p className='text-flex text-sm my-2'>Prepaid Water Meter Management System is design to conveniently monitor and manage all your Meters</p>
+                                {activeTab === 'login' ? (
                                     <button
                                         type="button"
                                         onClick={() => { setActiveTab('register'); setShowLogin(true) }}
-                                        className="dark:bg-white dark:text-black bg-blueTheme text-white px-4 py-2 rounded-md uppercase mt-2 shadown-sm hover:text-gray-800 ">
+                                        className="dark:bg-white dark:text-black bg-blueTheme text-white px-4 py-2 rounded-md uppercase mt-2 shadow-sm hover:text-gray-800 ">
                                         <span>Register</span>
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={() => { setActiveTab('login'); setShowLogin(true) }}
+                                        className="dark:bg-white dark:text-black bg-blueTheme text-white px-4 py-2 rounded-md uppercase mt-2 shadow-sm hover:text-gray-800 ">
+                                        <span>Back</span>
                                     </button>
                                 )}
                             </>
-                        ) : <p className='text-flex text-sm my-2'>PWM Management Sytstem is design to converniently monitor and manage all your prepaid water Meters</p>
+                        ) : <p className='text-flex text-sm my-2'>PWM Management System is design to conveniently monitor and manage all your prepaid water Meters</p>
                         }
 
 
@@ -191,48 +171,42 @@ export const Auth = () => {
                 </div>
 
                 <div className="short-auth-form has-lang-select">
-                  <Outlet/>
+
+                    <Outlet />
                     {/* Show selector first, or login */}
                     {!showLogin ? (
-                        <AccountTypeSelector onSelect={handleAccountSelect} />
-                    ) : ( 
-                        <> 
+                        <AccountTypeSelector onSelect={(type: 'sales' | 'zone') => {
+                            setAccountType(type);
+                            setShowLogin(true);
+                        }} />
+                    ) : (
+                        <>
                             {activeTab === 'login' && (
-                                <Login accountType={accountType!} onChangeAccountType={() => {
-                                    setShowLogin(false);
-                                    // Optional: clear form if you want
-                                    setAccountType(null);
+                                <Login 
+                                    accountType={accountType!} 
+                                    onChangePassword={() => {
+                                        console.log("change password clicked!! ")
+                                        setActiveTab('password')
+                                    }}
+                                    onChangeAccountType={() => {
+                                        setShowLogin(false);
+                                        setAccountType(null);
                                 }} />
-                            ) }
-                            {activeTab==='register' && accountType==="zone" && (
-                                 <Register
-                                    accountType={accountType!}
-                                    onChangeAccountType={handleBackToSelector}
-                                    onLoginInstead={handleSwitchToLogin}
-                                />
-                            )} 
-                            
-                            {/* <nav className="auth-nav">
-                                {[{ label: 'Login' }, { label: 'Register' }].map(
-                                    (item, idx) => (
-                                        <div
-                                            key={idx}
-                                            onClick={() => setActiveTab(item.label)}
-                                            aria-current="page"
-                                            className={`auth-nav-item router-link-active ${activeTab === item.label ? 'link-active' : ''}`}
-                                        >
-                                            <a className="cursor-pointer rounded-lg px-4 py-2.5 text-lg font-medium duration-150 hover:bg-gray-50 hover:text-blue-600 active:bg-gray-100">
-                                                {item.label}
-                                            </a>
-                                        </div>
-                                    )
-                                )}
-                            </nav>  */}
+                            )}
 
+                            {activeTab === 'register' && accountType === "zone" && (
+                                <Register />
+                            )}
+                            {activeTab === 'password' && accountType === "sales" && (
+                                <ForgetPassword 
+                                    accountType={accountType!} 
+                                    onBack={() => setActiveTab('login')} // Add back prop
+                                />
+                            )}
 
                         </>
 
-                    )} 
+                    )}
 
 
                 </div>

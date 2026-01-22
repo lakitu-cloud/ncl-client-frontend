@@ -79,7 +79,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             stroke={BLUE_SHADES.meters}
             domain={[0, 'dataMax + 20']} // slight padding above max
             tick={{ fontFamily: 'Oswald', fontSize: 14, fill: '#4B5563' }}
-            tickFormatter={(value) => Math.round(value).toLocaleString()}
+            tickFormatter={(value) => `${(value / 1000).toLocaleString()}k`}
             label={{
               value: 'Total Meters',
               angle: -90,
@@ -94,7 +94,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             yAxisId="revenue"
             orientation="right"
             stroke={BLUE_SHADES.revenue}
-            domain={[100000, 'dataMax + 200000']} // starts around 100K, pads above
+            domain={['auto', 'dataMax + 200000']} 
             tick={{ fontFamily: 'Oswald', fontSize: 14, fill: '#4B5563' }}
             tickFormatter={(value) => `${Math.round(value / 1000)}`}
             label={{
@@ -114,7 +114,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             wrapperStyle={{ paddingBottom: '12px' }}
             iconType="rect"
             formatter={(value) => (
-              <span className="font-popins font-md text-gray-700 text-sm">{value}</span>
+              <span className="font-poppins font-md text-gray-700 dark:text-whiteText text-sm">{value}</span>
             )}
           />
 
@@ -123,7 +123,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             yAxisId="meters"
             dataKey="meters"
             fill={BLUE_SHADES.meters}
-            radius={[12, 12, 0, 0]}
+            radius={[8, 8, 0, 0]}
             name="Meters"
           />
 
@@ -132,7 +132,7 @@ export default function ManagerPerformanceBar({ data }: ManagerPerformanceBarPro
             yAxisId="revenue"
             dataKey="revenue"
             fill={BLUE_SHADES.revenue}
-            radius={[12, 12, 0, 0]}
+            radius={[8, 8, 0, 0]}
             name="Revenue (TZS)"
           />
         </BarChart>

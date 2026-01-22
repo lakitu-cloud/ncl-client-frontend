@@ -109,7 +109,7 @@ export default function SalesMeterDetail() {
             {/* Meter Image */}
             <div className="mb-6 rounded-md overflow-hidden border-2 border-gray-200 dark:border-gray-700  shadow-md relative group">
               <img
-                src={displayMeter.image || require('../../assets/images/products/5.png')}
+                src={displayMeter.image || require('../../assets/images/products/1.png')}
                 alt="Meter"
                 className="w-full h-64 object-center"
                 loading="lazy"
@@ -280,7 +280,7 @@ export default function SalesMeterDetail() {
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-whiteText font-oswald">Meter Overview</h2>
                 <p className="text-gray-600 dark:text-whiteText mt-2 text-sm  ">
-                  Serial: <span className="font-poppins font-bold">{meter.serial}</span> • Managed by Sales Team
+                  Last Active: <span className="font-poppins font-bold">{meter.updatedAt}</span> 
                 </p>
 
               </div>
@@ -311,9 +311,9 @@ export default function SalesMeterDetail() {
             />
 
             {/* Transactions Table */}
-            <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
-              <div className="px-8 py-6 border-b border-gray-200 flex justify-between items-center bg-gradient-to-r from-blue-50 to-indigo-50">
-                <h3 className="text-xl font-bold text-gray-800">Token Sales History</h3>
+            <div className=" shadow-md border overflow-hidden">
+              <div className="px-8 py-2  flex justify-between items-center ">
+                <h3 className="text-md font-bold text-gray-800">Token Sales History</h3>
                 <span className="text-lg font-bold text-green-700">
                   Total Revenue: TSH {totalRevenue.toLocaleString()}
                 </span>

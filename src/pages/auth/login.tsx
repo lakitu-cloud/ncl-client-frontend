@@ -9,12 +9,13 @@ import { toast } from 'react-toastify';
 interface LoginProps {
   accountType: 'sales' | 'zone';
   onChangeAccountType: () => void;
+  onChangePassword: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
+const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType, onChangePassword }) => {
   const [isPasswordHidden, setPasswordHidden] = useState(true);
-  const [email, setEmail] = useState('admin_lindi@ruwasa.com');
-  const [phone, setPhone] = useState('0755481857');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
   const navigate = useNavigate();
@@ -33,16 +34,16 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
   // Success & Error handling (shared)
   useEffect(() => {
     if (zoneMutation.isSuccess || salesMutation.isSuccess) {
-      toast.success('Login successful!');
+      // toast.success('Login successful!');
       navigate(accountType === 'zone' ? '/manager/zone/dashboard' : '/manager/sales/dashboard');
     }
 
-    if (zoneMutation.isError) {
-      toast.error((zoneMutation.error as any)?.message || 'Zone login failed');
-    }
-    if (salesMutation.isError) {
-      toast.error((salesMutation.error as any)?.message || 'Sales login failed');
-    }
+    // if (zoneMutation.isError) {
+    //   toast.error((zoneMutation.error as any)?.message || 'Zone login failed');
+    // }
+    // if (salesMutation.isError) {
+    //   toast.error((salesMutation.error as any)?.message || 'Sales login failed');
+    // }
   }, [
     zoneMutation.isSuccess,
     zoneMutation.isError,
@@ -57,13 +58,10 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-          // console.log({ phone, password})
-
-
     if (!password) {
       toast.error('Password is required');
       return;
-    }
+    } 
 
     if (accountType === 'zone') {
       if (!email) {
@@ -150,10 +148,10 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
         </div>
 
         <div className="flex justify-between text-sm text-blue-600 dark:text-whiteText">
-          <Link to="/forgot-password" className="underline hover:opacity-80">
+          <button type="button" onChange={onChangePassword} className="underline ">
             Forgot Password?
-          </Link>
-          <button type="button" onClick={onChangeAccountType} className="underline hover:opacity-80">
+          </button>
+          <button type="button" onClick={onChangeAccountType} className="underline ">
             Change account type
           </button>
         </div>
@@ -161,7 +159,7 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
         <button
           type="submit"
           disabled={isPending}
-          className="py-3 px-6 rounded-md max-w-lg justify-end bg-blue-800 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold font-oswald dark:bg-whiteText dark:text-blackText text-md transition flex items-center gap-2"
+          className="py-3 px-6 rounded-md max-w-lg justify-end bg-blue-800 hover:bg-blue-700 disabled:bg-blue-400 disabled:dark:bg-blue-600 text-white font-semibold font-oswald dark:bg-whiteText dark:text-blackText text-md transition flex items-center gap-2"
         >
           {isPending ? (
             <>
@@ -174,9 +172,9 @@ const Login: React.FC<LoginProps> = ({ accountType, onChangeAccountType }) => {
         </button>
       </form>
 
-      <footer className="mt-8 text-center text-xs text-gray-500">
+      {/* <footer className="mt-8 text-center text-xs text-gray-500">
         By continuing, you agree to our <a href="#" className="underline">Privacy Policy</a>
-      </footer>
+      </footer> */}
     </main>
   );
 };

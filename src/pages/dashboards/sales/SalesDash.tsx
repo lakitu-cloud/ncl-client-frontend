@@ -1,7 +1,7 @@
 import Header from "../../../layout/navbar/Header";
-import Transaction from "./components/Transaction";
 import { FiArrowDown, FiArrowUp } from "react-icons/fi";
 import { useDash } from "../../../hooks/useManager";
+import { SubscriberRankingCard } from "./components/Transaction";
 
 const tap = require("../../../assets/images/logo.gif");
 
@@ -11,15 +11,15 @@ export const SalesDash = () => {
   return (
     <div className="max-h-screen">
       <Header title="Dashboard" />
-      <section className="mt-6 font-poppins">
+      <section className="mt-4 font-poppins">
         <div className="max-w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 not-prose">
           {/* Top card */}
-          <div className="col-span-2 rounded-lg text-white bg-blue-800 p-4">
+          <div className="col-span-2 rounded-md text-white bg-blue-800 p-4">
             <header className="flex align-middle  gap-x-8 mb-4 ">
               <div className="">
                 <svg
-                  width="72px"
-                  height="72px"
+                  width="58px"
+                  height="58px"
                   className="hidden sm:block"
                   viewBox="0 0 24 24"
                   fill="none"
@@ -31,8 +31,8 @@ export const SalesDash = () => {
                   />
                 </svg>
               </div>
-              <div className="mb-4">
-                <h1 className="text-2xl font-oswald mb-2">
+              <div className="mb-2">
+                <h1 className="text-xl font-oswald mb-2">
                   EQUIPMENT QUALITY STATISTICS
                 </h1>
                 <p className="text-sm overflow-hidden">
@@ -41,9 +41,9 @@ export const SalesDash = () => {
               </div>
             </header>
             <div className="border-[1px]"></div>
-            <div className="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-2 justify-between gap-x-8 mt-12">
-              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 sm:grid-cols-2 justify-between gap-x-8 mt-8">
+              <div className="w-full sm:w-auto flex flex-col text-center mb-6 sm:mb-0">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.subscriber ? data.totals.subscriber : 0}
                 </p>
                 <p className="flex flex-col">
@@ -51,8 +51,8 @@ export const SalesDash = () => {
                   <span>Count</span>
                 </p>
               </div>
-              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+              <div className="w-full sm:w-auto flex flex-col text-center mb-6 sm:mb-0">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.meter || 0}
                 </p>
                 <p className="flex flex-col">
@@ -60,8 +60,8 @@ export const SalesDash = () => {
                   <span>Count</span>
                 </p>
               </div>
-              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+              <div className="w-full sm:w-auto flex flex-col text-center mb-6 sm:mb-0">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.transaction || 0}
                 </p>
                 <p className="flex flex-col">
@@ -70,7 +70,7 @@ export const SalesDash = () => {
                 </p>
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.wakala || 0}
                 </p>
                 <p className="flex flex-col">
@@ -82,12 +82,12 @@ export const SalesDash = () => {
           </div>
           {/* Second card */}
           <div className="col-span-1 rounded-lg text-white bg-green-700 p-4">
-            <header className="flex flex-col sm:flex-row items-center  gap-x-8 mb-4">
+            <header className="flex flex-col sm:flex-row items-center  gap-x-8 mb-2">
               <div>
                 <svg
-                  width="80px"
+                  width="58px"
                   className="hidden sm:block"
-                  height="80px"
+                  height="58px"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -108,17 +108,17 @@ export const SalesDash = () => {
                   </g>
                 </svg>
               </div>
-              <div className="mb-4">
-                <h1 className="text-2xl font-oswald mb-2 mx-auto">
+              <div className="mb-2">
+                <h1 className="text-xl font-oswald mb-2 mx-auto">
                   ACTIVE RESOURCE
                 </h1>
                 <p className="text-sm">Summary of active resource</p>
               </div>
             </header>
             <div className="border-[1px]"></div>
-            <div className="flex flex-wrap justify-between gap-x-8 mt-12">
-              <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+            <div className="flex flex-wrap justify-between gap-x-8 mt-8">
+              <div className="w-full sm:w-auto flex flex-col text-center mb-6 sm:mb-0">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.subscriber ? data.totals.subscriber : 0}
                 </p>
                 <p className="flex flex-col">
@@ -127,7 +127,7 @@ export const SalesDash = () => {
                 </p>
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.meter || 0}
                 </p>
                 <p className="flex flex-col">
@@ -139,12 +139,12 @@ export const SalesDash = () => {
           </div>
 
           {/* Third card */}
-          <div className="col-span-1 rounded-lg text-white bg-orange-400 p-4">
-            <header className="flex flex-col sm:flex-row items-center  gap-x-8 mb-4">
+          <div className="col-span-1 rounded-lg text-white bg-orange-400 p-4 ">
+            <header className="flex flex-col sm:flex-row items-center gap-x-8 mb-2">
               <div>
                 <svg
-                  width="80px"
-                  height="80px"
+                  width="58px"
+                  height="58px"
                   viewBox="0 0 24 24"
                   fill="none"
                   className="hidden sm:block"
@@ -164,24 +164,24 @@ export const SalesDash = () => {
                   />
                 </svg>
               </div>
-              <div className="mb-4">
-                <h1 className="text-2xl font-oswald mb-2">DISTRIBUTION</h1>
+              <div className="mb-2">
+                <h1 className="text-xl font-oswald mb-2">DISTRIBUTION</h1>
                 <p className="text-sm">View distribution of resources.</p>
               </div>
             </header>
             <div className="border-[1px]"></div>
-            <div className="flex flex-wrap justify-between gap-x-8 mt-12">
+            <div className="flex flex-wrap justify-between gap-x-8 mt-8">
               <div className="w-full sm:w-auto flex flex-col text-center mb-8 sm:mb-0">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.wakala || 0}
                 </p>
-                <p className="flex flex-col">
+                <p className="flex flex-col"> 
                   <span>Point of Sale</span>
                   <span>Count</span>
                 </p>
               </div>
               <div className="w-full sm:w-auto flex flex-col text-center">
-                <p className="font-oswald text-semibold text-3xl mb-4">
+                <p className="font-oswald text-semibold text-2xl mb-2">
                   {data?.totals.meter || 0}
                 </p>
                 <p className="flex flex-col">
@@ -194,22 +194,22 @@ export const SalesDash = () => {
         </div>
 
         {/* Middle section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-3 mt-4">
           <div className="relative col-start-1 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all ">
             {/* Background Image */}
-            <div
+            {/* <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
               style={{ backgroundImage: `url(${tap})` }}
-            ></div>
+            ></div> */}
 
             {/* Content Overlay */}
             <div className="relative z-9 flex flex-col justify-between h-full">
               {/* Title */}
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 text-sm dark:text-whiteText font-medium font-oswald">
                 Daily Volume
               </p>
 
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
+              <p className="text-4xl font-bold dark:text-whiteText text-gray-900 font-oswald">
                 {/* {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
@@ -268,23 +268,23 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 1: Weekly Volume */}
-          <div className="relative col-start-2 row-start-1 col-span-1 row-span-1 border dark:bg-darkTheme border-gray-200 rounded-lg overflow-hidden p-6 transition-all">
+          <div className="relative col-start-2 row-start-1 col-span-1 row-span-1 border dark:bg-darkTheme border-gray-200 rounded-md overflow-hidden p-6 transition-all">
             {/* Background Image */}
-            <div
+            {/* <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
               style={{ backgroundImage: `url(${tap})` }}
-            ></div>
+            ></div> */}
 
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 dark:text-whiteText text-sm font-medium font-oswald">
                 Weekly Volume
               </p>
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
-                {new Intl.NumberFormat("en-US", {
+              <p className="text-4xl font-bold dark:text-whiteText text-gray-900 font-oswald">
+                {/* {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
-                }).format((data?.volume?.thisWeek ?? 0) * 0.001)}{" "}
-                m³
+                }).format((data?.volume.thisWeek ?? 0) * 0.001)}{" "} */}
+                {data?.volume.thisWeek} m³
               </p>
               <div className="flex items-center text-sm font-medium">
                 {(() => {
@@ -333,23 +333,23 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 2: Monthly Volume */}
-          <div className="relative col-start-3 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-3 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-md p-6 overflow-hidden transition-all">
             {/* Background Image */}
-            <div
+            {/* <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
               style={{ backgroundImage: `url(${tap})` }}
-            ></div>
+            ></div> */}
 
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm font-medium font-oswald">
+              <p className="text-gray-700 text-sm dark:text-whiteText font-medium font-oswald">
                 Monthly Volume
               </p>
-              <p className="text-4xl font-bold text-gray-900 font-oswald">
-                {new Intl.NumberFormat("en-US", {
+              <p className="text-4xl font-bold text-gray-900 dark:text-whiteText font-oswald">
+                {/* {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
-                }).format((data?.volume?.thisMonth ?? 0) * 0.001)}{" "}
-                m³
+                }).format((data?.volume?.thisMonth ?? 0) * 0.001)}{" "} */}
+                {data?.volume.thisMonth}m³
               </p>
               <div className="flex items-center text-sm font-medium">
                 {(() => {
@@ -398,23 +398,23 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 3: Annual Volume */}
-          <div className="relative col-start-4 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-4 row-start-1 col-span-1 row-span-1 border border-gray-200 rounded-md p-6 overflow-hidden transition-all">
             {/* Background Image */}
-            <div
+            {/* <div
               className="absolute inset-0 bg-cover bg-center opacity-30"
               style={{ backgroundImage: `url(${tap})` }}
-            ></div>
+            ></div> */}
 
             <div className="relative z-9 flex flex-col justify-between h-full">
               <p className="text-gray-700 dark:text-gray-200 text-sm font-medium font-oswald">
                 Annual Volume
               </p>
               <p className="text-4xl font-bold dark:text-whiteText text-gray-900 font-oswald">
-                {new Intl.NumberFormat("en-US", {
+                {/* {new Intl.NumberFormat("en-US", {
                   maximumFractionDigits: 2,
                   minimumFractionDigits: 0,
-                }).format((data?.volume?.thisYear ?? 0) * 0.001)}{" "}
-                m³
+                }).format((data?.volume?.thisYear ?? 0) * 0.001)}{" "} */}
+                {data?.volume.thisYear} m³
               </p>
               <div className="flex items-center text-sm font-medium">
                 {(() => {
@@ -462,7 +462,7 @@ export const SalesDash = () => {
             </div>
           </div>
           {/* Card 4: Amount Today */}
-          <div className="relative col-start-1 row-start-2 col-span-1 row-span-1  border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-1 row-start-2 col-span-1 row-span-1  border border-gray-200 rounded-md px-6 py-2 overflow-hidden transition-all">
             <div className="relative z-9 flex flex-col justify-between h-full">
               <p className="text-gray-700 dark:text-gray-200 text-sm font-medium font-oswald">
                 Amount Today
@@ -520,7 +520,7 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 5: Amount Weekly */}
-          <div className="relative col-start-2 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-2 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-md p-6 overflow-hidden transition-all">
             <div className="relative z-9 flex flex-col justify-between h-full">
               <p className="text-gray-700 dark:text-gray-200 text-sm font-medium font-oswald">
                 Amount Weekly
@@ -578,9 +578,9 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 6: Amount Monthly */}
-          <div className="relative col-start-3 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 transition-all overflow-hidden">
+          <div className="relative col-start-3 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-md p-6 transition-all overflow-hidden">
             <div className="relative z-9 flex flex-col justify-between h-full">
-              <p className="text-gray-700 text-sm dark:text-gray-20 font-medium font-oswald">
+              <p className="text-gray-700 text-sm dark:text-whiteText dark:text-gray-20 font-medium font-oswald">
                 Amount Monthly
               </p>
               <p className="text-4xl font-bold dark:text-whiteText text-gray-900 font-oswald">
@@ -636,7 +636,7 @@ export const SalesDash = () => {
           </div>
 
           {/* Card 6: Total Water Consumed */}
-          <div className="relative col-start-4 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-lg p-6 overflow-hidden transition-all">
+          <div className="relative col-start-4 row-start-2 col-span-1 row-span-1 border border-gray-200 rounded-md p-6 overflow-hidden transition-all">
             {/* <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url(${tap})` }}></div> */}
 
             <div className="relative z-9 flex flex-col justify-between h-full">
@@ -695,7 +695,7 @@ export const SalesDash = () => {
             </div>
           </div>
 
-          <Transaction />
+          <SubscriberRankingCard />
         </div>
 
         {/* Bottom Section */}

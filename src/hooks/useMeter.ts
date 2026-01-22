@@ -171,3 +171,46 @@ export const useMeterStats = () => {
 
   return { stats, isLoading, isError, error, meters };
 };
+
+interface ReportProblemVariables {
+  meterId: string;
+  description: string;
+}
+
+export const useReportMeterProblem = () => {
+
+  return useMutation({
+    mutationKey: ['report-problem'], // global key is fine, but we can scope per meter if needed
+
+    mutationFn: async ({ meterId, description }: ReportProblemVariables) => {
+      return meterService.reportProblem(meterId, description);
+    },
+
+    onMutate: () => {
+      toast.loading('Reporting problem...');
+    },
+
+    onSuccess: (data, variables) => {
+      toast.dismiss('report-loading');
+
+      if (data.status === 'success') {
+        toast.success(data.message || 'Problem reported successfully');
+      } else {
+        toast.error(data.message || 'Failed to report problem');
+      }
+
+      // Invalidate meter detail query to refresh UI
+      queryClient.invalidateQueries({
+        queryKey: ['meter', variables.meterId],
+      });
+    },
+
+    onError: (error: Error, variables) => {
+      toast.dismiss('report-loading');
+      toast.error(error.message || 'Failed to report problem');
+      console.error('Report problem failed:', error, variables);
+    },
+
+    retry: 1,
+  });
+};

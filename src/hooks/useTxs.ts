@@ -4,19 +4,28 @@ import { TransactionPayload } from "../types/tsxTypes";
 import { transactionService } from "../services/transactionService";
 
 
-export const useFetchTxs = (options?: UseQueryOptions< TransactionPayload[], Error >) => {
+export const useFetchTxs = (
+  accountType: 'zone' | 'sales' | null,
+  options?: UseQueryOptions<TransactionPayload[], Error>) => {
   return useQuery({
     queryKey: ["transactions"],
     queryFn: async () => {
-      const response = await transactionService.get();
+      if (!accountType) {
+        throw new Error('Account type not available');
+      }
 
-     if (response.transactions) {
+      const response = await transactionService.get(accountType);
+
+      if (response.transactions) {
         return response.transactions;
       }
-       throw new Error(response.message || 'Failed to fetch transactions');
+
+      throw new Error(response.message || 'Failed to fetch transactions');
+
     },
+    enabled: !!accountType,
     staleTime: 5 * 60 * 1000,
     retry: 3,
-     ...options,
+    ...options,
   });
 };

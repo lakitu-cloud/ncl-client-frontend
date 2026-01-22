@@ -34,7 +34,6 @@ export const managerService = {
 
   login: async (payload: ManagerLoginPayload) => {
     const res = await apiRequest<ApiResponse<{ status: string, token: string, id: string}>>('manager/login', 'POST', payload);
-    console.log(res)
     return res
   },
 
@@ -46,5 +45,10 @@ export const managerService = {
   dashboard: async(): Promise<any> => {
     const res = await apiRequest<ApiResponse>('manager/data', 'GET')
     return res  
-  }
+  },
+
+  // download: async(id: string): Promise<any> => {
+  //   const res = await apiRequest<any>(`report/${id}/download`, 'GET')
+  //   return res
+  // } 
 };

@@ -1,3 +1,6 @@
+import { Meter } from "./meterTypes";
+import { TransactionPayload } from "./tsxTypes";
+
 export interface SubscriberCreatePayload {
     name: string;
     phone: string;
@@ -18,20 +21,6 @@ export interface SubscriberUpdatePayload {
     ppu: string;
 }
 
-type Meter = {  
-    serial: string;
-  }
-
-export interface MeterSubscriber {
-  id: string;
-  serial: string;
-  name: string | null;
-  type: string;
-  status: string;
-  image: string;
-  // ... other meter fields if needed
-}
-
 export interface SubscriberPayload {
   id: string;
   ref: string;
@@ -44,12 +33,19 @@ export interface SubscriberPayload {
   location: string;
   createdAt: string;
   updatedAt: string;
-  meters: MeterSubscriber[]; 
+  transactions: TransactionPayload[]; 
+  meters: Meter[]
 }
 
 
 export interface Props {
   IsAddModalOpen: boolean,
   setIsAddModalOpen: any
+}
+
+export interface SearchSubscribersResponse {
+  status: 'success' | 'error';
+  subscribers: SubscriberPayload[];
+  message?: string;
 }
 

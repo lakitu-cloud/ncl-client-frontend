@@ -7,8 +7,9 @@ export const subscriberService = {
         return response;
     },
 
-    getById: async(id: string): Promise<{ status: string, message: string, data: any}> => {
-        return await apiRequest<any>(`subscriber/${id}`, 'GET')
+    getById: async(id: string): Promise<{ status: string, message: string, data: { subscriber: SubscriberPayload }}> => {
+        const res = await apiRequest<any>(`subscriber/${id}`, 'GET')
+        return res
     },
 
     create: async(payload: SubscriberCreatePayload): Promise<SubscriberCreatePayload> => {
@@ -16,7 +17,7 @@ export const subscriberService = {
     },
 
     delete: async(id: string): Promise<any> => {
-         return await apiRequest<any>(`subcriber/${id}`, 'DELETE')
+         return await apiRequest<any>(`subscriber/${id}`, 'DELETE')
     },
 
     assign: async(id: string, serial: string): Promise<any> => {
@@ -33,6 +34,7 @@ export const subscriberService = {
     },
 
     search: async(payload: string) => {
-        return await apiRequest<any>(`subscriber/:${payload}/search`, 'GET')
+        const res = await apiRequest<any>(`subscriber/search/${payload}`, 'GET')
+        return res
     }
 }

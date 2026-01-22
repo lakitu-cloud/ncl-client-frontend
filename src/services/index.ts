@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import { baseUrl } from "../config/urls";
 
 export const apiRequest = async <T>(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: any): Promise<T> => {
-    const response = await fetch(`${baseUrl}/${url}`, {
+    const response = await fetch(`${baseUrl}${url}`, {
         method,
         credentials: 'include',
         headers: {

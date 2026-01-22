@@ -1,24 +1,32 @@
-import MetersPage from "./ZoneMeters";
 import Header from "../../layout/navbar/Header";
 import { useApp } from "../../context/ContextProvider";
-import { SaleMeters } from "./SaleMeters";
 import { useMeterStats } from "../../hooks/useMeter";
 import { MeterListCards } from "../../components/card/meterListCards";
+import React, { Suspense } from "react";
+
+const ZoneMeters = React.lazy(() => import("./ZoneMeters"))
+const SaleMeters = React.lazy(() => import("./SaleMeters"))
+
 
 const Meters = () => {
   const { accountType } = useApp();
-  const { stats, isLoading: loadingStats } = useMeterStats();
 
   return (
     <main>
       <Header title="Meter Management" />
 
       <section className="px-8 mt-4">
-     
-        <MeterListCards stats={stats} isLoading={loadingStats} />
+
         <section className="mt-2">
-          {accountType === "zone" && (<MetersPage />)}
-          {accountType === "sales" && (<SaleMeters />)}
+          {accountType === "zone" && (
+            <Suspense fallback={<div>Loading meters...</div>}>
+              <ZoneMeters />
+            </Suspense>)}
+          {accountType === "sales" && (
+            <Suspense fallback={<div>Loading meters...</div>}>
+              <SaleMeters />
+            </Suspense>
+          )}
         </section>
         {/* {isButtonPress && <AddMeterModal />} */}
       </section>

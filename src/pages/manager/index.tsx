@@ -1,10 +1,12 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Header from "../../layout/navbar/Header";
 import { useApp } from "../../context/ContextProvider";
-import { ManagerList } from "./ManagerList";
+// import { ManagerList } from "./ManagerList";
 import { IoHelpCircleOutline } from "react-icons/io5";
 import { FiPlus } from "react-icons/fi";
 import { AddSalesManager } from "../../components/modal/addSalesManager";
+
+const ManagerList = React.lazy(() => import("./ManagerList"))
 
 const Sales = () => {
   const { isButtonPress, setIsButtonPress } = useApp();
@@ -52,7 +54,9 @@ const Sales = () => {
         {/* <CardMeter /> */}
 
         <section className="mt-8">
-          <ManagerList />
+          <Suspense fallback={<div>Loading managers...</div>}>
+        <ManagerList />
+      </Suspense>
         </section>
 
         {/* Modal — only renders when open */}

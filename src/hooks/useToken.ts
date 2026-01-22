@@ -6,15 +6,16 @@ import {
 } from "../types/rechargeTypes";
 import { toast } from "react-toastify";
 import { queryClient } from "..";
-import { rechargeSerice } from "../services/rechargeService";
+import { rechargeService } from "../services/rechargeService";
 
-export const useFetchTokens = (options?: UseQueryOptions< TopUpPayload[], Error, TopUpPayload[], ['token'] >) => {
+let tokenId: any
+
+export const useFetchTokens = (options?: UseQueryOptions< TopUpPayload[], Error, TopUpPayload[], ['tokens'] >) => {
   return useQuery({
-    queryKey: ["token"],
+    queryKey: ["tokens"],
     queryFn: async () => {
       toast.dismiss("LOADING");
-      const data = await rechargeSerice.get();
-      console.log(data)
+      const data = await rechargeService.get();
       return data;
     },
     staleTime: 5 * 60 * 1000,
@@ -26,15 +27,17 @@ export const useFetchTokens = (options?: UseQueryOptions< TopUpPayload[], Error,
 export const useGenerateToken = () => {
   return useMutation({
     mutationFn: (payload: GenerateTokenPayload) => {
-        return rechargeSerice.generateToken(payload)
+        return rechargeService.generateToken(payload)
     },
     onSuccess: (data) => {
       toast.dismiss("LOADING");
-      console.log(data)
 
         if (data.status === "success") {
+          
           toast.success(data.message);
-          queryClient.invalidateQueries({ queryKey: ["token"] });
+          queryClient.invalidateQueries({ queryKey: ['tokenId', tokenId] })
+          queryClient.invalidateQueries({ queryKey: ["tokens"] });
+          window.location.reload()
         }
   
         if (data.status === "error") {
@@ -53,18 +56,19 @@ export const useGenerateToken = () => {
 
 export const useGenerateTamper = () => {
   return useMutation({
-    mutationFn: async (serial: string) => await rechargeSerice.generateTamper(serial),
+    mutationFn: async (serial: string) => await rechargeService.generateTamper(serial),
     onMutate: () => {
       toast.loading("Please wait", { toastId: "LOADING" });
     },
     onSuccess: (data) => {
-      console.log(data)
       if (data.status == "success") {
         toast.dismiss("LOADING");
           toast.success(data.message);
+          
           queryClient.invalidateQueries({
-            queryKey: ["token"],
+            queryKey: ["tokens"],
           });
+
       }
 
       if (data.status == "error") {
@@ -73,9 +77,33 @@ export const useGenerateTamper = () => {
       }
     },
     onError: (error) => {
-      console.log(error)
       toast.dismiss("LOADING");
       toast.error(error.message);
     },
+  });
+};
+
+export const useTokenMeter = (tokenId: string) => {
+  tokenId = tokenId
+  return useQuery<TopUpPayload[], Error>({
+    queryKey: ['tokenId', tokenId], // ← important: include tokenId in key!
+    queryFn: async ({ queryKey }) => {
+      const [, id] = queryKey; // extract the id from queryKey
+
+      toast.dismiss('LOADING');
+
+      const response = await rechargeService.getTamperById(id as string);
+
+      // Optional: validate/transform response
+      if (!response?.token) {
+        throw new Error('Invalid response format');
+      }
+
+      return response.token;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000,   // 10 minutes (previously cacheTime)
+    retry: 3,
+    enabled: !!tokenId,       // ← very important: don't run if no id
   });
 };

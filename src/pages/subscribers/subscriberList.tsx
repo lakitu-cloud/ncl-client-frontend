@@ -22,7 +22,7 @@ import DeleteModalSubs from "../../components/modal/deleteModalSubs";
 export function SubscriberTable() {
 
   // React Query data
-  const { data = [], isPending } = useGetSubs(); // data is now the array directly
+  const { data = [], isPending } = useGetSubs(); 
   const { mutate: assignMutate } = useAssignSub();
   const deleteSubscriber = useDeleteSubs();
 
@@ -159,12 +159,12 @@ export function SubscriberTable() {
           );
         },
       },
-      {
-        accessorKey: "ref",
-        header: "Ref No.",
-        size: 120,
-        cell: ({ getValue }) => <span className="text-sm">{getValue() as string}</span>,
-      },
+      // {
+      //   accessorKey: "ref",
+      //   header: "Ref No.",
+      //   size: 120,
+      //   cell: ({ getValue }) => <span className="text-sm">{getValue() as string}</span>,
+      // },
 
       {
         id: "serial",

@@ -3,41 +3,75 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    
+    <!-- Basic Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
+    <meta name="theme-color" content="#1e40af" /> <!-- blue-700 -->
+    <meta name="description" content="NCL Remote Management System – Advanced smart water metering, real-time monitoring, revenue management and tamper control solution for utilities and water authorities in Tanzania." />
+    
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="NCL | Remote Management System" />
+    <meta property="og:description" content="Intelligent water metering platform for utilities. Real-time monitoring, revenue protection, tamper detection & remote control." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://yourcompany.com" />
+    <meta property="og:image" content="%PUBLIC_URL%/og-image.jpg" /> <!-- prepare 1200×630 image -->
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NCL | Remote Management System" />
+    <meta name="twitter:description" content="Smart water metering & utility management platform" />
+    
+    <!-- Fonts (Oswald + Poppins – already in your project) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
     />
+
+    <!-- Manifest & Apple Touch -->
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>NCL | Remote Management System</title>
+    <!-- Title – Keep it short but descriptive -->
+    <title>NCL | Remote Meter Management System</title>
+
+    <!-- Critical CSS (will be replaced by build) -->
+    <link href="%PUBLIC_URL%/static/css/main.e3fef926.css" rel="stylesheet" />
   </head>
-  <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+
+  <body class="bg-gray-50 antialiased">
+    <noscript>
+      <div style="text-align: center; padding: 4rem 1rem; background: #1e40af; color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+        <h1 style="font-family: 'Oswald', sans-serif; font-size: 2.5rem; margin-bottom: 1rem;">
+          JavaScript is required
+        </h1>
+        <p style="font-family: 'Poppins', sans-serif; max-width: 480px;">
+          NCL Remote Management System requires JavaScript to function properly.<br/>
+          Please enable JavaScript in your browser settings.
+        </p>
+      </div>
+    </noscript>
+
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+    <!-- Optional: Very basic loading indicator (shown before React hydrates) -->
+    <div id="loading" style="position: fixed; inset: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+      <div class="text-center">
+        <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <!-- <h2 class="text-xl font-bold text-gray-800 font-oswald">NCL System</h2> -->
+        <p class="text-sm text-gray-600 mt-2 font-oswald">Loading remote management platform...</p>
+      </div>
+    </div>
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
+    <!-- Remove loading screen after React mounts -->
+    <script>
+      window.addEventListener('load', () => {
+        const loading = document.getElementById('loading');
+        if (loading) loading.style.display = 'none';
+      });
+    </script>
+
+    <!-- Built files will be auto injected here -->
   </body>
 </html>

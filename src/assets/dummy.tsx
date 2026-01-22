@@ -3,15 +3,12 @@ import React from "react";
 import {
   IoHomeOutline,
   IoPeopleOutline,
-  IoDocumentTextOutline,
-  IoStatsChartOutline,
-  IoCalendarOutline,
-  IoMailOutline,
-  IoCartOutline,
-  IoConstructOutline,
+  IoDocumentTextOutline,  
   IoFlashOutline,
   IoCashOutline, // for Topup
-  IoBusinessOutline, // for Wakala
+  IoBusinessOutline,
+  IoCloudUpload,
+  IoCloudUploadOutline, // for Wakala
 } from "react-icons/io5";
 
 
@@ -39,15 +36,16 @@ export const getNavigation = (): NavItem[] => {
       icon: <IoHomeOutline className="w-6 h-6" />,
     },
     {
-      name: isZone ? "Managers" : "Customers",
-      href: isZone ? `${basePath}/managers` : `${basePath}/subscribers`,
-      icon: <IoPeopleOutline className="w-6 h-6" />,
-    },
-    {
       name: "Meters",
       href: `${basePath}/meters`,
       icon: <IoFlashOutline className="w-6 h-6" />,
     },
+    {
+      name: isZone ? "Managers" : "Customers",
+      href: isZone ? `${basePath}/managers` : `${basePath}/subscribers`,
+      icon: <IoPeopleOutline className="w-6 h-6" />,
+    },
+    
      {
       name: "Transactions",
       href: `/manager/transactions`,
@@ -61,7 +59,7 @@ export const getNavigation = (): NavItem[] => {
       {
         name: "Top Up",
         href: `${basePath}/topup`,
-        icon: <IoCashOutline className="w-6 h-6" />,
+        icon: <IoCloudUploadOutline className="w-6 h-6" />,
       },
       {
         name: "Wakala",
@@ -72,13 +70,13 @@ export const getNavigation = (): NavItem[] => {
   }
 
   // Only Zone sees this
-  if (isZone) {
-    items.push({
-      name: "Intergration",
-      href: `${basePath}/intergration`,
-      icon: <IoDocumentTextOutline className="w-6 h-6" />,
-    });
-  }
+  // if (isZone) {
+  //   items.push({
+  //     name: "Intergration",
+  //     href: `${basePath}/intergration`,
+  //     icon: <IoDocumentTextOutline className="w-6 h-6" />,
+  //   });
+  // }
 
   return items;
 };

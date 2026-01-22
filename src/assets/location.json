@@ -1,0 +1,185 @@
+{
+  "country": "United Republic of Tanzania",
+  "regions": [
+    {
+      "name": "Arusha",
+      "code": "01",
+      "capital": "Arusha",
+      "districts": ["Arusha City", "Arusha Rural", "Karatu", "Monduli", "Ngorongoro", "Meru"]
+    },
+    {
+      "name": "Dar es Salaam",
+      "code": "02",
+      "capital": "Dar es Salaam",
+      "districts": ["Ilala", "Kinondoni", "Temeke", "Ubungo", "Kigamboni"]
+    },
+    {
+      "name": "Dodoma",
+      "code": "03",
+      "capital": "Dodoma",
+      "districts": ["Dodoma Urban", "Bahi", "Chamwino", "Chemba", "Kondoa", "Kongwa"]
+    },
+    {
+      "name": "Geita",
+      "code": "27",
+      "capital": "Geita",
+      "districts": ["Geita", "Bukombe", "Chato", "Mbogwe", "Nyang'hwale"]
+    },
+    {
+      "name": "Iringa",
+      "code": "11",
+      "capital": "Iringa",
+      "districts": ["Iringa Urban", "Iringa Rural", "Kilolo", "Mufindi"]
+    },
+    {
+      "name": "Kagera",
+      "code": "05",
+      "capital": "Bukoba",
+      "districts": ["Bukoba Urban", "Bukoba Rural", "Biharamulo", "Karagwe", "Kyerwa", "Muleba", "Ngara"]
+    },
+    {
+      "name": "Katavi",
+      "code": "28",
+      "capital": "Mpanda",
+      "districts": ["Mpanda Urban", "Mpanda Rural", "Mlele", "Nsimanjigwa"]
+    },
+    {
+      "name": "Kigoma",
+      "code": "16",
+      "capital": "Kigoma",
+      "districts": ["Kigoma Urban", "Kigoma Rural", "Kasulu", "Kasulu Town", "Kakonko", "Uvinza"]
+    },
+    {
+      "name": "Kilimanjaro",
+      "code": "07",
+      "capital": "Moshi",
+      "districts": ["Moshi Urban", "Moshi Rural", "Hai", "Siha", "Same", "Mwanga", "Rombo"]
+    },
+    {
+      "name": "Lindi",
+      "code": "08",
+      "capital": "Lindi",
+      "districts": ["Lindi Urban", "Lindi Rural", "Kilwa", "Ruangwa", "Nachingwea", "Matandu"]
+    },
+    {
+      "name": "Manyara",
+      "code": "26",
+      "capital": "Babati",
+      "districts": ["Babati Urban", "Babati Rural", "Hanang", "Kiteto", "Simanjiro", "Mbulu"]
+    },
+    {
+      "name": "Mara",
+      "code": "13",
+      "capital": "Musoma",
+      "districts": ["Musoma Urban", "Musoma Rural", "Bunda", "Bunda Town", "Serengeti", "Tarime", "Butiama"]
+    },
+    {
+      "name": "Mbeya",
+      "code": "09",
+      "capital": "Mbeya",
+      "districts": ["Mbeya City", "Mbeya Rural", "Chunya", "Kyela", "Rungwe", "Busokelo"]
+    },
+    {
+      "name": "Morogoro",
+      "code": "10",
+      "capital": "Morogoro",
+      "districts": ["Morogoro Urban", "Morogoro Rural", "Kilombero", "Kilosa", "Ulanga", "Mvomero", "Gairo", "Ifakara Town"]
+    },
+    {
+      "name": "Mtwara",
+      "code": "17",
+      "capital": "Mtwara",
+      "districts": ["Mtwara Urban", "Mtwara Rural", "Masasi", "Masasi Town", "Nanyamba", "Newala", "Tandahimba"]
+    },
+    {
+      "name": "Mwanza",
+      "code": "18",
+      "capital": "Mwanza",
+      "districts": ["Nyamagana", "Ilemela", "Kwimba", "Magu", "Misungwi", "Sengerema"]
+    },
+    {
+      "name": "Njombe",
+      "code": "29",
+      "capital": "Njombe",
+      "districts": ["Njombe Town", "Njombe Rural", "Ludewa", "Makete", "Wanging'ombe"]
+    },
+    {
+      "name": "Pwani (Coast)",
+      "code": "19",
+      "capital": "Kibaha",
+      "districts": ["Kibaha Urban", "Kibaha Rural", "Bagamoyo", "Kisarawe", "Rufiji", "Mafia", "Mkuranga"]
+    },
+    {
+      "name": "Rukwa",
+      "code": "20",
+      "capital": "Sumbawanga",
+      "districts": ["Sumbawanga Urban", "Sumbawanga Rural", "Nkasi", "Kalambo"]
+    },
+    {
+      "name": "Ruvuma",
+      "code": "21",
+      "capital": "Songea",
+      "districts": ["Songea Urban", "Songea Rural", "Mbinga", "Namungo", "Namtumbo", "Tunduru"]
+    },
+    {
+      "name": "Shinyanga",
+      "code": "22",
+      "capital": "Shinyanga",
+      "districts": ["Shinyanga Urban", "Shinyanga Rural", "Kahama Rural", "Kahama Town", "Kishapu", "Ushetu"]
+    },
+    {
+      "name": "Singida",
+      "code": "23",
+      "capital": "Singida",
+      "districts": ["Singida Urban", "Singida Rural", "Ikungi", "Iramba", "Mkalama", "Itigi"]
+    },
+    {
+      "name": "Songwe",
+      "code": "31",
+      "capital": "Vwawa",
+      "districts": ["Songwe", "Momba", "Tunduma"]
+    },
+    {
+      "name": "Tabora",
+      "code": "24",
+      "capital": "Tabora",
+      "districts": ["Tabora Urban", "Tabora Rural", "Igunga", "Nzega", "Uyui", "Sikonge", "Urambo", "Kaliua"]
+    },
+    {
+      "name": "Tanga",
+      "code": "25",
+      "capital": "Tanga",
+      "districts": ["Tanga City", "Handeni", "Handeni Town", "Kilindi", "Korogwe", "Korogwe Town", "Lushoto", "Muheza", "Mkinga", "Pangani"]
+    },
+    {
+      "name": "Mjini Magharibi (Zanzibar Urban/West)",
+      "code": "Z01",
+      "capital": "Zanzibar City",
+      "districts": ["Zanzibar Urban", "West Zanzibar"]
+    },
+    {
+      "name": "Kaskazini Unguja (Zanzibar North)",
+      "code": "Z02",
+      "capital": "Mkokotoni",
+      "districts": ["Kaskazini A", "Kaskazini B"]
+    },
+    {
+      "name": "Kusini Unguja (Zanzibar South)",
+      "code": "Z03",
+      "capital": "Koani",
+      "districts": ["Kusini"]
+    },
+    {
+      "name": "Kaskazini Pemba (Pemba North)",
+      "code": "Z04",
+      "capital": "Wete",
+      "districts": ["Wete", "Micheweni"]
+    },
+    {
+      "name": "Kusini Pemba (Pemba South)",
+      "code": "Z05",
+      "capital": "Chake-Chake",
+      "districts": ["Mkoani", "Chake-Chake"]
+    }
+  ]
+}

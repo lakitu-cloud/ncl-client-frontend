@@ -27,8 +27,9 @@ import { Meter, MeterPayload } from '../../types/meterTypes';
 import { useGetMeter } from '../../hooks/useMeter';
 import { FaCircleCheck, FaCircleStop, FaCircleXmark } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
+import { MeterListCards } from '../../components/card/meterListCards';
 
-export const SaleMeters = () => {
+const SaleMeters = () => {
   const [globalFilter, setGlobalFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -156,33 +157,33 @@ export const SaleMeters = () => {
         header: 'Calibration Factor',
         cell: ({ getValue }) => (getValue() != null ? getValue() : 'Self'),
       },
-      // {
-      //   accessorKey: 'error',
-      //   header: 'Error',
-      //   cell: ({ getValue }) => {
-      //     const value = getValue<string | null>();
-      //     return (
-      //       <span
-      //         className={`px-2 py-1 rounded text-sm font-medium ${value === null ? 'bg-blue-100 text-blue-700' : 'text-red-600'
-      //           }`}
-      //       >
-      //         {value || 'NIL'}
-      //       </span>
-      //     );
-      //   },
-      // },
-      // {
-      //   accessorKey: 'lock_meter',
-      //   header: 'Locked',
-      //   cell: ({ getValue }) => (
-      //     <label className="inline-flex items-center cursor-pointer">
-      //       <input type="checkbox" className="sr-only peer" checked={!!getValue()} readOnly />
-      //       <div className="relative w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 after:absolute after:top-1 after:left-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-full" />
-      //     </label>
-      //   ),
-      // },
       {
-        accessorKey: 'created_at',
+        accessorKey: 'error',
+        header: 'Error',
+        cell: ({ getValue }) => {
+          const value = getValue<string | null>();
+          return (
+            <span
+              className={`px-2 py-1 rounded text-sm font-medium ${value === null ? 'bg-blue-100 text-blue-700' : 'text-red-600'
+                }`}
+            >
+              {value || 'NIL'}
+            </span>
+          );
+        },
+      },
+        {
+          accessorKey: 'lock_meter',
+          header: 'Locked',
+          cell: ({ getValue }) => (
+            <label className="inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" checked={!!getValue()} readOnly />
+              <div className="relative w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-600 after:absolute after:top-1 after:left-1 after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all peer-checked:after:translate-x-full" />
+            </label>
+          ),
+        },
+      {
+        accessorKey: 'createdAt',
         header: 'Created At',
         cell: ({ getValue }) => {
           const date = new Date(getValue<string>());
@@ -234,107 +235,113 @@ export const SaleMeters = () => {
   });
 
   return (
-    <div className="flex flex-col gap-3 mb-4 w-full">
-      <div className="font-poppins mb-6 flex flex-wrap items-center justify-between gap-4">
-        {/* Filters */}
-        <div className="flex items-center gap-4">
-          {/* Status & Type Filters (simplified – you can use Flowbite dropdown with init if needed) */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 dark:bg-blackText dark:text-whiteText dark:border-gray-600 dark:hover:bg-darkTheme dark:hover:border-gray-700 dark:focus:ring-gray-700"
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-            <option value="locked">Locked</option>
-          </select>
+    <>
+      <MeterListCards meters={meters} isLoading={isFetching} />
 
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 dark:bg-blackText dark:text-whiteText dark:border-gray-600 dark:hover:bg-darkTheme dark:hover:border-gray-700 dark:focus:ring-gray-700"
-          >
-            <option value="">All Types</option>
-            <option value="Token">Token</option>
-            <option value="Card">Card</option>
-            <option value="Direct">Direct</option>
-          </select>
+      <div className="flex flex-col gap-3 my-8 w-full">
+        <div className="font-poppins mb-6 flex flex-wrap items-center justify-between gap-4">
+          {/* Filters */}
+          <div className="flex items-center gap-4">
+            {/* Status & Type Filters (simplified – you can use Flowbite dropdown with init if needed) */}
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 dark:bg-blackText dark:text-whiteText dark:border-gray-600 dark:hover:bg-darkTheme dark:hover:border-gray-700 dark:focus:ring-gray-700"
+            >
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="locked">Locked</option>
+            </select>
+
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-md text-sm px-4 py-2 dark:bg-blackText dark:text-whiteText dark:border-gray-600 dark:hover:bg-darkTheme dark:hover:border-gray-700 dark:focus:ring-gray-700"
+            >
+              <option value="">All Types</option>
+              <option value="Token">Token</option>
+              <option value="Card">Card</option>
+              <option value="Direct">Direct</option>
+            </select>
+          </div>
+
+          <div className="relative flex-1 min-w-[200px]">
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+            <input
+              type="text"
+              placeholder="Search meters..."
+              value={globalFilter ?? ''}
+              onChange={(e) => setGlobalFilter(e.target.value)}
+              className="pl-8 p-2 w-full border rounded dark:bg-blackText dark:hover:bg-darkTheme dark:border-gray-700 dark:text-white"
+            />
+          </div>
+
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600 dark:text-whiteText">
+              {Object.keys(rowSelection).length} selected
+            </span>
+{/* 
+            <button onClick={() => setToggle(!toggle)}>
+              {toggle ? <FaToggleOn className="text-blue-600 dark:text-whiteText text-2xl" /> : <FaToggleOff className="text-gray-400 text-2xl" />}
+            </button>
+
+            <button onClick={handleRefreshData} disabled={isFetching}>
+              <FaSync className={`dark:text-whiteText text-xl ${isFetching ? 'animate-spin' : ''}`} />
+            </button>
+
+            <button><FaDownload className="text-xl dark:text-whiteText" /></button>
+            <button><FaCog className="text-xl dark:text-whiteText" /></button> */}
+          </div>
         </div>
 
-        <div className="relative flex-1 min-w-[200px]">
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input
-            type="text"
-            placeholder="Search meters..."
-            value={globalFilter ?? ''}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            className="pl-8 p-2 w-full border rounded dark:bg-blackText dark:hover:bg-darkTheme dark:border-gray-700 dark:text-white"
-          />
-        </div>
+        {/* Table */}
+        {isFetching && !meters.length ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Loading meters...</p>
+          </div>
+        ) : data.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-lg font-semibold text-gray-600">No meters found</p>
+            <p className="text-sm text-gray-500">Try adjusting filters or add new meters.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto rounded-md ">
+            <table className="w-full table-auto">
+              <thead className="bg-gray-50 dark:bg-blackText border-b-2 dark:border-whiteText">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-whiteText uppercase tracking-wider"
+                        style={{ width: header.getSize() }}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                      </th>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <tbody className="bg-white dark:bg-blackText divide-y divide-gray-200">
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-darkTheme">
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id} className="px-6 py-3 text-sm text-gray-800 dark:text-whiteText">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600 dark:text-whiteText">
-            {Object.keys(rowSelection).length} selected
-          </span>
-
-          <button onClick={() => setToggle(!toggle)}>
-            {toggle ? <FaToggleOn className="text-blue-600 dark:text-whiteText text-2xl" /> : <FaToggleOff className="text-gray-400 text-2xl" />}
-          </button>
-
-          <button onClick={handleRefreshData} disabled={isFetching}>
-            <FaSync className={`dark:text-whiteText text-xl ${isFetching ? 'animate-spin' : ''}`} />
-          </button>
-
-          <button><FaDownload className="text-xl dark:text-whiteText" /></button>
-          <button><FaCog className="text-xl dark:text-whiteText" /></button>
-        </div>
+        {/* Pagination (optional – add controls if needed) */}
       </div>
-
-      {/* Table */}
-      {isFetching && !meters.length ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Loading meters...</p>
-        </div>
-      ) : data.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-lg font-semibold text-gray-600">No meters found</p>
-          <p className="text-sm text-gray-500">Try adjusting filters or add new meters.</p>
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-md ">
-          <table className="w-full table-auto">
-            <thead className="bg-gray-50 dark:bg-blackText border-b-2 dark:border-whiteText">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="px-6 py-4 text-left text-sm font-semibold text-gray-700 dark:text-whiteText uppercase tracking-wider"
-                      style={{ width: header.getSize() }}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="bg-white dark:bg-blackText divide-y divide-gray-200">
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-darkTheme">
-                  {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-6 py-3 text-sm text-gray-800 dark:text-whiteText">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Pagination (optional – add controls if needed) */}
-    </div>
+    </>
   );
 };
+
+export default SaleMeters;

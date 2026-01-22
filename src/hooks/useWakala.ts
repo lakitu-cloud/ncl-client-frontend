@@ -10,7 +10,6 @@ export const useWakalas = () => {
     queryKey: ['wakalas'],
     queryFn: async () => {
       const data = wakalaService.get()
-      console.log(data)
       return data
     },
     staleTime: 5 * 60 * 1000,

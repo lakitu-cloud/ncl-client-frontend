@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useRegister } from '../../hooks/useUser';
 
-interface RegisterProps {
-  accountType: 'sales' | 'zone';
-  onChangeAccountType: () => void;
-  onLoginInstead?: () => void;
-}
 
-const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType }) => {
+const Register = () => {
   const [full_name, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [ppu, setPpu] = useState('');
   const [password, setPassword] = useState('');
   const [confirm_password, setConfirmPassword] = useState('');
 
@@ -20,105 +15,101 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
   const [isPasswordHidden, setPasswordHidden] = useState(true);
   const [isConfirmPasswordHidden, setConfirmPasswordHidden] = useState(true);
 
-  const [isSuccess, setIsSuccess] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
   const { mutate, isPending, isError, error } = useRegister();
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setIsLoading(true);
-    setIsSuccess('');
 
     // Basic validation
-    if (!full_name || !email || !phone || !password || !confirm_password) {
+    if (!full_name || !email || !phone || !password || !confirm_password || !ppu) {
       toast.error('All fields are required');
-      setIsLoading(false);
       return;
     }
 
     if (password !== confirm_password) {
       toast.error('Passwords do not match');
-      setIsLoading(false);
       return;
     }
 
     if (password.length < 6) {
       toast.error('Password must be at least 6 characters');
-      setIsLoading(false);
       return;
     }
+
+    const ppl = parseInt(ppu)
 
     mutate({
       name: full_name.trim(),
       email: email.toLowerCase().trim(),
       phone: phone.trim(),
+      ppl,
       password,
     });
   };
 
   return (
-    <section className="text-start text-blue-800 font-poppins">
-
-      {/* Error / Success Messages */}
-      {isError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-          {isError}
-        </div>
-      )}
-      {isSuccess && (
-        <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
-          {isSuccess}
-        </div>
-      )}
-
+    <section className="text-start font-poppins">
       <form onSubmit={handleSubmit} className="space-y-5">
         {activeTab === 'Details' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-blue-800 mb-1 dark:text-gray-400">Email</label>
+              <label className="block text-sm font-medium text-blue-800 mb-1 dark:text-whiteText ">Email</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:bg-darkTheme dark:text-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:bg-blackText dark:text-gray-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-blue-800 mb-1">Full Name</label>
+              <label className="block text-sm font-medium text-blue-800 dark:text-whiteText  mb-1">Full Name</label>
               <input
                 type="text"
                 required
                 value={full_name}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter name here"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:bg-darkTheme dark:text-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:bg-blackText dark:text-gray-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-blue-800 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-blue-800 dark:text-whiteText  mb-1">Phone Number</label>
               <input
                 type="tel"
                 required
+                placeholder="Enter phone number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder=""
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:bg-darkTheme dark:text-gray-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:bg-blackText dark:text-whiteText"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-blue-800 dark:text-whiteText  mb-1">Price Per Unit</label>
+              <input
+                type="number"
+                required
+                placeholder="Set Price Per Unit"
+                value={ppu}
+                onChange={(e) => setPpu(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:bg-blackText dark:text-whiteText"
+              />
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                Set the amount you charge per unit (e.g. <span className="font-medium">2000</span>).
+              </p>
             </div>
 
             <button
               type="button"
               onClick={() => setActiveTab('Password')}
-              className="w-full py-3 bg-blue-800 text-white font-semibold rounded-lg hover:bg-blue-900 transition uppercase dark:bg-white dark:text-gray-500"
-              disabled={isLoading}
+              className="px-4 py-3 bg-blue-800 text-white font-semibold rounded-lg hover:bg-blue-900 transition uppercase dark:bg-white dark:text-gray-500"
             >
-              Continue to Password
+              Continue
             </button>
           </>
         )}
@@ -126,7 +117,7 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
         {activeTab === 'Password' && (
           <>
             <div>
-              <label className="block text-sm font-medium text-blue-800 mb-1">Password</label>
+              <label className="block text-sm font-medium text-blue-800 dark:text-whiteText mb-1">Password</label>
               <div className="relative">
                 <input
                   type={isPasswordHidden ? 'password' : 'text'}
@@ -134,7 +125,7 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-md focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition dark:focus:border-whiteText dark:focus:ring-whiteText dark:bg-blackText dark:text-gray-500"
                 />
                 <button
                   type="button"
@@ -156,7 +147,7 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-blue-800 mb-1">Confirm Password</label>
+              <label className="block text-sm font-medium text-blue-800 dark:text-whiteText mb-1">Confirm Password</label>
               <div className="relative">
                 <input
                   type={isConfirmPasswordHidden ? 'password' : 'text'}
@@ -164,7 +155,7 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
                   value={confirm_password}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:border-blue-600 focus:ring-2 focus:ring-blue-200 dark:focus:border-whiteText dark:focus:ring-whiteText dark:bg-blackText dark:text-gray-500 outline-none transition"
                 />
                 <button
                   type="button"
@@ -185,23 +176,36 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
               </div>
             </div>
 
-            <div className="flex gap-4 mt-8">
-                <button
-                  type="button"
-                  onClick={() => {
-                   window.location.reload();
-                  }}
-                  className="flex-1 py-3 border-2 border-blue-800 text-blue-800 font-semibold rounded-lg hover:bg-blue-50 transition"
-                  disabled={isLoading}
-                >
-                  Back
-                </button>
+            <div className="flex justify-between gap-4 mt-8">
+              <button
+                type="button"
+                onClick={() => setActiveTab('Details')}
+                className="py-3 px-6 rounded-md max-w-lg justify-end bg-blue-800 hover:bg-blue-700 disabled:bg-blue-400 text-whiteText font-semibold font-oswald dark:bg-whiteText dark:text-blackText text-md transition flex items-center gap-2"
+              >
+                Back
+              </button>
               <button
                 type="submit"
-                disabled={isLoading}
-                className="flex-1 py-3 bg-blue-800 text-white font-semibold rounded-lg hover:bg-blue-900 transition disabled:opacity-60 uppercase"
+                disabled={isPending}
+                aria-disabled={isPending}
+                className={`
+                    py-3 px-6 rounded-md max-w-lg justify-end
+                    bg-blue-800 hover:bg-blue-700 active:bg-blue-900
+                    disabled:bg-blue-400 disabled:cursor-not-allowed
+                    text-whiteText font-semibold font-oswald 
+                    dark:bg-whiteText dark:text-blackText dark:hover:bg-gray-100
+                    text-md transition-all duration-200
+                    flex items-center justify-center gap-2 min-w-[140px]
+                  `}
               >
-                {isLoading ? 'Creating Account...' : 'Register'}
+                {isPending ? (
+                  <>
+                    <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  'Register'
+                )}
               </button>
             </div>
           </>
@@ -209,14 +213,14 @@ const Register: React.FC<RegisterProps> = ({ accountType, onChangeAccountType })
       </form>
 
       {/* Change Account Type Link */}
-      <div className="mt-6 text-center">
+      {/* <div className="mt-6 text-center">
         <button
           onClick={onChangeAccountType}
           className="text-sm text-blue-600 hover:underline"
         >
           ← Change account type ({accountType})
         </button>
-      </div>
+      </div> */}
     </section>
   );
 };

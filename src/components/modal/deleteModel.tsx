@@ -4,22 +4,22 @@ import { useDeleteManager } from '../../hooks/useManager';
 import { toast } from 'react-toastify';
 
 type DeleteManagerModalProps = {
-  managerId: string;
-  managerName: string;
+  id: string;
+  value?: string;
   onClose: () => void;
 };
 
-const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName, onClose }) => {
+const DeleteModal: React.FC<DeleteManagerModalProps> = ({id, value, onClose }) => {
   const deleteManager = useDeleteManager();
 
   const handleDelete = () => {
-    deleteManager.mutate(managerId, {
+    deleteManager.mutate(id, {
       onSuccess: () => {
-        toast.success(`Manager "${managerName}" deleted successfully`);
+        toast.success(`${value} deleted successfully`);
         onClose();
       },
       onError: () => {
-        toast.error("Failed to delete manager");
+        toast.error("Failed to delete");
         onClose();
       },
     });
@@ -53,10 +53,10 @@ const DeleteModal: React.FC<DeleteManagerModalProps> = ({managerId, managerName,
           </div>
 
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-whiteText">
-            Delete Manager
+            Delete 
           </h3>
           <p className="mb-6 text-sm text-gray-500">
-            Are you sure you want to delete <span className="font-bold">"{managerName}"</span>?
+            Are you sure you want to delete <span className="font-bold">"{value}"</span>?
             <br />
             <span className="text-red-600">This will also unassign all their meters.</span>
           </p>

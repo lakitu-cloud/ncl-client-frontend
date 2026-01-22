@@ -88,21 +88,21 @@ export default function ManagerDonutChart({ data }: ManagerDonutChartProps) {
         {/* Center Total */}
         <text
           x="50%"
-          y="38%"
+          y="48%"
           textAnchor="middle"
           dominantBaseline="middle"
-          className="font-oswald font-bold text-3xl fill-gray-800"
+          className="font-oswald font-bold text-3xl fill-gray-800 dark:text-whiteText"
         >
           {totalSubscribers.toLocaleString()}
         </text>
         <text
           x="50%"
-          y="48%"
+          y="54%"
           textAnchor="middle"
           dominantBaseline="middle"
-          className="font-oswald font-medium text-sm fill-gray-600 uppercase tracking-wider"
+          className="font-oswald font-medium text-sm fill-gray-600 uppercase tracking-wider dark:text-whiteText"
         >
-          Total Subscribers
+          Total Customers
         </text>
 
         {/* Fixed Tooltip formatter */}

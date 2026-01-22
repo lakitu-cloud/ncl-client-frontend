@@ -8,6 +8,7 @@ export interface Meter {
   phone: string | null;
   status: string;
   description: string;
+  error?: string;
   lock: boolean;
   image: string;
   subscriberId: string | null;

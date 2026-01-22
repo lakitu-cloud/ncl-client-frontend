@@ -3,20 +3,8 @@
 @tailwind utilities;
 
 
-@font-face {
-    font-family: 'Oswald';
-    src: url('../assets/fonts/Oswald/Oswald-VariableFont_wght.ttf');
-}
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
 
-@font-face{
-    font-family: 'Open Sans';
-     src: url('../assets/fonts/Open_Sans/OpenSans-VariableFont_wdth\,wght.ttf');
-}
-
-@font-face{
-    font-family: 'Poppins';
-    src: url('../assets/fonts/Poppins/Poppins-Light.ttf');
-}
 
 .map-container {
   height: 100%;
